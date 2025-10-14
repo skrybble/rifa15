@@ -245,43 +245,65 @@ const RaffleDetailPage = ({ user, onLogout }) => {
 
               {/* Purchase Form */}
               {raffle.status === 'active' && availableTickets > 0 ? (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Cantidad de tickets
-                    </label>
-                    <input
-                      type="number"
-                      data-testid="quantity-input"
-                      min="1"
-                      max={Math.min(availableTickets, 10)}
-                      value={quantity}
-                      onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent text-center text-xl font-bold"
-                    />
+                user ? (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">
+                        Cantidad de tickets
+                      </label>
+                      <input
+                        type="number"
+                        data-testid="quantity-input"
+                        min="1"
+                        max={Math.min(availableTickets, 10)}
+                        value={quantity}
+                        onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent text-center text-xl font-bold"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                      <span className="text-slate-700 font-semibold">Total a pagar</span>
+                      <span className="text-3xl font-bold text-sky-600">
+                        ${(quantity * raffle.ticket_price).toFixed(2)}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={handlePurchase}
+                      data-testid="purchase-btn"
+                      disabled={purchasing}
+                      className="w-full py-4 bg-sky-600 text-white rounded-lg font-bold text-lg hover:bg-sky-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                    >
+                      <ShoppingCart className="w-6 h-6" />
+                      <span>{purchasing ? 'Procesando...' : 'Comprar Tickets'}</span>
+                    </button>
+
+                    <p className="text-xs text-center text-slate-500">
+                      El sorteo se realizará automáticamente el día indicado a las 6:00 PM
+                    </p>
                   </div>
-
-                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
-                    <span className="text-slate-700 font-semibold">Total a pagar</span>
-                    <span className="text-3xl font-bold text-sky-600">
-                      ${(quantity * raffle.ticket_price).toFixed(2)}
-                    </span>
+                ) : (
+                  <div className="text-center py-8 space-y-4">
+                    <p className="text-lg text-slate-700 font-semibold">
+                      Inicia sesión para comprar tickets
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      <Link
+                        to="/login"
+                        className="px-6 py-3 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition-all"
+                      >
+                        Iniciar Sesión
+                      </Link>
+                      <Link
+                        to="/register"
+                        className="px-6 py-3 bg-white text-sky-600 border-2 border-sky-600 rounded-lg font-semibold hover:bg-sky-50 transition-all"
+                      >
+                        Registrarse
+                      </Link>
+                    </div>
                   </div>
-
-                  <button
-                    onClick={handlePurchase}
-                    data-testid="purchase-btn"
-                    disabled={purchasing}
-                    className="w-full py-4 bg-sky-600 text-white rounded-lg font-bold text-lg hover:bg-sky-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                  >
-                    <ShoppingCart className="w-6 h-6" />
-                    <span>{purchasing ? 'Procesando...' : 'Comprar Tickets'}</span>
-                  </button>
-
-                  <p className="text-xs text-center text-slate-500">
-                    El sorteo se realizará automáticamente el día indicado a las 6:00 PM
-                  </p>
-                </div>
+                )
               ) : (
                 <div className="text-center py-6">
                   <p className="text-lg font-semibold text-slate-600">
