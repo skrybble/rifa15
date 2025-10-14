@@ -171,6 +171,25 @@ class MessageCreate(BaseModel):
     content: str
     parent_id: Optional[str] = None
 
+class UserProfileUpdate(BaseModel):
+    full_name: Optional[str] = None
+    description: Optional[str] = None
+    profile_image: Optional[str] = None
+    cover_image: Optional[str] = None
+
+class UserPrivacySettings(BaseModel):
+    notifications_enabled: Optional[bool] = None
+    messaging_enabled: Optional[bool] = None
+
+class BlockUserRequest(BaseModel):
+    user_id_to_block: str
+
+class PaymentMethod(BaseModel):
+    type: str  # 'card', 'paypal', 'google_pay'
+    label: str  # User-defined label
+    last_four: Optional[str] = None  # Last 4 digits for cards
+    is_default: bool = False
+
 # Helper functions
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
