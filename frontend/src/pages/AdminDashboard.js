@@ -293,6 +293,34 @@ const AdminDashboard = ({ user, onLogout }) => {
                 equivalentes al 1% de ${stats?.total_revenue.toFixed(2)} en ventas totales.
               </p>
             </div>
+            
+            {/* Creadores Destacados con Total de Rifas */}
+            <div className="mt-8">
+              <h3 className="text-xl font-bold text-slate-900 mb-4">Creadores Destacados</h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {users.slice(0, 6).map((creator) => (
+                  <div
+                    key={creator.id}
+                    className="p-4 border border-slate-200 rounded-lg hover:border-sky-300 transition-colors"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                        {creator.full_name.charAt(0)}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-bold text-slate-900">{creator.full_name}</p>
+                        <p className="text-sm text-slate-600">
+                          ⭐ {creator.rating.toFixed(1)} ({creator.rating_count})
+                        </p>
+                        <p className="text-sm text-sky-600 font-semibold">
+                          🎫 {creatorsRaffleCount[creator.id] || 0} rifas
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
