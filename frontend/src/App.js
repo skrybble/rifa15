@@ -112,6 +112,10 @@ function App() {
           path="/messages"
           element={user ? <MessagesPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
         />
+        <Route
+          path="/profile-settings"
+          element={user ? <ProfileSettingsPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
+        />
       </Routes>
     </BrowserRouter>
   );
