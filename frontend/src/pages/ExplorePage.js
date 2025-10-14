@@ -212,28 +212,42 @@ const ExplorePage = ({ user, onLogout }) => {
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {creators.slice(0, 8).map((creator) => (
-                <Link
+                <div
                   key={creator.id}
-                  to={`/creator/${creator.id}`}
                   data-testid={`creator-card-${creator.id}`}
-                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all"
                 >
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-20 h-20 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-3">
-                      {creator.full_name.charAt(0)}
+                  <Link to={`/creator/${creator.id}`} className="block">
+                    <div className="flex flex-col items-center text-center">
+                      <div className="w-20 h-20 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-3">
+                        {creator.full_name.charAt(0)}
+                      </div>
+                      <h3 className="font-bold text-slate-900 mb-1">{creator.full_name}</h3>
+                      <div className="flex items-center space-x-1 text-sm text-amber-600 mb-2">
+                        <span>★</span>
+                        <span className="font-semibold">{creator.rating.toFixed(1)}</span>
+                        <span className="text-slate-400">({creator.rating_count})</span>
+                      </div>
+                      <div className="flex items-center space-x-1 text-sm text-slate-500 mb-3">
+                        <Heart className="w-4 h-4" />
+                        <span>{creator.followers?.length || 0} seguidores</span>
+                      </div>
                     </div>
-                    <h3 className="font-bold text-slate-900 mb-1">{creator.full_name}</h3>
-                    <div className="flex items-center space-x-1 text-sm text-amber-600 mb-2">
-                      <span>★</span>
-                      <span className="font-semibold">{creator.rating.toFixed(1)}</span>
-                      <span className="text-slate-400">({creator.rating_count})</span>
-                    </div>
-                    <div className="flex items-center space-x-1 text-sm text-slate-500">
-                      <Heart className="w-4 h-4" />
-                      <span>{creator.followers?.length || 0} seguidores</span>
-                    </div>
-                  </div>
-                </Link>
+                  </Link>
+                  {user && user.id !== creator.id && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate('/messages', { state: { startConversationWith: creator.id } });
+                      }}
+                      className="w-full mt-3 px-4 py-2 bg-sky-100 text-sky-700 rounded-lg hover:bg-sky-200 transition-colors flex items-center justify-center space-x-2"
+                      title="Enviar mensaje"
+                    >
+                      <Mail className="w-4 h-4" />
+                      <span className="text-sm font-medium">Mensaje</span>
+                    </button>
+                  )}
+                </div>
               ))}
             </div>
           )}
