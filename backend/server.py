@@ -75,6 +75,12 @@ class User(BaseModel):
     rating: float = 0.0
     rating_count: int = 0
     is_active: bool = True
+    # Privacy settings
+    notifications_enabled: bool = True
+    messaging_enabled: bool = True
+    blocked_users: List[str] = Field(default_factory=list)
+    # Payment methods (stored as JSON string for UI display)
+    payment_methods: List[dict] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserCreate(BaseModel):
