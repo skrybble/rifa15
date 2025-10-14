@@ -661,6 +661,23 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Initialize scheduler
+scheduler = AsyncIOScheduler()
+
+@app.on_event("startup")
+async def startup_event():
+    # Schedule daily draw at 6:00 PM (18:00)
+    scheduler.add_job(
+        run_daily_draw,
+        CronTrigger(hour=18, minute=0, timezone='UTC'),
+        id='daily_raffle_draw',
+        name='Daily Raffle Draw at 6 PM',
+        replace_existing=True
+    )
+    scheduler.start()
+    logger.info("Scheduler started - Daily draw scheduled at 18:00 UTC")
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
+    scheduler.shutdown()
     client.close()
