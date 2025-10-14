@@ -80,15 +80,15 @@ function App() {
         />
         <Route
           path="/explore"
-          element={user ? <ExplorePage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
+          element={<ExplorePage user={user} onLogout={handleLogout} />}
         />
         <Route
           path="/creator/:creatorId"
-          element={user ? <CreatorProfilePage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
+          element={<CreatorProfilePage user={user} onLogout={handleLogout} />}
         />
         <Route
           path="/raffle/:raffleId"
-          element={user ? <RaffleDetailPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
+          element={<RaffleDetailPage user={user} onLogout={handleLogout} />}
         />
         <Route
           path="/dashboard"
