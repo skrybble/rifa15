@@ -187,7 +187,7 @@ const DashboardPage = ({ user, onLogout }) => {
               {raffles.map((raffle) => (
                 <Link
                   key={raffle.id}
-                  to={`/raffle/${raffle.id}`}
+                  to={`/raffle/${raffle.id}/manage`}
                   data-testid={`raffle-item-${raffle.id}`}
                   className="block p-6 border border-slate-200 rounded-lg hover:border-sky-300 hover:shadow-md transition-all"
                 >
