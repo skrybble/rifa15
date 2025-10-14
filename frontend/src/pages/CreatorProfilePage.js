@@ -107,11 +107,11 @@ const CreatorProfilePage = ({ user, onLogout }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
           {/* Cover Image */}
-          <div className="h-16 bg-gradient-to-r from-red-500 to-purple-600"></div>
+          <div className="h-48 bg-gradient-to-r from-sky-400 to-blue-600"></div>
 
           <div className="px-8 pb-8">
             {/* Profile Info */}
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-16 mb-6">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-20 mb-6">
               <div className="flex items-end space-x-4">
                 <div className="w-32 h-32 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white text-4xl font-bold border-4 border-white shadow-lg">
                   {creator.full_name.charAt(0)}
