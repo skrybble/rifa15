@@ -132,26 +132,38 @@ const CreatorProfilePage = ({ user, onLogout }) => {
                   </div>
                 </div>
               </div>
-              <button
-                onClick={handleFollow}
-                data-testid="follow-btn"
-                className={`mt-4 md:mt-0 px-6 py-3 rounded-lg font-semibold transition-all ${
-                  isFollowing
-                    ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                    : 'bg-sky-600 text-white hover:bg-sky-700'
-                }`}
-              >
-                {isFollowing ? 'Siguiendo' : 'Seguir'}
-              </button>
-              {canRate && user.id !== creatorId && (
+              <div className="flex flex-wrap gap-2">
                 <button
-                  onClick={() => setShowRatingModal(true)}
-                  data-testid="rate-btn"
-                  className="mt-4 md:mt-0 md:ml-2 px-6 py-3 rounded-lg font-semibold transition-all bg-amber-500 text-white hover:bg-amber-600"
+                  onClick={handleFollow}
+                  data-testid="follow-btn"
+                  className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                    isFollowing
+                      ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      : 'bg-sky-600 text-white hover:bg-sky-700'
+                  }`}
                 >
-                  Valorar
+                  {isFollowing ? 'Siguiendo' : 'Seguir'}
                 </button>
-              )}
+                {user && user.id !== creatorId && (
+                  <button
+                    onClick={() => navigate('/messages', { state: { startConversationWith: creatorId } })}
+                    data-testid="message-btn"
+                    className="px-6 py-3 rounded-lg font-semibold transition-all bg-sky-100 text-sky-700 hover:bg-sky-200 flex items-center space-x-2"
+                  >
+                    <Mail className="w-4 h-4" />
+                    <span>Mensaje</span>
+                  </button>
+                )}
+                {canRate && user.id !== creatorId && (
+                  <button
+                    onClick={() => setShowRatingModal(true)}
+                    data-testid="rate-btn"
+                    className="px-6 py-3 rounded-lg font-semibold transition-all bg-amber-500 text-white hover:bg-amber-600"
+                  >
+                    Valorar
+                  </button>
+                )}
+              </div>
             </div>
 
             {creator.description && (
