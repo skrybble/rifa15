@@ -16,6 +16,9 @@ import random
 from enum import Enum
 import base64
 from fastapi.staticfiles import StaticFiles
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
+import asyncio
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
