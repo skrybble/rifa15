@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../App';
 import { ArrowLeft, Users, Ticket, DollarSign, TrendingUp, Play, Mail, Ban, Trash2, CheckCircle, X, ChevronLeft, ChevronRight } from 'lucide-react';
