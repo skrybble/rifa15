@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../App';
-import { ArrowLeft, Users, Ticket, DollarSign, TrendingUp, Play, Mail, Ban, Trash2, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Users, Ticket, DollarSign, TrendingUp, Play, Mail, Ban, Trash2, CheckCircle, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const AdminDashboard = ({ user, onLogout }) => {
   const navigate = useNavigate();
@@ -227,58 +227,46 @@ const AdminDashboard = ({ user, onLogout }) => {
         )}
 
         {/* Tabs */}
-        <div className="flex space-x-4 mb-6 border-b border-slate-200">
+        <div className="flex space-x-4 mb-6 border-b border-slate-200 overflow-x-auto">
           <button
             onClick={() => setActiveTab('overview')}
-            data-testid="tab-overview"
-            className={`px-4 py-2 font-semibold transition-colors border-b-2 ${
-              activeTab === 'overview'
-                ? 'border-sky-600 text-sky-700'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+            className={`px-4 py-2 font-semibold transition-colors border-b-2 whitespace-nowrap ${
+              activeTab === 'overview' ? 'border-sky-600 text-sky-700' : 'border-transparent text-slate-600'
             }`}
           >
             Vista General
           </button>
           <button
             onClick={() => setActiveTab('creators')}
-            data-testid="tab-creators"
-            className={`px-4 py-2 font-semibold transition-colors border-b-2 ${
-              activeTab === 'creators'
-                ? 'border-sky-600 text-sky-700'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+            className={`px-4 py-2 font-semibold transition-colors border-b-2 whitespace-nowrap ${
+              activeTab === 'creators' ? 'border-sky-600 text-sky-700' : 'border-transparent text-slate-600'
             }`}
           >
             Creadores
           </button>
           <button
             onClick={() => setActiveTab('raffles')}
-            data-testid="tab-raffles"
-            className={`px-4 py-2 font-semibold transition-colors border-b-2 ${
-              activeTab === 'raffles'
-                ? 'border-sky-600 text-sky-700'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+            className={`px-4 py-2 font-semibold transition-colors border-b-2 whitespace-nowrap ${
+              activeTab === 'raffles' ? 'border-sky-600 text-sky-700' : 'border-transparent text-slate-600'
             }`}
           >
             Rifas
           </button>
           <button
             onClick={() => setActiveTab('commissions')}
-            data-testid="tab-commissions"
-            className={`px-4 py-2 font-semibold transition-colors border-b-2 ${
-              activeTab === 'commissions'
-                ? 'border-sky-600 text-sky-700'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+            className={`px-4 py-2 font-semibold transition-colors border-b-2 whitespace-nowrap ${
+              activeTab === 'commissions' ? 'border-sky-600 text-sky-700' : 'border-transparent text-slate-600'
             }`}
           >
             Comisiones
           </button>
         </div>
 
-        {/* Tab Content */}
+        {/* Overview Tab */}
         {activeTab === 'overview' && (
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-2xl font-bold text-slate-900 mb-6">Resumen de la Plataforma</h2>
-            <div className="space-y-4">
+            <div className="space-y-4 mb-8">
               <p className="text-slate-600">
                 La plataforma cuenta con <span className="font-bold text-sky-600">{stats?.total_users}</span> usuarios
                 y <span className="font-bold text-sky-600">{stats?.total_creators}</span> creadores activos.
@@ -294,46 +282,37 @@ const AdminDashboard = ({ user, onLogout }) => {
               </p>
             </div>
             
-            {/* Creadores Destacados con Total de Rifas */}
-            <div className="mt-8">
-              <h3 className="text-xl font-bold text-slate-900 mb-4">Creadores Destacados</h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {users.slice(0, 6).map((creator) => (
-                  <div
-                    key={creator.id}
-                    className="p-4 border border-slate-200 rounded-lg hover:border-sky-300 transition-colors"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                        {creator.full_name.charAt(0)}
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-bold text-slate-900">{creator.full_name}</p>
-                        <p className="text-sm text-slate-600">
-                          ⭐ {creator.rating.toFixed(1)} ({creator.rating_count})
-                        </p>
-                        <p className="text-sm text-sky-600 font-semibold">
-                          🎫 {creatorsRaffleCount[creator.id] || 0} rifas
-                        </p>
-                      </div>
+            {/* Creadores Destacados */}
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Creadores Destacados</h3>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {users.slice(0, 6).map((creator) => (
+                <div
+                  key={creator.id}
+                  className="p-4 border border-slate-200 rounded-lg hover:border-sky-300 transition-colors"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                      {creator.full_name.charAt(0)}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-bold text-slate-900">{creator.full_name}</p>
+                      <p className="text-sm text-slate-600">⭐ {creator.rating.toFixed(1)} ({creator.rating_count})</p>
+                      <p className="text-sm text-sky-600 font-semibold">🎫 {creatorsRaffleCount[creator.id] || 0} rifas</p>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
 
+        {/* Creators Tab */}
         {activeTab === 'creators' && (
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-2xl font-bold text-slate-900 mb-6">Creadores de Contenido</h2>
             <div className="space-y-3">
               {users.map((creator) => (
-                <div
-                  key={creator.id}
-                  data-testid={`creator-row-${creator.id}`}
-                  className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-sky-300 transition-colors"
-                >
+                <div key={creator.id} className="flex items-center justify-between p-4 border border-slate-200 rounded-lg">
                   <div className="flex items-center space-x-4">
                     <div className="w-12 h-12 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
                       {creator.full_name.charAt(0)}
@@ -367,30 +346,18 @@ const AdminDashboard = ({ user, onLogout }) => {
                     <div className="flex space-x-2">
                       <button
                         onClick={() => handleToggleActive(creator.id)}
-                        className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                        className="p-2 hover:bg-slate-100 rounded-lg"
                         title={creator.is_active ? 'Desactivar' : 'Activar'}
                       >
-                        {creator.is_active ? (
-                          <Ban className="w-5 h-5 text-orange-600" />
-                        ) : (
-                          <CheckCircle className="w-5 h-5 text-green-600" />
-                        )}
+                        {creator.is_active ? <Ban className="w-5 h-5 text-orange-600" /> : <CheckCircle className="w-5 h-5 text-green-600" />}
                       </button>
                       <button
-                        onClick={() => {
-                          setSelectedUser(creator);
-                          setShowMessageModal(true);
-                        }}
-                        className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                        title="Enviar mensaje"
+                        onClick={() => { setSelectedUser(creator); setShowMessageModal(true); }}
+                        className="p-2 hover:bg-slate-100 rounded-lg"
                       >
                         <Mail className="w-5 h-5 text-sky-600" />
                       </button>
-                      <button
-                        onClick={() => handleDeleteUser(creator.id)}
-                        className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                        title="Eliminar usuario"
-                      >
+                      <button onClick={() => handleDeleteUser(creator.id)} className="p-2 hover:bg-red-50 rounded-lg">
                         <Trash2 className="w-5 h-5 text-red-600" />
                       </button>
                     </div>
@@ -401,16 +368,41 @@ const AdminDashboard = ({ user, onLogout }) => {
           </div>
         )}
 
+        {/* Raffles Tab with Pagination and Filters */}
         {activeTab === 'raffles' && (
           <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-slate-900 mb-6">Todas las Rifas</h2>
-            <div className="space-y-3">
-              {raffles.map((raffle) => (
-                <div
-                  key={raffle.id}
-                  data-testid={`raffle-row-${raffle.id}`}
-                  className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-sky-300 transition-colors"
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-slate-900">Todas las Rifas</h2>
+              <div className="flex items-center space-x-4">
+                <select
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value)}
+                  className="px-4 py-2 border border-slate-300 rounded-lg"
                 >
+                  <option value="all">Todas las fechas</option>
+                  <option value="1day">Último día</option>
+                  <option value="1week">Última semana</option>
+                  <option value="2weeks">Últimas 2 semanas</option>
+                  <option value="1month">Último mes</option>
+                  <option value="3months">Últimos 3 meses</option>
+                  <option value="6months">Últimos 6 meses</option>
+                </select>
+                <select
+                  value={rafflesPerPage}
+                  onChange={(e) => { setRafflesPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                  className="px-4 py-2 border border-slate-300 rounded-lg"
+                >
+                  <option value="10">10 por página</option>
+                  <option value="25">25 por página</option>
+                  <option value="50">50 por página</option>
+                  <option value="100">100 por página</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="space-y-3 mb-6">
+              {getPaginatedRaffles().map((raffle) => (
+                <div key={raffle.id} className="flex items-center justify-between p-4 border border-slate-200 rounded-lg">
                   <div className="flex-1">
                     <p className="font-bold text-slate-900">{raffle.title}</p>
                     <p className="text-sm text-slate-600 line-clamp-1">{raffle.description}</p>
@@ -420,23 +412,116 @@ const AdminDashboard = ({ user, onLogout }) => {
                       <span>{new Date(raffle.raffle_date).toLocaleDateString('es-ES')}</span>
                     </div>
                   </div>
+                  <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                    raffle.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-700'
+                  }`}>
+                    {raffle.status === 'active' ? 'Activa' : 'Finalizada'}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination */}
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-slate-600">
+                Mostrando {Math.min((currentPage - 1) * rafflesPerPage + 1, filteredRaffles.length)} - {Math.min(currentPage * rafflesPerPage, filteredRaffles.length)} de {filteredRaffles.length} rifas
+              </p>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 border border-slate-300 rounded-lg disabled:opacity-50"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <span className="px-4 py-2 border border-slate-300 rounded-lg">
+                  {currentPage} / {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="p-2 border border-slate-300 rounded-lg disabled:opacity-50"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Commissions Tab */}
+        {activeTab === 'commissions' && (
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-2xl font-bold text-slate-900 mb-6">Comisiones por Creador</h2>
+            <div className="space-y-3">
+              {commissions.map((commission, idx) => (
+                <div key={idx} className="flex items-center justify-between p-4 border border-slate-200 rounded-lg">
                   <div>
-                    {raffle.status === 'active' ? (
-                      <span className="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
-                        Activa
-                      </span>
-                    ) : raffle.status === 'completed' ? (
-                      <span className="inline-block px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-semibold">
-                        Finalizada
-                      </span>
-                    ) : null}
+                    <p className="font-bold text-slate-900">{commission.creator_name || 'Creador desconocido'}</p>
+                    <p className="text-sm text-slate-600">{commission.tickets_count} tickets vendidos</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-slate-900">Ventas: ${commission.total_sales.toFixed(2)}</p>
+                    <p className="text-sm text-amber-600 font-semibold">Comisión: ${commission.commission.toFixed(2)}</p>
                   </div>
                 </div>
               ))}
+              {commissions.length === 0 && (
+                <p className="text-center text-slate-500 py-8">No hay comisiones registradas</p>
+              )}
             </div>
           </div>
         )}
       </div>
+
+      {/* Message Modal */}
+      {showMessageModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-slate-900">Enviar Mensaje</h2>
+              <button onClick={() => setShowMessageModal(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <p className="text-sm text-slate-600">Para: <span className="font-bold">{selectedUser?.full_name}</span></p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Asunto</label>
+                <input
+                  type="text"
+                  value={messageSubject}
+                  onChange={(e) => setMessageSubject(e.target.value)}
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg"
+                  placeholder="Asunto del mensaje"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Mensaje</label>
+                <textarea
+                  value={messageContent}
+                  onChange={(e) => setMessageContent(e.target.value)}
+                  rows={6}
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg"
+                  placeholder="Escribe tu mensaje aquí..."
+                />
+              </div>
+
+              <button
+                onClick={handleSendMessage}
+                className="w-full py-3 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700"
+              >
+                Enviar Mensaje
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
