@@ -19,14 +19,16 @@ const ExplorePage = ({ user, onLogout }) => {
 
   const loadData = async () => {
     try {
-      const [rafflesRes, creatorsRes, notifRes] = await Promise.all([
-        axios.get(`${API}/raffles?status=active`),
-        axios.get(`${API}/creators`),
-        axios.get(`${API}/notifications`)
-      ]);
+      const rafflesRes = await axios.get(`${API}/raffles?status=active`);
+      const creatorsRes = await axios.get(`${API}/creators`);
+      
       setRaffles(rafflesRes.data);
       setCreators(creatorsRes.data);
-      setNotifications(notifRes.data);
+      
+      if (user) {
+        const notifRes = await axios.get(`${API}/notifications`);
+        setNotifications(notifRes.data);
+      }
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
