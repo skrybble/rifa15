@@ -10,6 +10,7 @@ const ExplorePage = ({ user, onLogout }) => {
   const [raffles, setRaffles] = useState([]);
   const [creators, setCreators] = useState([]);
   const [notifications, setNotifications] = useState([]);
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -28,6 +29,14 @@ const ExplorePage = ({ user, onLogout }) => {
       if (user) {
         const notifRes = await axios.get(`${API}/notifications`);
         setNotifications(notifRes.data);
+        
+        // Get unread messages count
+        try {
+          const messagesCountRes = await axios.get(`${API}/messages/unread-count`);
+          setUnreadMessagesCount(messagesCountRes.data.count);
+        } catch (error) {
+          console.error('Error loading messages count:', error);
+        }
       }
     } catch (error) {
       console.error('Error loading data:', error);
