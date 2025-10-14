@@ -486,24 +486,33 @@ const MessagesPage = ({ user, onLogout }) => {
                 </div>
 
                 {/* Reply Input */}
-                <div className="p-4 border-t border-slate-200">
-                  <div className="flex space-x-2">
-                    <textarea
-                      value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
-                      placeholder="Escribe tu respuesta..."
-                      rows={3}
-                      className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none"
-                    />
-                    <button
-                      onClick={handleSendReply}
-                      disabled={!replyText.trim()}
-                      className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <Send className="w-5 h-5" />
-                    </button>
+                {!showArchived && (
+                  <div className="p-4 border-t border-slate-200">
+                    <div className="flex space-x-2">
+                      <textarea
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSendReply();
+                          }
+                        }}
+                        placeholder="Escribe tu respuesta... (Enter para enviar, Shift+Enter para nueva línea)"
+                        rows={3}
+                        className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none"
+                      />
+                      <button
+                        onClick={handleSendReply}
+                        disabled={!replyText.trim()}
+                        className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Enviar mensaje"
+                      >
+                        <Send className="w-5 h-5" />
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
               </>
             ) : (
               <div className="flex-1 flex items-center justify-center">
