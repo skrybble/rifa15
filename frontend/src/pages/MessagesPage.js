@@ -257,6 +257,60 @@ const MessagesPage = ({ user, onLogout }) => {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Action Bar */}
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={toggleArchiveView}
+              className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                showArchived
+                  ? 'bg-sky-600 text-white'
+                  : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              {showArchived ? (
+                <span className="flex items-center space-x-2">
+                  <ArchiveRestore className="w-4 h-4" />
+                  <span>Ver Activos</span>
+                </span>
+              ) : (
+                <span className="flex items-center space-x-2">
+                  <Archive className="w-4 h-4" />
+                  <span>Ver Archivados</span>
+                </span>
+              )}
+            </button>
+            
+            {user.role === 'admin' && (
+              <button
+                onClick={() => {
+                  setBulkDeleteMode(!bulkDeleteMode);
+                  setSelectedMessages([]);
+                }}
+                className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  bulkDeleteMode
+                    ? 'bg-red-600 text-white'
+                    : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                <span className="flex items-center space-x-2">
+                  <CheckSquare className="w-4 h-4" />
+                  <span>{bulkDeleteMode ? 'Cancelar' : 'Eliminar Múltiples'}</span>
+                </span>
+              </button>
+            )}
+            
+            {bulkDeleteMode && selectedMessages.length > 0 && (
+              <button
+                onClick={handleBulkDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all"
+              >
+                Eliminar ({selectedMessages.length})
+              </button>
+            )}
+          </div>
+        </div>
+        
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Conversations List */}
           <div className="lg:col-span-1 bg-white rounded-xl shadow-lg">
