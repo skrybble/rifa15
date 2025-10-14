@@ -56,6 +56,21 @@ const CreatorProfilePage = ({ user, onLogout }) => {
     }
   };
 
+  const handleRating = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('rating', rating);
+      formData.append('comment', comment);
+      
+      await axios.post(`${API}/users/${creatorId}/rate`, formData);
+      alert('¡Valoración enviada exitosamente!');
+      setShowRatingModal(false);
+      loadCreatorData();
+    } catch (error) {
+      alert(error.response?.data?.detail || 'Error al enviar valoración');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-50">
