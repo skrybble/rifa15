@@ -209,6 +209,78 @@ backend:
         comment: "Endpoints ya existentes: POST /api/messages (enviar), GET /api/messages (listar), GET /api/messages/conversation/:id, POST /api/messages/:id/archive, POST /api/messages/:id/unarchive, DELETE /api/messages/:id (admin), GET /api/admin/messages/all (admin)"
 
 frontend:
+  - task: "Página Mi Perfil (ProfileSettingsPage)"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/ProfileSettingsPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Página completa con tabs: Perfil (foto, portada, bio), Privacidad (notificaciones, mensajería), Usuarios Bloqueados, Métodos de Pago"
+
+  - task: "Botón de mensaje en CreatorProfilePage"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/CreatorProfilePage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Agregado botón de mensaje junto al botón Seguir. Navega a /messages con state para iniciar conversación"
+
+  - task: "Botón de mensaje en tarjetas de ExplorePage"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/ExplorePage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Agregado botón de mensaje en cada tarjeta de creador. Navega a /messages con state para iniciar conversación"
+
+  - task: "Enlace Mi Perfil en navegación"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/ExplorePage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Agregado icono de configuración en header que enlaza a /profile-settings"
+
+  - task: "Integración de inicio de conversación en MessagesPage"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/MessagesPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Actualizado para manejar location.state.startConversationWith y abrir conversación automáticamente"
+
+  - task: "Ruta /profile-settings en App.js"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Agregada ruta protegida para ProfileSettingsPage"
+
   - task: "Página de mensajería tipo WhatsApp"
     implemented: true
     working: "NA"
