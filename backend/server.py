@@ -473,20 +473,25 @@ async def rate_creator(
     if not has_purchased:
         raise HTTPException(status_code=400, detail="Solo puedes calificar creadores de quienes compraste tickets")
     
-    # Check if already rated
+    # Check if already rated - update if exists
     existing = await db.ratings.find_one({"user_id": current_user.id, "creator_id": creator_id})
+    
     if existing:
-        raise HTTPException(status_code=400, detail="Ya calificaste a este creador")
-    
-    rating_obj = Rating(
-        user_id=current_user.id,
-        creator_id=creator_id,
-        rating=rating,
-        comment=comment
-    )
-    
-    doc = prepare_for_mongo(rating_obj.model_dump())
-    await db.ratings.insert_one(doc)
+        # Update existing rating
+        await db.ratings.update_one(
+            {"user_id": current_user.id, "creator_id": creator_id},
+            {"$set": {"rating": rating, "comment": comment}}
+        )
+    else:
+        # Create new rating
+        rating_obj = Rating(
+            user_id=current_user.id,
+            creator_id=creator_id,
+            rating=rating,
+            comment=comment
+        )
+        doc = prepare_for_mongo(rating_obj.model_dump())
+        await db.ratings.insert_one(doc)
     
     # Update creator rating
     ratings = await db.ratings.find({"creator_id": creator_id}, {"_id": 0, "rating": 1}).to_list(None)
@@ -497,7 +502,19 @@ async def rate_creator(
         {"$set": {"rating": avg_rating, "rating_count": len(ratings)}}
     )
     
-    return {"message": "Calificación enviada"}
+    return {"message": "Calificación enviada exitosamente"}
+
+@api_router.get("/users/{creator_id}/ratings")
+async def get_creator_ratings(creator_id: str):
+    ratings = await db.ratings.find({"creator_id": creator_id}, {"_id": 0}).to_list(None)
+    
+    # Get user names for each rating
+    for rating in ratings:
+        user = await db.users.find_one({"id": rating["user_id"]}, {"_id": 0, "full_name": 1})
+        if user:
+            rating["user_name"] = user["full_name"]
+    
+    return [parse_from_mongo(r) for r in ratings]
 
 # Notifications
 @api_router.get("/notifications", response_model=List[Notification])
