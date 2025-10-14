@@ -400,14 +400,41 @@ const MessagesPage = ({ user, onLogout }) => {
               <>
                 {/* Conversation Header */}
                 <div className="p-4 border-b border-slate-200">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                      {selectedConversation.userName.charAt(0)}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                        {selectedConversation.userName?.charAt(0) || '?'}
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-900">{selectedConversation.userName}</p>
+                        <p className="text-sm text-slate-600">{selectedConversation.userEmail}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold text-slate-900">{selectedConversation.userName}</p>
-                      <p className="text-sm text-slate-600">{selectedConversation.userEmail}</p>
-                    </div>
+                    
+                    {!bulkDeleteMode && (
+                      <button
+                        onClick={() => {
+                          const firstMessage = conversationMessages[0];
+                          if (firstMessage) {
+                            handleArchive(firstMessage.id);
+                          }
+                        }}
+                        className="px-3 py-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 transition-all"
+                        title={showArchived ? "Desarchivar conversación" : "Archivar conversación"}
+                      >
+                        {showArchived ? (
+                          <span className="flex items-center space-x-2">
+                            <ArchiveRestore className="w-4 h-4" />
+                            <span>Desarchivar</span>
+                          </span>
+                        ) : (
+                          <span className="flex items-center space-x-2">
+                            <Archive className="w-4 h-4" />
+                            <span>Archivar</span>
+                          </span>
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
 
