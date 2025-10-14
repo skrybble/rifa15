@@ -445,6 +445,17 @@ const MessagesPage = ({ user, onLogout }) => {
                       key={msg.id}
                       className={`flex ${msg.from_user_id === user.id ? 'justify-end' : 'justify-start'}`}
                     >
+                      {bulkDeleteMode && user.role === 'admin' && (
+                        <div className="mr-2 mt-2">
+                          <input
+                            type="checkbox"
+                            checked={selectedMessages.includes(msg.id)}
+                            onChange={() => toggleMessageSelection(msg.id)}
+                            className="w-5 h-5 text-sky-600 rounded focus:ring-sky-500"
+                          />
+                        </div>
+                      )}
+                      
                       <div
                         className={`max-w-[70%] rounded-lg p-4 ${
                           msg.from_user_id === user.id
@@ -455,13 +466,14 @@ const MessagesPage = ({ user, onLogout }) => {
                         {msg.subject && msg.subject !== 'Re: Conversación' && (
                           <p className="font-bold mb-2">{msg.subject}</p>
                         )}
-                        <p className="whitespace-pre-wrap">{msg.content}</p>
-                        <div className="flex items-center justify-between mt-2 text-xs opacity-70">
+                        <p className="whitespace-pre-wrap break-words">{msg.content}</p>
+                        <div className="flex items-center justify-between mt-2 text-xs opacity-70 gap-2">
                           <span>{new Date(msg.created_at).toLocaleString('es-ES')}</span>
-                          {user.role === 'admin' && (
+                          {user.role === 'admin' && !bulkDeleteMode && (
                             <button
                               onClick={() => handleDelete(msg.id)}
-                              className="ml-2 hover:text-red-300"
+                              className="ml-2 hover:text-red-300 transition-colors"
+                              title="Eliminar mensaje"
                             >
                               <Trash2 className="w-3 h-3" />
                             </button>
@@ -470,6 +482,7 @@ const MessagesPage = ({ user, onLogout }) => {
                       </div>
                     </div>
                   ))}
+                  <div ref={messagesEndRef} />
                 </div>
 
                 {/* Reply Input */}
