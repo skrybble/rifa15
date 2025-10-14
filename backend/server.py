@@ -156,6 +156,7 @@ class Message(BaseModel):
     content: str
     parent_id: Optional[str] = None
     read: bool = False
+    archived_by: List[str] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class MessageCreate(BaseModel):
