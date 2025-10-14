@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../App';
-import { Mail, Send, Archive, Trash2, ArrowLeft, X, User as UserIcon } from 'lucide-react';
+import { Mail, Send, Archive, Trash2, ArrowLeft, X, User as UserIcon, Search, ArchiveRestore, CheckSquare } from 'lucide-react';
 
 const MessagesPage = ({ user, onLogout }) => {
   const navigate = useNavigate();
@@ -12,6 +12,11 @@ const MessagesPage = ({ user, onLogout }) => {
   const [loading, setLoading] = useState(true);
   const [replyText, setReplyText] = useState('');
   const [showArchived, setShowArchived] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedMessages, setSelectedMessages] = useState([]);
+  const [bulkDeleteMode, setBulkDeleteMode] = useState(false);
+  const messagesEndRef = useRef(null);
+  const pollingIntervalRef = useRef(null);
 
   useEffect(() => {
     loadMessages();
