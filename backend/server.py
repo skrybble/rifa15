@@ -279,16 +279,27 @@ async def create_raffle(
     if current_user.role not in [UserRole.CREATOR, UserRole.ADMIN]:
         raise HTTPException(status_code=403, detail="Solo los creadores pueden crear rifas")
     
-    # Check active raffles limit
-    active_count = await db.raffles.count_documents({
-        "creator_id": current_user.id,
-        "status": RaffleStatus.ACTIVE
-    })
-    if active_count >= 3:
-        raise HTTPException(status_code=400, detail="Solo puedes tener 3 rifas activas")
-    
     # Parse date
     raffle_datetime = datetime.fromisoformat(raffle_date.replace('Z', '+00:00'))
+    
+    # Check if there are already 3 raffles ending on this date for this creator
+    raffle_date_only = raffle_datetime.date()
+    start_of_day = datetime.combine(raffle_date_only, datetime.min.time()).replace(tzinfo=timezone.utc)
+    end_of_day = datetime.combine(raffle_date_only, datetime.max.time()).replace(tzinfo=timezone.utc)
+    
+    raffles_on_same_day = await db.raffles.count_documents({
+        "creator_id": current_user.id,
+        "raffle_date": {
+            "$gte": start_of_day.isoformat(),
+            "$lte": end_of_day.isoformat()
+        }
+    })
+    
+    if raffles_on_same_day >= 3:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Ya tienes 3 rifas programadas para finalizar el {raffle_date_only.strftime('%d/%m/%Y')}. Por favor selecciona otra fecha de finalización."
+        )
     
     # Check time restriction (3 hours before daily draw)
     draw_time = raffle_datetime.replace(hour=18, minute=0, second=0, microsecond=0)
