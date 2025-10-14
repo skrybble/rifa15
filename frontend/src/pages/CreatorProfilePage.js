@@ -11,6 +11,10 @@ const CreatorProfilePage = ({ user, onLogout }) => {
   const [raffles, setRaffles] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState('');
+  const [canRate, setCanRate] = useState(false);
 
   useEffect(() => {
     loadCreatorData();
