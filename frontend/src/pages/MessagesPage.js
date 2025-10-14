@@ -20,7 +20,25 @@ const MessagesPage = ({ user, onLogout }) => {
 
   useEffect(() => {
     loadMessages();
-  }, []);
+    
+    // Auto-refresh every 10 seconds
+    pollingIntervalRef.current = setInterval(() => {
+      loadMessages();
+      if (selectedConversation) {
+        loadConversation(selectedConversation.userId, true); // silent reload
+      }
+    }, 10000);
+    
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [selectedConversation]);
+  
+  useEffect(() => {
+    scrollToBottom();
+  }, [conversationMessages]);
 
   const loadMessages = async () => {
     try {
