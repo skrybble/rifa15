@@ -159,13 +159,17 @@ const MessagesPage = ({ user, onLogout }) => {
 
   const handleArchive = async (messageId) => {
     try {
-      await axios.post(`${API}/messages/${messageId}/archive`);
+      if (showArchived) {
+        await axios.post(`${API}/messages/${messageId}/unarchive`);
+      } else {
+        await axios.post(`${API}/messages/${messageId}/archive`);
+      }
       loadMessages();
       if (selectedConversation) {
         loadConversation(selectedConversation.userId);
       }
     } catch (error) {
-      alert('Error al archivar mensaje');
+      alert('Error al procesar la solicitud');
     }
   };
 
@@ -182,6 +186,48 @@ const MessagesPage = ({ user, onLogout }) => {
       alert('Error al eliminar mensaje');
     }
   };
+  
+  const handleBulkDelete = async () => {
+    if (selectedMessages.length === 0) {
+      alert('Selecciona al menos un mensaje');
+      return;
+    }
+    
+    if (!confirm(`¿Estás seguro de eliminar ${selectedMessages.length} mensajes? Esta acción no se puede deshacer.`)) return;
+    
+    try {
+      await Promise.all(selectedMessages.map(id => axios.delete(`${API}/messages/${id}`)));
+      setSelectedMessages([]);
+      setBulkDeleteMode(false);
+      loadMessages();
+      if (selectedConversation) {
+        loadConversation(selectedConversation.userId);
+      }
+      alert(`${selectedMessages.length} mensajes eliminados exitosamente`);
+    } catch (error) {
+      alert('Error al eliminar mensajes');
+    }
+  };
+  
+  const toggleMessageSelection = (messageId) => {
+    setSelectedMessages(prev => 
+      prev.includes(messageId) 
+        ? prev.filter(id => id !== messageId)
+        : [...prev, messageId]
+    );
+  };
+  
+  const toggleArchiveView = () => {
+    setShowArchived(!showArchived);
+    setSelectedConversation(null);
+    setConversationMessages([]);
+    setSearchQuery('');
+  };
+  
+  // Filter conversations by search query
+  const filteredConversations = conversations.filter(conv =>
+    conv.userName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (loading) {
     return (
