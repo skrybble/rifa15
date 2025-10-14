@@ -143,6 +143,15 @@ const CreatorProfilePage = ({ user, onLogout }) => {
               >
                 {isFollowing ? 'Siguiendo' : 'Seguir'}
               </button>
+              {canRate && user.id !== creatorId && (
+                <button
+                  onClick={() => setShowRatingModal(true)}
+                  data-testid="rate-btn"
+                  className="mt-4 md:mt-0 md:ml-2 px-6 py-3 rounded-lg font-semibold transition-all bg-amber-500 text-white hover:bg-amber-600"
+                >
+                  Valorar
+                </button>
+              )}
             </div>
 
             {creator.description && (
