@@ -366,6 +366,35 @@ async def get_raffle(raffle_id: str):
         raise HTTPException(status_code=404, detail="Rifa no encontrada")
     return parse_from_mongo(raffle)
 
+@api_router.get("/raffles/check-date/{date}")
+async def check_date_availability(date: str, current_user: User = Depends(get_current_user)):
+    """Check if a creator can create a raffle on a specific date"""
+    try:
+        raffle_date = datetime.fromisoformat(date.replace('Z', '+00:00'))
+        raffle_date_only = raffle_date.date()
+        
+        start_of_day = datetime.combine(raffle_date_only, datetime.min.time()).replace(tzinfo=timezone.utc)
+        end_of_day = datetime.combine(raffle_date_only, datetime.max.time()).replace(tzinfo=timezone.utc)
+        
+        raffles_on_same_day = await db.raffles.count_documents({
+            "creator_id": current_user.id,
+            "raffle_date": {
+                "$gte": start_of_day.isoformat(),
+                "$lte": end_of_day.isoformat()
+            }
+        })
+        
+        available = raffles_on_same_day < 3
+        
+        return {
+            "available": available,
+            "raffles_count": raffles_on_same_day,
+            "date": raffle_date_only.strftime('%d/%m/%Y'),
+            "message": f"Ya tienes {raffles_on_same_day} rifa(s) programada(s) para finalizar el {raffle_date_only.strftime('%d/%m/%Y')}." if raffles_on_same_day > 0 else "Fecha disponible"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Fecha inválida")
+
 # Ticket endpoints
 @api_router.post("/tickets/purchase")
 async def purchase_tickets(
