@@ -341,10 +341,19 @@ const DashboardPage = ({ user, onLogout }) => {
                   type="datetime-local"
                   data-testid="raffle-date-input"
                   value={formData.raffle_date}
-                  onChange={(e) => setFormData({ ...formData, raffle_date: e.target.value })}
+                  onChange={(e) => handleDateChange(e.target.value)}
                   className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                   required
                 />
+                {dateWarning && (
+                  <div className={`mt-2 p-3 rounded-lg text-sm ${
+                    dateWarning.includes('⚠️') 
+                      ? 'bg-amber-50 text-amber-800 border border-amber-200' 
+                      : 'bg-blue-50 text-blue-800 border border-blue-200'
+                  }`}>
+                    {dateWarning}
+                  </div>
+                )}
               </div>
 
               <div>
