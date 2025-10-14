@@ -768,6 +768,58 @@ async def get_payment_methods(current_user: User = Depends(get_current_user)):
     user = await db.users.find_one({"id": current_user.id}, {"_id": 0, "payment_methods": 1})
     return user.get("payment_methods", [])
 
+@api_router.post("/users/upload-profile-image")
+async def upload_profile_image(file: UploadFile = File(...), current_user: User = Depends(get_current_user)):
+    """Upload profile image"""
+    # Validate file type
+    if not file.content_type.startswith('image/'):
+        raise HTTPException(status_code=400, detail="El archivo debe ser una imagen")
+    
+    # Generate unique filename
+    file_extension = file.filename.split('.')[-1]
+    unique_filename = f"profile_{current_user.id}_{uuid.uuid4()}.{file_extension}"
+    file_path = UPLOADS_DIR / unique_filename
+    
+    # Save file
+    with open(file_path, "wb") as buffer:
+        content = await file.read()
+        buffer.write(content)
+    
+    # Update user profile image
+    image_url = f"/uploads/{unique_filename}"
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {"profile_image": image_url}}
+    )
+    
+    return {"image_url": image_url, "message": "Imagen de perfil actualizada exitosamente"}
+
+@api_router.post("/users/upload-cover-image")
+async def upload_cover_image(file: UploadFile = File(...), current_user: User = Depends(get_current_user)):
+    """Upload cover image"""
+    # Validate file type
+    if not file.content_type.startswith('image/'):
+        raise HTTPException(status_code=400, detail="El archivo debe ser una imagen")
+    
+    # Generate unique filename
+    file_extension = file.filename.split('.')[-1]
+    unique_filename = f"cover_{current_user.id}_{uuid.uuid4()}.{file_extension}"
+    file_path = UPLOADS_DIR / unique_filename
+    
+    # Save file
+    with open(file_path, "wb") as buffer:
+        content = await file.read()
+        buffer.write(content)
+    
+    # Update user cover image
+    image_url = f"/uploads/{unique_filename}"
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {"cover_image": image_url}}
+    )
+    
+    return {"image_url": image_url, "message": "Imagen de portada actualizada exitosamente"}
+
 # Notifications
 @api_router.get("/notifications", response_model=List[Notification])
 async def get_notifications(current_user: User = Depends(get_current_user)):
