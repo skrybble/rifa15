@@ -80,6 +80,38 @@ const RaffleDetailPage = ({ user, onLogout }) => {
   const availableTickets = raffle.ticket_range - raffle.tickets_sold;
   const progressPercentage = (raffle.tickets_sold / raffle.ticket_range) * 100;
 
+  const shareUrl = window.location.href;
+  const shareText = `¡Participa en la rifa de ${raffle.title}! Solo $${raffle.ticket_price} por ticket.`;
+
+  const handleShare = (platform) => {
+    let url = '';
+    const encodedUrl = encodeURIComponent(shareUrl);
+    const encodedText = encodeURIComponent(shareText);
+
+    switch (platform) {
+      case 'facebook':
+        url = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+        break;
+      case 'twitter':
+        url = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`;
+        break;
+      case 'whatsapp':
+        url = `https://api.whatsapp.com/send?text=${encodedText} ${encodedUrl}`;
+        break;
+      case 'telegram':
+        url = `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`;
+        break;
+      case 'copy':
+        navigator.clipboard.writeText(shareUrl);
+        alert('¡Enlace copiado al portapapeles!');
+        return;
+      default:
+        return;
+    }
+
+    window.open(url, '_blank', 'width=600,height=400');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-blue-50">
       {/* Header */}
