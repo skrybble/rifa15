@@ -103,14 +103,13 @@
 #====================================================================================================
 
 user_problem_statement: |
-  Implementar sistema de mensajería completo tipo WhatsApp con las siguientes características:
-  1. Vista de conversaciones a la izquierda con lista de usuarios
-  2. Vista de mensajes tipo chat a la derecha
-  3. Auto-actualización de mensajes cada 10 segundos
-  4. Búsqueda/filtrado de conversaciones por nombre de usuario
-  5. Eliminación masiva de mensajes para administrador
-  6. Vista de mensajes archivados
-  7. Envío de mensajes desde página de gestión de rifas (creadores y admin)
+  1. Sistema de mensajería completo tipo WhatsApp (✅ COMPLETADO)
+  2. Botones de mensaje en perfiles de usuarios/creadores
+  3. Página "Mi Perfil" con:
+     - Configuración de foto de perfil y biografía (upload de archivo)
+     - Configuración de privacidad (notificaciones, mensajería)
+     - Bloqueo de usuarios (impide mensajes y ver perfil)
+     - Métodos de pago (solo UI, sin integración Stripe)
 
 backend:
   - task: "Endpoint para obtener mensajes archivados"
