@@ -29,6 +29,11 @@ const CreatorProfilePage = ({ user, onLogout }) => {
       setCreator(creatorRes.data);
       setRaffles(rafflesRes.data.filter(r => r.status === 'active'));
       setIsFollowing(creatorRes.data.followers?.includes(user.id));
+      
+      // Check if user can rate (has purchased tickets from this creator)
+      const ticketsRes = await axios.get(`${API}/tickets/my-tickets`);
+      const hasPurchased = ticketsRes.data.some(t => t.creator_id === creatorId);
+      setCanRate(hasPurchased);
     } catch (error) {
       console.error('Error loading creator:', error);
     } finally {
