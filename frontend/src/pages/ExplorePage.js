@@ -121,6 +121,14 @@ const ExplorePage = ({ user, onLogout }) => {
                       </span>
                     )}
                   </button>
+                  <Link
+                    to="/profile-settings"
+                    data-testid="profile-settings-btn"
+                    className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                    title="Mi Perfil"
+                  >
+                    <Settings className="w-6 h-6 text-slate-700" />
+                  </Link>
                   <button
                     onClick={onLogout}
                     data-testid="logout-btn"
