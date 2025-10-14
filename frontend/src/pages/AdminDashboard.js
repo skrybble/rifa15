@@ -353,12 +353,46 @@ const AdminDashboard = ({ user, onLogout }) => {
                       <p className="font-bold text-slate-900">{creator.followers?.length || 0}</p>
                     </div>
                     <div className="text-center">
+                      <p className="text-sm text-slate-500">Rifas</p>
+                      <p className="font-bold text-slate-900">{creatorsRaffleCount[creator.id] || 0}</p>
+                    </div>
+                    <div className="text-center">
                       <p className="text-sm text-slate-500">Estado</p>
                       <span className={`text-xs px-2 py-1 rounded-full ${
                         creator.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                       }`}>
                         {creator.is_active ? 'Activo' : 'Inactivo'}
                       </span>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleToggleActive(creator.id)}
+                        className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                        title={creator.is_active ? 'Desactivar' : 'Activar'}
+                      >
+                        {creator.is_active ? (
+                          <Ban className="w-5 h-5 text-orange-600" />
+                        ) : (
+                          <CheckCircle className="w-5 h-5 text-green-600" />
+                        )}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedUser(creator);
+                          setShowMessageModal(true);
+                        }}
+                        className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                        title="Enviar mensaje"
+                      >
+                        <Mail className="w-5 h-5 text-sky-600" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteUser(creator.id)}
+                        className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Eliminar usuario"
+                      >
+                        <Trash2 className="w-5 h-5 text-red-600" />
+                      </button>
                     </div>
                   </div>
                 </div>
