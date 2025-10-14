@@ -74,6 +74,19 @@ const ExplorePage = ({ user, onLogout }) => {
                   >
                     Mis Tickets
                   </Link>
+                  <Link
+                    to="/messages"
+                    data-testid="messages-nav"
+                    className="text-slate-700 hover:text-sky-700 font-medium flex items-center space-x-1 relative"
+                  >
+                    <Mail className="w-4 h-4" />
+                    <span>Mensajes</span>
+                    {unreadMessagesCount > 0 && (
+                      <span className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                        {unreadMessagesCount}
+                      </span>
+                    )}
+                  </Link>
                   {user?.role === 'creator' && (
                     <Link
                       to="/dashboard"
