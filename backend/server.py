@@ -1008,6 +1008,31 @@ async def get_creator_raffles_count(creator_id: str):
 # Messaging System
 @api_router.post("/messages")
 async def send_message(message_data: MessageCreate, current_user: User = Depends(get_current_user)):
+    # Check if recipient exists and get their settings
+    recipient = await db.users.find_one(
+        {"id": message_data.to_user_id}, 
+        {"_id": 0, "messaging_enabled": 1, "blocked_users": 1, "full_name": 1}
+    )
+    
+    if not recipient:
+        raise HTTPException(status_code=404, detail="Usuario destinatario no encontrado")
+    
+    # Check if sender is blocked by recipient
+    if current_user.id in recipient.get("blocked_users", []):
+        raise HTTPException(status_code=403, detail="No puedes enviar mensajes a este usuario")
+    
+    # Check if recipient has messaging disabled
+    if not recipient.get("messaging_enabled", True):
+        raise HTTPException(status_code=403, detail="Este usuario ha desactivado la mensajería")
+    
+    # Check if current user has blocked the recipient
+    current_user_data = await db.users.find_one(
+        {"id": current_user.id}, 
+        {"_id": 0, "blocked_users": 1}
+    )
+    if message_data.to_user_id in current_user_data.get("blocked_users", []):
+        raise HTTPException(status_code=403, detail="No puedes enviar mensajes a un usuario bloqueado")
+    
     message = Message(
         from_user_id=current_user.id,
         to_user_id=message_data.to_user_id,
@@ -1019,13 +1044,14 @@ async def send_message(message_data: MessageCreate, current_user: User = Depends
     doc = prepare_for_mongo(message.model_dump())
     await db.messages.insert_one(doc)
     
-    # Create notification for recipient
-    await create_notification(
-        message_data.to_user_id,
-        "Nuevo Mensaje",
-        f"{current_user.full_name} te ha enviado un mensaje: {message_data.subject}",
-        "message"
-    )
+    # Create notification for recipient only if notifications enabled
+    if recipient.get("notifications_enabled", True):
+        await create_notification(
+            message_data.to_user_id,
+            "Nuevo Mensaje",
+            f"{current_user.full_name} te ha enviado un mensaje: {message_data.subject}",
+            "message"
+        )
     
     return message
 
