@@ -219,7 +219,7 @@ const ExplorePage = ({ user, onLogout }) => {
                 >
                   <Link to={`/creator/${creator.id}`} className="block">
                     <div className="flex flex-col items-center text-center">
-                      <div className="w-20 h-20 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-3">
+                      <div className="w-20 h-20 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-5">
                         {creator.full_name.charAt(0)}
                       </div>
                       <h3 className="font-bold text-slate-900 mb-1">{creator.full_name}</h3>
