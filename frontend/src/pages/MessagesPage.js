@@ -34,7 +34,7 @@ const MessagesPage = ({ user, onLogout }) => {
         clearInterval(pollingIntervalRef.current);
       }
     };
-  }, [selectedConversation]);
+  }, [selectedConversation, showArchived]);
   
   useEffect(() => {
     scrollToBottom();
