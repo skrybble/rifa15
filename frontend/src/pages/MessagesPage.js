@@ -105,15 +105,18 @@ const MessagesPage = ({ user, onLogout }) => {
     }
   };
 
-  const loadConversation = async (userId) => {
+  const loadConversation = async (userId, silent = false) => {
     try {
       const response = await axios.get(`${API}/messages/conversation/${userId}`);
       setConversationMessages(response.data.messages);
-      setSelectedConversation({
-        userId: userId,
-        userName: response.data.other_user.full_name,
-        userEmail: response.data.other_user.email
-      });
+      
+      if (!silent) {
+        setSelectedConversation({
+          userId: userId,
+          userName: response.data.other_user.full_name,
+          userEmail: response.data.other_user.email
+        });
+      }
       
       // Mark messages as read
       const unreadMessages = response.data.messages.filter(m => 
@@ -124,10 +127,16 @@ const MessagesPage = ({ user, onLogout }) => {
         await axios.post(`${API}/messages/${msg.id}/read`);
       }
       
-      loadMessages(); // Refresh conversations
+      if (!silent) {
+        loadMessages(); // Refresh conversations
+      }
     } catch (error) {
       console.error('Error loading conversation:', error);
     }
+  };
+  
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleSendReply = async () => {
