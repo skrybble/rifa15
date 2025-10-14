@@ -402,7 +402,11 @@ const AdminDashboard = ({ user, onLogout }) => {
             
             <div className="space-y-3 mb-6">
               {getPaginatedRaffles().map((raffle) => (
-                <div key={raffle.id} className="flex items-center justify-between p-4 border border-slate-200 rounded-lg">
+                <Link
+                  key={raffle.id}
+                  to={`/raffle/${raffle.id}/manage`}
+                  className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-sky-300 transition-colors"
+                >
                   <div className="flex-1">
                     <p className="font-bold text-slate-900">{raffle.title}</p>
                     <p className="text-sm text-slate-600 line-clamp-1">{raffle.description}</p>
@@ -417,7 +421,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                   }`}>
                     {raffle.status === 'active' ? 'Activa' : 'Finalizada'}
                   </span>
-                </div>
+                </Link>
               ))}
             </div>
 
