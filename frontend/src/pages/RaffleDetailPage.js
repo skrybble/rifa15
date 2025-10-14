@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../App';
 import { Ticket, ArrowLeft, Calendar, DollarSign, User, ShoppingCart, AlertCircle, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const RaffleDetailPage = ({ user, onLogout }) => {
   const { raffleId } = useParams();
