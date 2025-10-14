@@ -112,6 +112,78 @@ user_problem_statement: |
      - Métodos de pago (solo UI, sin integración Stripe)
 
 backend:
+  - task: "Modelo User extendido con campos de privacidad y pagos"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Agregados campos: notifications_enabled, messaging_enabled, blocked_users, payment_methods al modelo User"
+
+  - task: "Endpoints de gestión de perfil"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints: PUT /api/users/profile, POST /api/users/upload-profile-image, POST /api/users/upload-cover-image"
+
+  - task: "Endpoints de configuración de privacidad"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoint: PUT /api/users/privacy para actualizar notificaciones y mensajería"
+
+  - task: "Endpoints de bloqueo de usuarios"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints: POST /api/users/block, POST /api/users/unblock/:id, GET /api/users/blocked"
+
+  - task: "Endpoints de métodos de pago"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints: GET/POST/DELETE /api/users/payment-methods (solo UI, sin Stripe)"
+
+  - task: "Lógica de bloqueo en mensajería"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Actualizado POST /api/messages para validar bloqueos y configuración de mensajería. GET /api/users/:id valida bloqueos para ver perfil"
+
   - task: "Endpoint para obtener mensajes archivados"
     implemented: true
     working: "NA"
