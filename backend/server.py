@@ -916,6 +916,29 @@ async def get_messages(current_user: User = Depends(get_current_user)):
     
     return [parse_from_mongo(m) for m in filtered_messages]
 
+@api_router.get("/messages/archived")
+async def get_archived_messages(current_user: User = Depends(get_current_user)):
+    """Get all archived messages for current user"""
+    messages = await db.messages.find(
+        {
+            "$or": [{"from_user_id": current_user.id}, {"to_user_id": current_user.id}],
+            "archived_by": current_user.id
+        },
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(None)
+    
+    # Get sender/receiver names
+    for msg in messages:
+        from_user = await db.users.find_one({"id": msg["from_user_id"]}, {"_id": 0, "full_name": 1})
+        to_user = await db.users.find_one({"id": msg["to_user_id"]}, {"_id": 0, "full_name": 1})
+        
+        if from_user:
+            msg["from_user_name"] = from_user["full_name"]
+        if to_user:
+            msg["to_user_name"] = to_user["full_name"]
+    
+    return [parse_from_mongo(m) for m in messages]
+
 @api_router.get("/messages/conversation/{other_user_id}")
 async def get_conversation(other_user_id: str, current_user: User = Depends(get_current_user)):
     """Get all messages between current user and another user"""
