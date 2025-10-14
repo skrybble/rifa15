@@ -891,12 +891,114 @@ async def send_message(message_data: MessageCreate, current_user: User = Depends
 
 @api_router.get("/messages")
 async def get_messages(current_user: User = Depends(get_current_user)):
+    # Find all messages where user is sender or receiver
     messages = await db.messages.find(
         {"$or": [{"from_user_id": current_user.id}, {"to_user_id": current_user.id}]},
         {"_id": 0}
     ).sort("created_at", -1).to_list(None)
     
-    # Get sender/receiver names
+    # Get sender/receiver names and filter archived
+    filtered_messages = []
+    for msg in messages:
+        # Skip if archived by current user
+        if current_user.id in msg.get("archived_by", []):
+            continue
+            
+        from_user = await db.users.find_one({"id": msg["from_user_id"]}, {"_id": 0, "full_name": 1})
+        to_user = await db.users.find_one({"id": msg["to_user_id"]}, {"_id": 0, "full_name": 1})
+        
+        if from_user:
+            msg["from_user_name"] = from_user["full_name"]
+        if to_user:
+            msg["to_user_name"] = to_user["full_name"]
+        
+        filtered_messages.append(msg)
+    
+    return [parse_from_mongo(m) for m in filtered_messages]
+
+@api_router.get("/messages/conversation/{other_user_id}")
+async def get_conversation(other_user_id: str, current_user: User = Depends(get_current_user)):
+    """Get all messages between current user and another user"""
+    messages = await db.messages.find(
+        {
+            "$or": [
+                {"from_user_id": current_user.id, "to_user_id": other_user_id},
+                {"from_user_id": other_user_id, "to_user_id": current_user.id}
+            ]
+        },
+        {"_id": 0}
+    ).sort("created_at", 1).to_list(None)
+    
+    # Get other user info
+    other_user = await db.users.find_one({"id": other_user_id}, {"_id": 0, "full_name": 1, "email": 1})
+    
+    return {
+        "messages": [parse_from_mongo(m) for m in messages],
+        "other_user": other_user
+    }
+
+@api_router.post("/messages/{message_id}/archive")
+async def archive_message(message_id: str, current_user: User = Depends(get_current_user)):
+    """Archive a message for current user"""
+    await db.messages.update_one(
+        {"id": message_id},
+        {"$addToSet": {"archived_by": current_user.id}}
+    )
+    return {"message": "Mensaje archivado"}
+
+@api_router.post("/messages/{message_id}/unarchive")
+async def unarchive_message(message_id: str, current_user: User = Depends(get_current_user)):
+    """Unarchive a message for current user"""
+    await db.messages.update_one(
+        {"id": message_id},
+        {"$pull": {"archived_by": current_user.id}}
+    )
+    return {"message": "Mensaje desarchivado"}
+
+@api_router.delete("/messages/{message_id}")
+async def delete_message(message_id: str, current_user: User = Depends(get_current_user)):
+    """Delete a message (admin only)"""
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Solo los administradores pueden eliminar mensajes")
+    
+    result = await db.messages.delete_one({"id": message_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Mensaje no encontrado")
+    
+    return {"message": "Mensaje eliminado"}
+
+@api_router.get("/admin/messages/all")
+async def get_all_messages(current_user: User = Depends(get_current_user)):
+    """Get all messages in the system (admin only)"""
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    messages = await db.messages.find({}, {"_id": 0}).sort("created_at", -1).to_list(None)
+    
+    # Get user names
+    for msg in messages:
+        from_user = await db.users.find_one({"id": msg["from_user_id"]}, {"_id": 0, "full_name": 1})
+        to_user = await db.users.find_one({"id": msg["to_user_id"]}, {"_id": 0, "full_name": 1})
+        
+        if from_user:
+            msg["from_user_name"] = from_user["full_name"]
+        if to_user:
+            msg["to_user_name"] = to_user["full_name"]
+    
+    return [parse_from_mongo(m) for m in messages]
+
+@api_router.get("/admin/messages/user/{user_id}")
+async def get_user_messages(user_id: str, current_user: User = Depends(get_current_user)):
+    """Get all messages for a specific user (admin only)"""
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    messages = await db.messages.find(
+        {"$or": [{"from_user_id": user_id}, {"to_user_id": user_id}]},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(None)
+    
+    # Get user names
     for msg in messages:
         from_user = await db.users.find_one({"id": msg["from_user_id"]}, {"_id": 0, "full_name": 1})
         to_user = await db.users.find_one({"id": msg["to_user_id"]}, {"_id": 0, "full_name": 1})
