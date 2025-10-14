@@ -2,15 +2,29 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../App';
-import { ArrowLeft, Users, Ticket, DollarSign, TrendingUp, Play } from 'lucide-react';
+import { ArrowLeft, Users, Ticket, DollarSign, TrendingUp, Play, Mail, Ban, Trash2, CheckCircle } from 'lucide-react';
 
 const AdminDashboard = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [raffles, setRaffles] = useState([]);
+  const [commissions, setCommissions] = useState([]);
+  const [creatorsRaffleCount, setCreatorsRaffleCount] = useState({});
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  
+  // Pagination & Filters
+  const [rafflesPerPage, setRafflesPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [dateFilter, setDateFilter] = useState('all');
+  const [filteredRaffles, setFilteredRaffles] = useState([]);
+  
+  // Messaging
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [messageSubject, setMessageSubject] = useState('');
+  const [messageContent, setMessageContent] = useState('');
 
   useEffect(() => {
     loadAdminData();
