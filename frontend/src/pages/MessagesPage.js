@@ -43,7 +43,7 @@ const MessagesPage = ({ user, onLogout }) => {
   const loadMessages = async () => {
     try {
       // Get messages endpoint based on role and archived filter
-      let endpoint = `${API}/messages`;
+      let endpoint = showArchived ? `${API}/messages/archived` : `${API}/messages`;
       
       if (user.role === 'admin' && !showArchived) {
         // Admin can see all messages
@@ -57,16 +57,6 @@ const MessagesPage = ({ user, onLogout }) => {
       const conversationsMap = {};
       
       messages.forEach(msg => {
-        // Skip archived messages if not showing archived
-        if (!showArchived && msg.archived_by && msg.archived_by.includes(user.id)) {
-          return;
-        }
-        
-        // Show only archived messages if showing archived
-        if (showArchived && (!msg.archived_by || !msg.archived_by.includes(user.id))) {
-          return;
-        }
-        
         const otherId = msg.from_user_id === user.id ? msg.to_user_id : msg.from_user_id;
         const otherName = msg.from_user_id === user.id ? msg.to_user_name : msg.from_user_name;
         
@@ -83,7 +73,7 @@ const MessagesPage = ({ user, onLogout }) => {
         conversationsMap[otherId].messages.push(msg);
         
         // Count unread messages
-        if (msg.to_user_id === user.id && !msg.read) {
+        if (msg.to_user_id === user.id && !msg.read && !showArchived) {
           conversationsMap[otherId].unreadCount++;
         }
         
