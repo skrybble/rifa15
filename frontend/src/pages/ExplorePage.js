@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../App';
-import { Ticket, LogOut, User, Bell, LayoutDashboard, Heart, Calendar, DollarSign } from 'lucide-react';
+import { Ticket, LogOut, User, Bell, LayoutDashboard, Heart, Calendar, DollarSign, Mail } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 
 const ExplorePage = ({ user, onLogout }) => {
