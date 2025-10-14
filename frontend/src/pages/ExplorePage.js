@@ -46,63 +46,82 @@ const ExplorePage = ({ user, onLogout }) => {
               <span className="text-2xl font-bold text-slate-900">RifaXWin</span>
             </Link>
 
-            <nav className="hidden md:flex items-center space-x-6">
-              <Link
-                to="/explore"
-                className="text-sky-700 font-semibold"
-              >
-                Explorar
-              </Link>
-              <Link
-                to="/my-tickets"
-                data-testid="my-tickets-nav"
-                className="text-slate-700 hover:text-sky-700 font-medium"
-              >
-                Mis Tickets
-              </Link>
-              {user?.role === 'creator' && (
-                <Link
-                  to="/dashboard"
-                  data-testid="dashboard-nav"
-                  className="text-slate-700 hover:text-sky-700 font-medium flex items-center space-x-1"
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                  <span>Dashboard</span>
-                </Link>
-              )}
-              {user?.role === 'admin' && (
-                <Link
-                  to="/admin"
-                  data-testid="admin-nav"
-                  className="text-slate-700 hover:text-sky-700 font-medium"
-                >
-                  Admin
-                </Link>
-              )}
-            </nav>
+            {user ? (
+              <>
+                <nav className="hidden md:flex items-center space-x-6">
+                  <Link
+                    to="/explore"
+                    className="text-sky-700 font-semibold"
+                  >
+                    Explorar
+                  </Link>
+                  <Link
+                    to="/my-tickets"
+                    data-testid="my-tickets-nav"
+                    className="text-slate-700 hover:text-sky-700 font-medium"
+                  >
+                    Mis Tickets
+                  </Link>
+                  {user?.role === 'creator' && (
+                    <Link
+                      to="/dashboard"
+                      data-testid="dashboard-nav"
+                      className="text-slate-700 hover:text-sky-700 font-medium flex items-center space-x-1"
+                    >
+                      <LayoutDashboard className="w-4 h-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                  )}
+                  {user?.role === 'admin' && (
+                    <Link
+                      to="/admin"
+                      data-testid="admin-nav"
+                      className="text-slate-700 hover:text-sky-700 font-medium"
+                    >
+                      Admin
+                    </Link>
+                  )}
+                </nav>
 
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setShowNotifications(!showNotifications)}
-                data-testid="notifications-btn"
-                className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors"
-              >
-                <Bell className="w-6 h-6 text-slate-700" />
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    {unreadCount}
-                  </span>
-                )}
-              </button>
-              <button
-                onClick={onLogout}
-                data-testid="logout-btn"
-                className="flex items-center space-x-2 px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
-              >
-                <LogOut className="w-5 h-5" />
-                <span className="hidden sm:inline">Salir</span>
-              </button>
-            </div>
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setShowNotifications(!showNotifications)}
+                    data-testid="notifications-btn"
+                    className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                  >
+                    <Bell className="w-6 h-6 text-slate-700" />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                        {unreadCount}
+                      </span>
+                    )}
+                  </button>
+                  <button
+                    onClick={onLogout}
+                    data-testid="logout-btn"
+                    className="flex items-center space-x-2 px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    <span className="hidden sm:inline">Salir</span>
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <Link
+                  to="/login"
+                  className="px-4 py-2 text-slate-700 hover:text-sky-700 font-semibold transition-colors"
+                >
+                  Iniciar Sesión
+                </Link>
+                <Link
+                  to="/register"
+                  className="px-6 py-2 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition-all"
+                >
+                  Registrarse
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </header>
