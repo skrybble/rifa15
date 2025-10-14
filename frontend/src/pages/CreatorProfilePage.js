@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../App';
-import { Ticket, Heart, Star, ArrowLeft, Calendar, DollarSign } from 'lucide-react';
+import { Ticket, Heart, Star, ArrowLeft, Calendar, DollarSign, Mail } from 'lucide-react';
 
 const CreatorProfilePage = ({ user, onLogout }) => {
   const { creatorId } = useParams();
