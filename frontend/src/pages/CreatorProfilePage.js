@@ -111,7 +111,7 @@ const CreatorProfilePage = ({ user, onLogout }) => {
 
           <div className="px-8 pb-8">
             {/* Profile Info */}
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-20 mb-6">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-24 mb-6">
               <div className="flex items-end space-x-4">
                 <div className="w-32 h-32 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white text-4xl font-bold border-4 border-white shadow-lg">
                   {creator.full_name.charAt(0)}
