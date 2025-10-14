@@ -101,3 +101,101 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: |
+  Implementar sistema de mensajería completo tipo WhatsApp con las siguientes características:
+  1. Vista de conversaciones a la izquierda con lista de usuarios
+  2. Vista de mensajes tipo chat a la derecha
+  3. Auto-actualización de mensajes cada 10 segundos
+  4. Búsqueda/filtrado de conversaciones por nombre de usuario
+  5. Eliminación masiva de mensajes para administrador
+  6. Vista de mensajes archivados
+  7. Envío de mensajes desde página de gestión de rifas (creadores y admin)
+
+backend:
+  - task: "Endpoint para obtener mensajes archivados"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Agregado endpoint GET /api/messages/archived para obtener mensajes archivados del usuario actual"
+
+  - task: "Endpoints de mensajería existentes"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Endpoints ya existentes: POST /api/messages (enviar), GET /api/messages (listar), GET /api/messages/conversation/:id, POST /api/messages/:id/archive, POST /api/messages/:id/unarchive, DELETE /api/messages/:id (admin), GET /api/admin/messages/all (admin)"
+
+frontend:
+  - task: "Página de mensajería tipo WhatsApp"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/MessagesPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implementada interfaz tipo WhatsApp con lista de conversaciones a la izquierda y chat a la derecha. Incluye búsqueda, archivado, eliminación masiva (admin), auto-actualización cada 10s"
+
+  - task: "Integración de mensajería en navegación"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js, /app/frontend/src/pages/ExplorePage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Agregada ruta /messages en App.js y enlace en navegación de ExplorePage con badge de mensajes no leídos"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Endpoint para obtener mensajes archivados"
+    - "Página de mensajería tipo WhatsApp"
+    - "Integración de mensajería en navegación"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      He implementado el sistema de mensajería completo con las siguientes características:
+      
+      Backend:
+      - Agregado endpoint GET /api/messages/archived para filtrar mensajes archivados
+      - Todos los demás endpoints ya existían (envío, listado, conversaciones, archivar, eliminar)
+      
+      Frontend:
+      - MessagesPage.js con interfaz tipo WhatsApp
+      - Lista de conversaciones a la izquierda con avatares y preview del último mensaje
+      - Vista de chat a la derecha con burbujas de mensajes
+      - Auto-actualización cada 10 segundos mediante polling
+      - Búsqueda de conversaciones por nombre
+      - Toggle para ver mensajes archivados/activos
+      - Modo de eliminación masiva para administradores
+      - Botón para archivar/desarchivar conversaciones completas
+      - Enter para enviar mensaje, Shift+Enter para nueva línea
+      - Badge de mensajes no leídos en navegación
+      
+      Necesita testing manual por parte del usuario como solicitó.
