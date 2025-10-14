@@ -642,6 +642,121 @@ async def get_creator_ratings(creator_id: str):
     
     return [parse_from_mongo(r) for r in ratings]
 
+# User Profile Management
+@api_router.put("/users/profile")
+async def update_profile(profile_data: UserProfileUpdate, current_user: User = Depends(get_current_user)):
+    """Update user profile information"""
+    update_data = {k: v for k, v in profile_data.dict(exclude_unset=True).items() if v is not None}
+    
+    if update_data:
+        await db.users.update_one(
+            {"id": current_user.id},
+            {"$set": update_data}
+        )
+    
+    updated_user = await db.users.find_one({"id": current_user.id}, {"_id": 0, "password": 0})
+    return parse_from_mongo(updated_user)
+
+@api_router.put("/users/privacy")
+async def update_privacy_settings(settings: UserPrivacySettings, current_user: User = Depends(get_current_user)):
+    """Update user privacy settings"""
+    update_data = {k: v for k, v in settings.dict(exclude_unset=True).items() if v is not None}
+    
+    if update_data:
+        await db.users.update_one(
+            {"id": current_user.id},
+            {"$set": update_data}
+        )
+    
+    return {"message": "Configuración actualizada exitosamente"}
+
+@api_router.post("/users/block")
+async def block_user(request: BlockUserRequest, current_user: User = Depends(get_current_user)):
+    """Block a user"""
+    if request.user_id_to_block == current_user.id:
+        raise HTTPException(status_code=400, detail="No puedes bloquearte a ti mismo")
+    
+    # Check if user exists
+    user_to_block = await db.users.find_one({"id": request.user_id_to_block})
+    if not user_to_block:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    # Add to blocked list
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$addToSet": {"blocked_users": request.user_id_to_block}}
+    )
+    
+    return {"message": "Usuario bloqueado exitosamente"}
+
+@api_router.post("/users/unblock/{user_id}")
+async def unblock_user(user_id: str, current_user: User = Depends(get_current_user)):
+    """Unblock a user"""
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$pull": {"blocked_users": user_id}}
+    )
+    
+    return {"message": "Usuario desbloqueado exitosamente"}
+
+@api_router.get("/users/blocked")
+async def get_blocked_users(current_user: User = Depends(get_current_user)):
+    """Get list of blocked users"""
+    user = await db.users.find_one({"id": current_user.id}, {"_id": 0, "blocked_users": 1})
+    blocked_ids = user.get("blocked_users", [])
+    
+    # Get user details for blocked users
+    blocked_users = []
+    for user_id in blocked_ids:
+        user_data = await db.users.find_one({"id": user_id}, {"_id": 0, "id": 1, "full_name": 1, "profile_image": 1})
+        if user_data:
+            blocked_users.append(user_data)
+    
+    return blocked_users
+
+@api_router.post("/users/payment-methods")
+async def add_payment_method(payment_method: PaymentMethod, current_user: User = Depends(get_current_user)):
+    """Add a payment method"""
+    user = await db.users.find_one({"id": current_user.id}, {"_id": 0, "payment_methods": 1})
+    payment_methods = user.get("payment_methods", [])
+    
+    # If this is set as default, unset other defaults
+    if payment_method.is_default:
+        for pm in payment_methods:
+            pm["is_default"] = False
+    
+    # Add new payment method
+    payment_methods.append(payment_method.dict())
+    
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {"payment_methods": payment_methods}}
+    )
+    
+    return {"message": "Método de pago agregado exitosamente"}
+
+@api_router.delete("/users/payment-methods/{index}")
+async def delete_payment_method(index: int, current_user: User = Depends(get_current_user)):
+    """Delete a payment method by index"""
+    user = await db.users.find_one({"id": current_user.id}, {"_id": 0, "payment_methods": 1})
+    payment_methods = user.get("payment_methods", [])
+    
+    if 0 <= index < len(payment_methods):
+        payment_methods.pop(index)
+        await db.users.update_one(
+            {"id": current_user.id},
+            {"$set": {"payment_methods": payment_methods}}
+        )
+        return {"message": "Método de pago eliminado exitosamente"}
+    
+    raise HTTPException(status_code=404, detail="Método de pago no encontrado")
+
+@api_router.get("/users/payment-methods")
+async def get_payment_methods(current_user: User = Depends(get_current_user)):
+    """Get user's payment methods"""
+    user = await db.users.find_one({"id": current_user.id}, {"_id": 0, "payment_methods": 1})
+    return user.get("payment_methods", [])
+
 # Notifications
 @api_router.get("/notifications", response_model=List[Notification])
 async def get_notifications(current_user: User = Depends(get_current_user)):
