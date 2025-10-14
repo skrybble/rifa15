@@ -158,6 +158,7 @@ const DashboardPage = ({ user, onLogout }) => {
               </div>
               <p className="text-3xl font-bold text-slate-900">{stats.active_raffles}</p>
               <p className="text-slate-600">Rifas Activas</p>
+              <p className="text-xs text-slate-400 mt-1">Máx 3 por día</p>
             </div>
 
             <div className="bg-white rounded-xl p-6 shadow-lg">
