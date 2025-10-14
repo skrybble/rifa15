@@ -315,18 +315,51 @@ const MessagesPage = ({ user, onLogout }) => {
           {/* Conversations List */}
           <div className="lg:col-span-1 bg-white rounded-xl shadow-lg">
             <div className="p-4 border-b border-slate-200">
-              <h2 className="text-lg font-bold text-slate-900">Conversaciones</h2>
-              <p className="text-sm text-slate-600">{conversations.length} conversaciones</p>
+              <h2 className="text-lg font-bold text-slate-900 mb-3">
+                {showArchived ? 'Conversaciones Archivadas' : 'Conversaciones'}
+              </h2>
+              
+              {/* Search Bar */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Buscar por nombre..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent text-sm"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+              
+              <p className="text-sm text-slate-600 mt-2">
+                {filteredConversations.length} conversaciones
+                {searchQuery && ` (filtradas de ${conversations.length})`}
+              </p>
             </div>
             
             <div className="overflow-y-auto max-h-[600px]">
-              {conversations.length === 0 ? (
+              {filteredConversations.length === 0 ? (
                 <div className="p-8 text-center">
                   <Mail className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                  <p className="text-slate-500">No tienes conversaciones</p>
+                  <p className="text-slate-500">
+                    {searchQuery 
+                      ? 'No se encontraron conversaciones' 
+                      : showArchived 
+                        ? 'No tienes conversaciones archivadas'
+                        : 'No tienes conversaciones'
+                    }
+                  </p>
                 </div>
               ) : (
-                conversations.map((conv) => (
+                filteredConversations.map((conv) => (
                   <button
                     key={conv.userId}
                     onClick={() => loadConversation(conv.userId)}
@@ -336,12 +369,12 @@ const MessagesPage = ({ user, onLogout }) => {
                   >
                     <div className="flex items-start space-x-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
-                        {conv.userName.charAt(0)}
+                        {conv.userName?.charAt(0) || '?'}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
                           <p className="font-semibold text-slate-900 truncate">{conv.userName}</p>
-                          {conv.unreadCount > 0 && (
+                          {conv.unreadCount > 0 && !showArchived && (
                             <span className="ml-2 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full">
                               {conv.unreadCount}
                             </span>
