@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../App';
 import { Mail, Send, Archive, Trash2, ArrowLeft, X, User as UserIcon, Search, ArchiveRestore, CheckSquare } from 'lucide-react';
 
 const MessagesPage = ({ user, onLogout }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [conversationMessages, setConversationMessages] = useState([]);
@@ -20,6 +21,13 @@ const MessagesPage = ({ user, onLogout }) => {
 
   useEffect(() => {
     loadMessages();
+    
+    // Check if we need to start a conversation
+    if (location.state?.startConversationWith) {
+      loadConversation(location.state.startConversationWith);
+      // Clear the state
+      window.history.replaceState({}, document.title);
+    }
     
     // Auto-refresh every 10 seconds
     pollingIntervalRef.current = setInterval(() => {
