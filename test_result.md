@@ -307,15 +307,18 @@ frontend:
 
 metadata:
   created_by: "main_agent"
-  version: "1.0"
-  test_sequence: 1
+  version: "2.0"
+  test_sequence: 2
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Endpoint para obtener mensajes archivados"
-    - "Página de mensajería tipo WhatsApp"
-    - "Integración de mensajería en navegación"
+    - "Página Mi Perfil (ProfileSettingsPage)"
+    - "Botón de mensaje en CreatorProfilePage"
+    - "Botón de mensaje en tarjetas de ExplorePage"
+    - "Upload de imágenes de perfil/portada"
+    - "Bloqueo de usuarios y restricciones"
+    - "Gestión de métodos de pago (UI)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -323,22 +326,35 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: |
-      He implementado el sistema de mensajería completo con las siguientes características:
+      SEGUNDA IMPLEMENTACIÓN COMPLETADA:
       
       Backend:
-      - Agregado endpoint GET /api/messages/archived para filtrar mensajes archivados
-      - Todos los demás endpoints ya existían (envío, listado, conversaciones, archivar, eliminar)
+      ✅ Extendido modelo User con campos de privacidad y pagos
+      ✅ Endpoints de gestión de perfil (actualizar info, subir foto/portada)
+      ✅ Endpoints de configuración de privacidad (notificaciones, mensajería)
+      ✅ Endpoints de bloqueo de usuarios (bloquear, desbloquear, listar)
+      ✅ Endpoints de métodos de pago (agregar, listar, eliminar - solo UI)
+      ✅ Lógica de bloqueo integrada en mensajería y perfiles
       
       Frontend:
-      - MessagesPage.js con interfaz tipo WhatsApp
-      - Lista de conversaciones a la izquierda con avatares y preview del último mensaje
-      - Vista de chat a la derecha con burbujas de mensajes
-      - Auto-actualización cada 10 segundos mediante polling
-      - Búsqueda de conversaciones por nombre
-      - Toggle para ver mensajes archivados/activos
-      - Modo de eliminación masiva para administradores
-      - Botón para archivar/desarchivar conversaciones completas
-      - Enter para enviar mensaje, Shift+Enter para nueva línea
-      - Badge de mensajes no leídos en navegación
+      ✅ Página "Mi Perfil" completa con 4 tabs:
+         - Perfil: Upload foto/portada, editar nombre y biografía
+         - Privacidad: Toggle notificaciones y mensajería
+         - Bloqueados: Bloquear/desbloquear usuarios
+         - Métodos de Pago: Agregar/eliminar métodos (UI sin Stripe)
       
-      Necesita testing manual por parte del usuario como solicitó.
+      ✅ Botones de mensaje agregados en:
+         - Tarjetas de creadores en ExplorePage
+         - Perfil completo del creador (CreatorProfilePage)
+         - Perfiles de usuarios generales
+      
+      ✅ Navegación actualizada con:
+         - Icono de configuración que enlaza a Mi Perfil
+         - Integración automática de inicio de conversación
+      
+      Funcionalidades de bloqueo:
+      - Usuario bloqueado NO puede ver el perfil del bloqueador
+      - Usuario bloqueado NO puede enviar mensajes al bloqueador
+      - El bloqueador NO puede enviar mensajes al bloqueado
+      
+      Necesita testing manual por parte del usuario.
