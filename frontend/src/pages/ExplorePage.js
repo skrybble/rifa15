@@ -242,7 +242,7 @@ const ExplorePage = ({ user, onLogout }) => {
                   <div className="p-6">
                     <h3 className="font-bold text-xl text-slate-900 mb-2">{raffle.title}</h3>
                     <p className="text-slate-600 mb-4 line-clamp-2">{raffle.description}</p>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center space-x-1 text-sky-700 font-semibold">
                         <DollarSign className="w-5 h-5" />
                         <span>${raffle.ticket_price}</span>
@@ -252,9 +252,12 @@ const ExplorePage = ({ user, onLogout }) => {
                         <span>{raffle.tickets_sold}/{raffle.ticket_range}</span>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-1 text-slate-500 text-sm mt-3">
-                      <Calendar className="w-4 h-4" />
-                      <span>{new Date(raffle.raffle_date).toLocaleDateString('es-ES')}</span>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-1 text-slate-500 text-sm">
+                        <Calendar className="w-4 h-4" />
+                        <span>{new Date(raffle.raffle_date).toLocaleDateString('es-ES')}</span>
+                      </div>
+                      <ShareButton raffle={raffle} small={true} />
                     </div>
                   </div>
                 </Link>
