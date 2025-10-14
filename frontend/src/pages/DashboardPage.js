@@ -47,6 +47,24 @@ const DashboardPage = ({ user, onLogout }) => {
     setImages(files);
   };
 
+  const handleDateChange = async (dateValue) => {
+    setFormData({ ...formData, raffle_date: dateValue });
+    setDateWarning('');
+    
+    if (dateValue) {
+      try {
+        const response = await axios.get(`${API}/raffles/check-date/${dateValue}`);
+        if (!response.data.available) {
+          setDateWarning(`⚠️ ${response.data.message} Máximo 3 rifas por día.`);
+        } else if (response.data.raffles_count > 0) {
+          setDateWarning(`ℹ️ ${response.data.message}`);
+        }
+      } catch (error) {
+        console.error('Error checking date:', error);
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
