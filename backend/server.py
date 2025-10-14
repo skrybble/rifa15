@@ -545,11 +545,22 @@ async def get_creators():
     return [parse_from_mongo(u) for u in creators]
 
 @api_router.get("/users/{user_id}", response_model=User)
-async def get_user(user_id: str):
-    user = await db.users.find_one({"id": user_id}, {"_id": 0, "password": 0})
-    if not user:
+async def get_user(user_id: str, current_user: User = Depends(get_current_user)):
+    # Check if the current user is blocked by the requested user
+    requested_user = await db.users.find_one({"id": user_id}, {"_id": 0, "password": 0})
+    if not requested_user:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return parse_from_mongo(user)
+    
+    # Check if current user is blocked
+    if current_user.id in requested_user.get("blocked_users", []):
+        raise HTTPException(status_code=403, detail="No tienes permiso para ver este perfil")
+    
+    # Check if current user has blocked this user
+    current_user_data = await db.users.find_one({"id": current_user.id}, {"_id": 0, "blocked_users": 1})
+    if user_id in current_user_data.get("blocked_users", []):
+        raise HTTPException(status_code=403, detail="Has bloqueado a este usuario")
+    
+    return parse_from_mongo(requested_user)
 
 @api_router.post("/users/{user_id}/follow")
 async def follow_user(user_id: str, current_user: User = Depends(get_current_user)):
