@@ -60,7 +60,7 @@ const ExplorePage = ({ user, onLogout }) => {
               >
                 Mis Tickets
               </Link>
-              {(user?.role === 'creator' || user?.role === 'admin') && (
+              {user?.role === 'creator' && (
                 <Link
                   to="/dashboard"
                   data-testid="dashboard-nav"
