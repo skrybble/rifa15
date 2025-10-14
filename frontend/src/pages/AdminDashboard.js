@@ -30,22 +30,69 @@ const AdminDashboard = ({ user, onLogout }) => {
     loadAdminData();
   }, []);
 
+  useEffect(() => {
+    filterRaffles();
+  }, [raffles, dateFilter]);
+
   const loadAdminData = async () => {
     try {
-      const [statsRes, usersRes, rafflesRes] = await Promise.all([
+      const [statsRes, usersRes, rafflesRes, commissionsRes] = await Promise.all([
         axios.get(`${API}/dashboard/admin-stats`),
         axios.get(`${API}/creators`),
-        axios.get(`${API}/raffles`)
+        axios.get(`${API}/raffles`),
+        axios.get(`${API}/admin/commissions`)
       ]);
       setStats(statsRes.data);
       setUsers(usersRes.data);
       setRaffles(rafflesRes.data);
+      setCommissions(commissionsRes.data);
+      
+      // Load raffle counts for each creator
+      const counts = {};
+      for (const creator of usersRes.data) {
+        const countRes = await axios.get(`${API}/admin/creator/${creator.id}/raffles-count`);
+        counts[creator.id] = countRes.data.count;
+      }
+      setCreatorsRaffleCount(counts);
     } catch (error) {
       console.error('Error loading admin data:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  const filterRaffles = () => {
+    let filtered = [...raffles];
+    
+    if (dateFilter !== 'all') {
+      const now = new Date();
+      let daysToFilter = 0;
+      
+      switch(dateFilter) {
+        case '1day': daysToFilter = 1; break;
+        case '1week': daysToFilter = 7; break;
+        case '2weeks': daysToFilter = 14; break;
+        case '1month': daysToFilter = 30; break;
+        case '3months': daysToFilter = 90; break;
+        case '6months': daysToFilter = 180; break;
+        default: daysToFilter = 0;
+      }
+      
+      const filterDate = new Date(now.getTime() - (daysToFilter * 24 * 60 * 60 * 1000));
+      filtered = filtered.filter(r => new Date(r.raffle_date) >= filterDate);
+    }
+    
+    setFilteredRaffles(filtered);
+    setCurrentPage(1);
+  };
+
+  const getPaginatedRaffles = () => {
+    const startIndex = (currentPage - 1) * rafflesPerPage;
+    const endIndex = startIndex + rafflesPerPage;
+    return filteredRaffles.slice(startIndex, endIndex);
+  };
+
+  const totalPages = Math.ceil(filteredRaffles.length / rafflesPerPage);
 
   const handleManualDraw = async () => {
     if (!confirm('¿Estás seguro de ejecutar el sorteo manual?')) return;
