@@ -429,6 +429,49 @@ async def get_raffle_tickets(raffle_id: str, current_user: User = Depends(get_cu
     tickets = await db.tickets.find({"raffle_id": raffle_id, "user_id": current_user.id}, {"_id": 0}).to_list(None)
     return [parse_from_mongo(t) for t in tickets]
 
+@api_router.get("/raffles/{raffle_id}/participants")
+async def get_raffle_participants(raffle_id: str, current_user: User = Depends(get_current_user)):
+    # Check if user is creator of this raffle or admin
+    raffle = await db.raffles.find_one({"id": raffle_id}, {"_id": 0})
+    if not raffle:
+        raise HTTPException(status_code=404, detail="Rifa no encontrada")
+    
+    if current_user.role != UserRole.ADMIN and raffle["creator_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="No tienes permiso para ver esta información")
+    
+    # Get all tickets for this raffle
+    tickets = await db.tickets.find({"raffle_id": raffle_id}, {"_id": 0}).to_list(None)
+    
+    # Group by user
+    participants = {}
+    for ticket in tickets:
+        ticket = parse_from_mongo(ticket)
+        user_id = ticket['user_id']
+        
+        if user_id not in participants:
+            # Get user info
+            user = await db.users.find_one({"id": user_id}, {"_id": 0, "full_name": 1, "email": 1})
+            participants[user_id] = {
+                "user_id": user_id,
+                "user_name": user.get("full_name", "Usuario desconocido") if user else "Usuario desconocido",
+                "user_email": user.get("email", "") if user else "",
+                "tickets": [],
+                "total_amount": 0,
+                "tickets_count": 0,
+                "first_purchase": ticket['purchased_at']
+            }
+        
+        participants[user_id]["tickets"].append({
+            "ticket_id": ticket['id'],
+            "ticket_number": ticket['ticket_number'],
+            "amount": ticket['amount'],
+            "purchased_at": ticket['purchased_at']
+        })
+        participants[user_id]["total_amount"] += ticket['amount']
+        participants[user_id]["tickets_count"] += 1
+    
+    return list(participants.values())
+
 # User/Creator endpoints
 @api_router.get("/creators", response_model=List[User])
 async def get_creators():
