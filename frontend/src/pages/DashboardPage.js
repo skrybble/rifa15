@@ -21,6 +21,7 @@ const DashboardPage = ({ user, onLogout }) => {
   const [images, setImages] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [dateWarning, setDateWarning] = useState('');
 
   useEffect(() => {
     loadDashboard();
