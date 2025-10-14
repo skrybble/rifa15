@@ -107,7 +107,7 @@ const CreatorProfilePage = ({ user, onLogout }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
           {/* Cover Image */}
-          <div className="h-24 bg-gradient-to-r from-sky-400 to-blue-600"></div>
+          <div className="h-16 bg-gradient-to-r from-red-500 to-purple-600"></div>
 
           <div className="px-8 pb-8">
             {/* Profile Info */}
