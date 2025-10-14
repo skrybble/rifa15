@@ -106,6 +106,50 @@ const AdminDashboard = ({ user, onLogout }) => {
     }
   };
 
+  const handleToggleActive = async (userId) => {
+    try {
+      await axios.post(`${API}/admin/users/${userId}/toggle-active`);
+      alert('Estado del usuario actualizado');
+      loadAdminData();
+    } catch (error) {
+      alert('Error al actualizar estado');
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (!confirm('¿Estás seguro de eliminar este usuario? Esta acción no se puede deshacer.')) return;
+
+    try {
+      await axios.delete(`${API}/admin/users/${userId}`);
+      alert('Usuario eliminado exitosamente');
+      loadAdminData();
+    } catch (error) {
+      alert('Error al eliminar usuario');
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!selectedUser || !messageSubject || !messageContent) {
+      alert('Por favor completa todos los campos');
+      return;
+    }
+
+    try {
+      await axios.post(`${API}/messages`, {
+        to_user_id: selectedUser.id,
+        subject: messageSubject,
+        content: messageContent
+      });
+      alert('Mensaje enviado exitosamente');
+      setShowMessageModal(false);
+      setSelectedUser(null);
+      setMessageSubject('');
+      setMessageContent('');
+    } catch (error) {
+      alert('Error al enviar mensaje');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-50">
