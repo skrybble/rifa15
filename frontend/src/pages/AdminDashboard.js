@@ -261,6 +261,17 @@ const AdminDashboard = ({ user, onLogout }) => {
           >
             Rifas
           </button>
+          <button
+            onClick={() => setActiveTab('commissions')}
+            data-testid="tab-commissions"
+            className={`px-4 py-2 font-semibold transition-colors border-b-2 ${
+              activeTab === 'commissions'
+                ? 'border-sky-600 text-sky-700'
+                : 'border-transparent text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Comisiones
+          </button>
         </div>
 
         {/* Tab Content */}
