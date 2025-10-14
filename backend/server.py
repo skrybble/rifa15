@@ -678,6 +678,165 @@ async def get_admin_stats(current_user: User = Depends(get_current_user)):
         "commission_revenue": commission_revenue
     }
 
+# New Admin Endpoints
+@api_router.get("/admin/commissions")
+async def get_commissions(
+    creator_id: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    query = {}
+    if creator_id:
+        query["creator_id"] = creator_id
+    
+    tickets = await db.tickets.find(query, {"_id": 0}).to_list(None)
+    
+    # Filter by date if provided
+    if start_date or end_date:
+        filtered_tickets = []
+        for ticket in tickets:
+            ticket = parse_from_mongo(ticket)
+            ticket_date = ticket['purchased_at']
+            
+            if start_date:
+                start = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
+                if ticket_date < start:
+                    continue
+            
+            if end_date:
+                end = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
+                if ticket_date > end:
+                    continue
+            
+            filtered_tickets.append(ticket)
+        tickets = filtered_tickets
+    
+    # Group by creator
+    commissions_by_creator = {}
+    for ticket in tickets:
+        creator_id = ticket['creator_id']
+        if creator_id not in commissions_by_creator:
+            commissions_by_creator[creator_id] = {
+                "creator_id": creator_id,
+                "total_sales": 0,
+                "commission": 0,
+                "tickets_count": 0
+            }
+        
+        commissions_by_creator[creator_id]["total_sales"] += ticket['amount']
+        commissions_by_creator[creator_id]["commission"] += ticket['amount'] * 0.01
+        commissions_by_creator[creator_id]["tickets_count"] += 1
+    
+    # Get creator names
+    for commission in commissions_by_creator.values():
+        creator = await db.users.find_one({"id": commission["creator_id"]}, {"_id": 0, "full_name": 1})
+        if creator:
+            commission["creator_name"] = creator["full_name"]
+    
+    return list(commissions_by_creator.values())
+
+@api_router.post("/admin/users/{user_id}/toggle-active")
+async def toggle_user_active(user_id: str, current_user: User = Depends(get_current_user)):
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    new_status = not user.get("is_active", True)
+    await db.users.update_one(
+        {"id": user_id},
+        {"$set": {"is_active": new_status}}
+    )
+    
+    return {"message": f"Usuario {'activado' if new_status else 'desactivado'}", "is_active": new_status}
+
+@api_router.delete("/admin/users/{user_id}")
+async def delete_user(user_id: str, current_user: User = Depends(get_current_user)):
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    # Delete user's raffles, tickets, ratings, notifications, messages
+    await db.raffles.delete_many({"creator_id": user_id})
+    await db.tickets.delete_many({"user_id": user_id})
+    await db.ratings.delete_many({"user_id": user_id})
+    await db.notifications.delete_many({"user_id": user_id})
+    await db.messages.delete_many({"$or": [{"from_user_id": user_id}, {"to_user_id": user_id}]})
+    
+    # Delete user
+    result = await db.users.delete_one({"id": user_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    return {"message": "Usuario eliminado exitosamente"}
+
+@api_router.get("/admin/creator/{creator_id}/raffles-count")
+async def get_creator_raffles_count(creator_id: str):
+    count = await db.raffles.count_documents({"creator_id": creator_id})
+    return {"count": count}
+
+# Messaging System
+@api_router.post("/messages")
+async def send_message(message_data: MessageCreate, current_user: User = Depends(get_current_user)):
+    message = Message(
+        from_user_id=current_user.id,
+        to_user_id=message_data.to_user_id,
+        subject=message_data.subject,
+        content=message_data.content,
+        parent_id=message_data.parent_id
+    )
+    
+    doc = prepare_for_mongo(message.model_dump())
+    await db.messages.insert_one(doc)
+    
+    # Create notification for recipient
+    await create_notification(
+        message_data.to_user_id,
+        "Nuevo Mensaje",
+        f"{current_user.full_name} te ha enviado un mensaje: {message_data.subject}",
+        "message"
+    )
+    
+    return message
+
+@api_router.get("/messages")
+async def get_messages(current_user: User = Depends(get_current_user)):
+    messages = await db.messages.find(
+        {"$or": [{"from_user_id": current_user.id}, {"to_user_id": current_user.id}]},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(None)
+    
+    # Get sender/receiver names
+    for msg in messages:
+        from_user = await db.users.find_one({"id": msg["from_user_id"]}, {"_id": 0, "full_name": 1})
+        to_user = await db.users.find_one({"id": msg["to_user_id"]}, {"_id": 0, "full_name": 1})
+        
+        if from_user:
+            msg["from_user_name"] = from_user["full_name"]
+        if to_user:
+            msg["to_user_name"] = to_user["full_name"]
+    
+    return [parse_from_mongo(m) for m in messages]
+
+@api_router.post("/messages/{message_id}/read")
+async def mark_message_read(message_id: str, current_user: User = Depends(get_current_user)):
+    await db.messages.update_one(
+        {"id": message_id, "to_user_id": current_user.id},
+        {"$set": {"read": True}}
+    )
+    return {"message": "Mensaje marcado como leído"}
+
+@api_router.get("/messages/unread-count")
+async def get_unread_messages_count(current_user: User = Depends(get_current_user)):
+    count = await db.messages.count_documents({"to_user_id": current_user.id, "read": False})
+    return {"count": count}
+
 # Include router
 app.include_router(api_router)
 
