@@ -102,6 +102,10 @@ function App() {
           path="/admin"
           element={user && user.role === 'admin' ? <AdminDashboard user={user} onLogout={handleLogout} /> : <Navigate to="/explore" />}
         />
+        <Route
+          path="/raffle/:raffleId/manage"
+          element={user && (user.role === 'creator' || user.role === 'admin') ? <RaffleManagementPage user={user} /> : <Navigate to="/explore" />}
+        />
       </Routes>
     </BrowserRouter>
   );
