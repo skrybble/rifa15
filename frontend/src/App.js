@@ -117,6 +117,10 @@ function App() {
           path="/profile-settings"
           element={user ? <ProfileSettingsPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
         />
+        <Route
+          path="/checkout"
+          element={user ? <CheckoutPage user={user} /> : <Navigate to="/login" />}
+        />
       </Routes>
     </BrowserRouter>
   );
