@@ -377,11 +377,11 @@ const RaffleDetailPage = ({ user, onLogout }) => {
                     <button
                       onClick={handlePurchase}
                       data-testid="purchase-btn"
-                      disabled={purchasing}
+                      disabled={quantity < 1}
                       className="w-full py-4 bg-sky-600 text-white rounded-lg font-bold text-lg hover:bg-sky-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                     >
                       <ShoppingCart className="w-6 h-6" />
-                      <span>{purchasing ? 'Procesando...' : 'Comprar Tickets'}</span>
+                      <span>Comprar Tickets</span>
                     </button>
 
                     <p className="text-xs text-center text-slate-500">
