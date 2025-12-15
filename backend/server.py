@@ -203,6 +203,42 @@ class MessageCreate(BaseModel):
     content: str
     parent_id: Optional[str] = None
 
+# Paddle Models
+class PaddleCustomerModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    user_id: str
+    paddle_customer_id: str
+    email: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PaddleTransactionModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    raffle_id: str
+    ticket_numbers: List[int]
+    amount: float
+    platform_fee: float
+    creator_amount: float
+    paddle_transaction_id: str
+    paddle_status: str  # pending, completed, failed
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PaddleCheckoutRequest(BaseModel):
+    raffle_id: str
+    ticket_numbers: List[int]
+
+class PaddleSubscriptionModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    paddle_subscription_id: str
+    plan_name: str  # growth, pro
+    status: str  # active, canceled, past_due
+    current_period_start: Optional[datetime] = None
+    current_period_end: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 class UserProfileUpdate(BaseModel):
     full_name: Optional[str] = None
     description: Optional[str] = None
