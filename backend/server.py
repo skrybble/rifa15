@@ -41,6 +41,25 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
+# Paddle Configuration
+PADDLE_VENDOR_ID = os.environ.get('PADDLE_VENDOR_ID', 'PENDING_SETUP')
+PADDLE_AUTH_CODE = os.environ.get('PADDLE_AUTH_CODE', 'PENDING_SETUP')
+PADDLE_PUBLIC_KEY = os.environ.get('PADDLE_PUBLIC_KEY', 'PENDING_SETUP')
+PADDLE_ENVIRONMENT = os.environ.get('PADDLE_ENVIRONMENT', 'sandbox')
+PLATFORM_COMMISSION = float(os.environ.get('PLATFORM_COMMISSION_PERCENTAGE', 1))
+
+# Initialize Paddle Client (if available and configured)
+paddle_client = None
+if PADDLE_AVAILABLE and PADDLE_AUTH_CODE != 'PENDING_SETUP':
+    try:
+        paddle_env = Environment.SANDBOX if PADDLE_ENVIRONMENT == 'sandbox' else Environment.PRODUCTION
+        paddle_client = Client(PADDLE_AUTH_CODE, environment=paddle_env)
+        print(f"✅ Paddle client initialized in {PADDLE_ENVIRONMENT} mode")
+    except Exception as e:
+        print(f"⚠️ Failed to initialize Paddle client: {e}")
+else:
+    print("ℹ️ Paddle not configured. Set PADDLE_AUTH_CODE in .env to enable payments")
+
 # Create the main app
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
