@@ -12,7 +12,6 @@ const RaffleDetailPage = ({ user, onLogout }) => {
   const [myTickets, setMyTickets] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [purchasing, setPurchasing] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
