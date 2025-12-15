@@ -1343,6 +1343,185 @@ async def get_unread_messages_count(current_user: User = Depends(get_current_use
     count = await db.messages.count_documents({"to_user_id": current_user.id, "read": False})
     return {"count": count}
 
+
+# ============================================
+# PADDLE INTEGRATION
+# ============================================
+
+@api_router.post("/paddle/create-checkout")
+async def create_paddle_checkout(
+    checkout_data: PaddleCheckoutRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """Crear sesión de checkout de Paddle para comprar tickets"""
+    if not paddle_client:
+        raise HTTPException(
+            status_code=503,
+            detail="Paddle no está configurado. Contacta al administrador."
+        )
+    
+    try:
+        # Obtener rifa
+        raffle = await db.raffles.find_one({"id": checkout_data.raffle_id})
+        if not raffle:
+            raise HTTPException(status_code=404, detail="Rifa no encontrada")
+        
+        # Validar que la rifa esté activa
+        if raffle["status"] != "active":
+            raise HTTPException(status_code=400, detail="Esta rifa no está activa")
+        
+        # Calcular monto
+        total_amount = raffle["ticket_price"] * len(checkout_data.ticket_numbers)
+        platform_fee = total_amount * (PLATFORM_COMMISSION / 100)
+        creator_amount = total_amount - platform_fee
+        
+        # Guardar transacción pendiente en DB
+        paddle_transaction = {
+            "id": str(uuid.uuid4()),
+            "user_id": current_user.id,
+            "raffle_id": checkout_data.raffle_id,
+            "ticket_numbers": checkout_data.ticket_numbers,
+            "amount": total_amount,
+            "platform_fee": platform_fee,
+            "creator_amount": creator_amount,
+            "paddle_transaction_id": "pending",
+            "paddle_status": "pending",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.paddle_transactions.insert_one(paddle_transaction)
+        
+        # Crear URL de checkout simulado (sin Paddle SDK real por ahora)
+        # En producción, esto usaría: paddle_client.transactions.create()
+        checkout_url = f"https://sandbox-checkout.paddle.com/checkout?items={raffle['id']}&customer={current_user.email}"
+        
+        return {
+            "checkout_url": checkout_url,
+            "transaction_id": paddle_transaction["id"],
+            "amount": total_amount,
+            "message": "⚠️ Paddle en modo simulación. Configura PADDLE_AUTH_CODE para activar pagos reales."
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error creating Paddle checkout: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+@api_router.post("/paddle/webhook")
+async def paddle_webhook(request: Request):
+    """Webhook de Paddle para confirmar pagos y eventos"""
+    body = await request.body()
+    signature = request.headers.get('Paddle-Signature', '')
+    
+    # Por ahora, webhook en modo simulación
+    # En producción, verificar firma con PADDLE_PUBLIC_KEY
+    
+    try:
+        payload = json.loads(body)
+        event_type = payload.get('event_type')
+        data = payload.get('data', {})
+        
+        print(f"📥 Paddle Webhook: {event_type}")
+        
+        # Manejar eventos
+        if event_type == 'transaction.completed':
+            await handle_transaction_completed(data)
+        elif event_type == 'transaction.payment_failed':
+            await handle_transaction_failed(data)
+        
+        return {"status": "success"}
+    except Exception as e:
+        print(f"Error processing webhook: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+async def handle_transaction_completed(data: dict):
+    """Manejar transacción completada"""
+    transaction_id = data.get('id', 'simulated_tx_' + str(uuid.uuid4()))
+    custom_data = data.get('custom_data', {})
+    
+    # Buscar transacción en DB
+    paddle_tx = await db.paddle_transactions.find_one(
+        {"paddle_transaction_id": transaction_id}
+    )
+    
+    if not paddle_tx:
+        # Si no existe, puede ser porque es una transacción simulada
+        print(f"Transaction {transaction_id} not found in DB (simulated)")
+        return
+    
+    # Actualizar estado
+    await db.paddle_transactions.update_one(
+        {"paddle_transaction_id": transaction_id},
+        {"$set": {"paddle_status": "completed"}}
+    )
+    
+    # Crear tickets
+    for ticket_number in paddle_tx["ticket_numbers"]:
+        # Verificar que el ticket no esté ya vendido
+        existing_ticket = await db.tickets.find_one({
+            "raffle_id": paddle_tx["raffle_id"],
+            "ticket_number": ticket_number
+        })
+        
+        if not existing_ticket:
+            ticket = {
+                "id": str(uuid.uuid4()),
+                "raffle_id": paddle_tx["raffle_id"],
+                "user_id": paddle_tx["user_id"],
+                "ticket_number": ticket_number,
+                "purchase_date": datetime.now(timezone.utc).isoformat(),
+                "price_paid": paddle_tx["amount"] / len(paddle_tx["ticket_numbers"])
+            }
+            await db.tickets.insert_one(ticket)
+    
+    # Actualizar estadísticas de la rifa
+    await db.raffles.update_one(
+        {"id": paddle_tx["raffle_id"]},
+        {
+            "$inc": {
+                "tickets_sold": len(paddle_tx["ticket_numbers"]),
+                "total_raised": paddle_tx["creator_amount"]
+            }
+        }
+    )
+    
+    # Crear notificación
+    await create_notification(
+        paddle_tx["user_id"],
+        "Compra Exitosa",
+        f"Has comprado {len(paddle_tx['ticket_numbers'])} tickets exitosamente",
+        "ticket_purchase"
+    )
+
+async def handle_transaction_failed(data: dict):
+    """Manejar transacción fallida"""
+    transaction_id = data.get('id')
+    
+    await db.paddle_transactions.update_one(
+        {"paddle_transaction_id": transaction_id},
+        {"$set": {"paddle_status": "failed"}}
+    )
+
+@api_router.get("/paddle/transactions")
+async def get_user_transactions(current_user: User = Depends(get_current_user)):
+    """Obtener historial de transacciones del usuario"""
+    transactions = await db.paddle_transactions.find(
+        {"user_id": current_user.id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(None)
+    
+    return [parse_from_mongo(tx) for tx in transactions]
+
+@api_router.get("/paddle/status")
+async def get_paddle_status():
+    """Verificar estado de Paddle"""
+    return {
+        "configured": paddle_client is not None,
+        "environment": PADDLE_ENVIRONMENT,
+        "vendor_id": PADDLE_VENDOR_ID if PADDLE_VENDOR_ID != 'PENDING_SETUP' else None,
+        "message": "✅ Paddle configurado" if paddle_client else "⚠️ Paddle pendiente de configuración"
+    }
+
+
 # Include router
 app.include_router(api_router)
 
