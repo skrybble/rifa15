@@ -38,26 +38,41 @@ const RaffleDetailPage = ({ user, onLogout }) => {
   };
 
   const handlePurchase = async () => {
-    setError('');
-    setSuccess('');
-    setPurchasing(true);
-
-    try {
-      // Simulate payment (in real app, use Stripe)
-      const response = await axios.post(`${API}/tickets/purchase`, {
-        raffle_id: raffleId,
-        quantity: quantity,
-        payment_token: 'test_token_12345'
-      });
-
-      setSuccess(`¡Compra exitosa! Has adquirido ${quantity} ticket(s)`);
-      loadRaffleData();
-      setQuantity(1);
-    } catch (error) {
-      setError(error.response?.data?.detail || 'Error al comprar tickets');
-    } finally {
-      setPurchasing(false);
+    if (!raffle) return;
+    
+    // Generar números de tickets aleatorios
+    const availableTickets = [];
+    for (let i = raffle.ticket_range[0]; i <= raffle.ticket_range[1]; i++) {
+      const isSold = raffle.sold_tickets?.includes(i);
+      if (!isSold) {
+        availableTickets.push(i);
+      }
     }
+    
+    // Seleccionar tickets aleatorios
+    const selectedTickets = [];
+    const ticketsToSelect = Math.min(quantity, availableTickets.length);
+    
+    for (let i = 0; i < ticketsToSelect; i++) {
+      const randomIndex = Math.floor(Math.random() * availableTickets.length);
+      selectedTickets.push(availableTickets[randomIndex]);
+      availableTickets.splice(randomIndex, 1);
+    }
+    
+    if (selectedTickets.length === 0) {
+      setError('No hay tickets disponibles');
+      return;
+    }
+    
+    // Redirigir a checkout
+    navigate('/checkout', {
+      state: {
+        raffleId: raffle.id,
+        ticketNumbers: selectedTickets,
+        amount: raffle.ticket_price * selectedTickets.length,
+        raffleTitle: raffle.title
+      }
+    });
   };
 
   if (loading) {
