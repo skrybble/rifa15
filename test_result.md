@@ -156,15 +156,18 @@ backend:
 
   - task: "Endpoints de bloqueo de usuarios"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Endpoints: POST /api/users/block, POST /api/users/unblock/:id, GET /api/users/blocked"
+      - working: true
+        agent: "main"
+        comment: "GET /api/users/blocked funciona correctamente, retorna lista vacía cuando no hay usuarios bloqueados"
 
   - task: "Endpoints de métodos de pago"
     implemented: true
