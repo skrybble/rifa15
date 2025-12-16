@@ -41,6 +41,11 @@ const RegisterPage = ({ onLogin }) => {
     e.preventDefault();
     setError('');
 
+    if (!acceptedTerms) {
+      setError('Debes aceptar los Términos y Condiciones para crear tu cuenta');
+      return;
+    }
+
     if (formData.interests.length < 3) {
       setError('Debes seleccionar al menos 3 intereses');
       return;
