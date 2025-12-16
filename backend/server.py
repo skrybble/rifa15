@@ -782,6 +782,8 @@ async def unblock_user(user_id: str, current_user: User = Depends(get_current_us
 async def get_blocked_users(current_user: User = Depends(get_current_user)):
     """Get list of blocked users"""
     user = await db.users.find_one({"id": current_user.id}, {"_id": 0, "blocked_users": 1})
+    if not user:
+        return []
     blocked_ids = user.get("blocked_users", [])
     
     # Get user details for blocked users
