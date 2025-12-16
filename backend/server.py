@@ -1053,7 +1053,7 @@ async def get_admin_stats(current_user: User = Depends(get_current_user)):
     total_users = await db.users.count_documents({"role": "user"})
     total_creators = await db.users.count_documents({"role": "creator"})
     total_raffles = await db.raffles.count_documents({})
-    active_raffles = await db.raffles.count_documents({"status": RaffleStatus.ACTIVE})
+    active_raffles = await db.raffles.count_documents({"status": "active"})
     
     tickets = await db.tickets.find({}, {"_id": 0, "amount_paid": 1}).to_list(None)
     total_revenue = sum([t.get('amount_paid', 0) for t in tickets])
