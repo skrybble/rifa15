@@ -635,7 +635,7 @@ async def get_raffle_participants(raffle_id: str, current_user: User = Depends(g
 # User/Creator endpoints
 @api_router.get("/creators", response_model=List[User])
 async def get_creators():
-    creators = await db.users.find({"role": UserRole.CREATOR, "is_active": True}, {"_id": 0, "password": 0}).to_list(None)
+    creators = await db.users.find({"role": "creator", "is_active": True}, {"_id": 0, "password": 0}).to_list(None)
     return [parse_from_mongo(u) for u in creators]
 
 # Note: Static /users/ routes are defined later to avoid path conflicts
