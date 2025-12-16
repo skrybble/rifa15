@@ -71,23 +71,23 @@ const AdminDashboard = ({ user, onLogout }) => {
 
   useEffect(() => {
     if (activeTab === 'creators') loadCreators();
-  }, [creatorsPage, creatorsPerPage, creatorsSearch, creatorsSortBy, creatorsSortOrder]);
+  }, [activeTab, creatorsPage, creatorsPerPage, creatorsSearch, creatorsSortBy, creatorsSortOrder]);
 
   useEffect(() => {
     if (activeTab === 'raffles') loadRaffles();
-  }, [rafflesPage, rafflesPerPage, rafflesSearch, rafflesSortBy, rafflesSortOrder, rafflesStatus]);
+  }, [activeTab, rafflesPage, rafflesPerPage, rafflesSearch, rafflesSortBy, rafflesSortOrder, rafflesStatus]);
 
   useEffect(() => {
     if (activeTab === 'calendar') loadCalendar();
-  }, [calendarDate]);
+  }, [activeTab, calendarDate]);
 
   useEffect(() => {
     if (activeTab === 'statistics') loadStatistics();
-  }, [statisticsPeriod]);
+  }, [activeTab, statisticsPeriod]);
 
   useEffect(() => {
     if (activeTab === 'users') loadAllUsers();
-  }, [usersPage, usersPerPage, usersSearch, usersRole, usersStatus]);
+  }, [activeTab, usersPage, usersPerPage, usersSearch, usersRole, usersStatus]);
 
   useEffect(() => {
     if (activeTab === 'reviews') {
