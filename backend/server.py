@@ -22,6 +22,7 @@ import asyncio
 import json
 import hmac
 import hashlib
+from urllib.parse import quote_plus
 
 # Paddle SDK
 try:
