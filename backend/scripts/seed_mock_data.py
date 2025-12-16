@@ -11,6 +11,7 @@ from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from uuid import uuid4
 import random
+from urllib.parse import quote_plus
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -24,9 +25,29 @@ load_dotenv(Path(__file__).parent.parent / '.env')
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# MongoDB connection
+# MongoDB connection - handle special characters in password
 mongo_url = os.environ['MONGO_URL']
 db_name = os.environ['DB_NAME']
+
+# If the URL contains credentials with special characters, we need to handle it
+# Format: mongodb://user:password@host:port/db
+if '@' in mongo_url and '://' in mongo_url:
+    # Parse and re-encode the URL properly
+    try:
+        prefix = mongo_url.split('://')[0]  # mongodb
+        rest = mongo_url.split('://')[1]
+        
+        if '@' in rest:
+            credentials, host_part = rest.rsplit('@', 1)
+            if ':' in credentials:
+                username, password = credentials.split(':', 1)
+                # Encode username and password
+                username = quote_plus(username)
+                password = quote_plus(password)
+                mongo_url = f"{prefix}://{username}:{password}@{host_part}"
+    except Exception as e:
+        print(f"Warning: Could not parse MongoDB URL: {e}")
+
 client = AsyncIOMotorClient(mongo_url)
 db = client[db_name]
 
