@@ -392,8 +392,8 @@ const MessagesPage = ({ user, onLogout }) => {
             </div>
           </div>
 
-          {/* Conversation Detail */}
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-lg flex flex-col" style={{ height: '600px' }}>
+          {/* Conversation Detail - Hidden on mobile when no conversation is selected */}
+          <div className={`lg:col-span-2 bg-white rounded-xl shadow-lg flex flex-col ${selectedConversation ? 'block' : 'hidden lg:block'}`} style={{ height: '600px' }}>
             {selectedConversation ? (
               <>
                 {/* Conversation Header */}
