@@ -1195,7 +1195,7 @@ async def get_admin_creators(
     if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail="Solo administradores")
     
-    query = {"role": UserRole.CREATOR}
+    query = {"role": "creator"}
     
     # Search by name or email
     if search:
