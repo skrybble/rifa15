@@ -1055,8 +1055,8 @@ async def get_admin_stats(current_user: User = Depends(get_current_user)):
     total_raffles = await db.raffles.count_documents({})
     active_raffles = await db.raffles.count_documents({"status": RaffleStatus.ACTIVE})
     
-    tickets = await db.tickets.find({}, {"_id": 0, "amount": 1}).to_list(None)
-    total_revenue = sum([t['amount'] for t in tickets])
+    tickets = await db.tickets.find({}, {"_id": 0, "amount_paid": 1}).to_list(None)
+    total_revenue = sum([t.get('amount_paid', 0) for t in tickets])
     commission_revenue = total_revenue * 0.01
     
     return {
