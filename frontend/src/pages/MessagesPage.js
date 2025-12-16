@@ -424,18 +424,18 @@ const MessagesPage = ({ user, onLogout }) => {
                             handleArchive(firstMessage.id);
                           }
                         }}
-                        className="px-3 py-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 transition-all"
+                        className="p-2 lg:px-3 lg:py-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 transition-all"
                         title={showArchived ? "Desarchivar conversación" : "Archivar conversación"}
                       >
                         {showArchived ? (
                           <span className="flex items-center space-x-2">
                             <ArchiveRestore className="w-4 h-4" />
-                            <span>Desarchivar</span>
+                            <span className="hidden lg:inline">Desarchivar</span>
                           </span>
                         ) : (
                           <span className="flex items-center space-x-2">
                             <Archive className="w-4 h-4" />
-                            <span>Archivar</span>
+                            <span className="hidden lg:inline">Archivar</span>
                           </span>
                         )}
                       </button>
