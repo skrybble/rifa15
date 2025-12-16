@@ -55,7 +55,7 @@ const ExplorePage = ({ user, onLogout }) => {
           <div className="flex justify-between items-center">
             <Link to="/" className="flex items-center space-x-2">
               <Ticket className="w-8 h-8 text-sky-600" />
-              <span className="text-2xl font-bold text-slate-900">RifaXWin</span>
+              <span className="text-2xl font-bold text-slate-900">RafflyWin</span>
             </Link>
 
             {user ? (

@@ -36,7 +36,7 @@ const LoginPage = ({ onLogin }) => {
           {/* Logo */}
           <div className="flex items-center justify-center space-x-2 mb-8">
             <Ticket className="w-10 h-10 text-sky-600" />
-            <span className="text-3xl font-bold text-slate-900">RifaXWin</span>
+            <span className="text-3xl font-bold text-slate-900">RafflyWin</span>
           </div>
 
           <h1 className="text-2xl font-bold text-center text-slate-900 mb-2">Bienvenido de vuelta</h1>

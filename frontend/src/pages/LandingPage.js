@@ -10,7 +10,7 @@ const LandingPage = ({ user }) => {
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2">
               <Ticket className="w-8 h-8 text-sky-600" />
-              <span className="text-2xl font-bold text-slate-900">RifaXWin</span>
+              <span className="text-2xl font-bold text-slate-900">RafflyWin</span>
             </div>
             <div className="flex items-center space-x-4">
               {user ? (
@@ -184,10 +184,10 @@ const LandingPage = ({ user }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Ticket className="w-6 h-6" />
-            <span className="text-xl font-bold">RifaXWin</span>
+            <span className="text-xl font-bold">RafflyWin</span>
           </div>
           <p className="text-slate-400">
-            &copy; 2025 RifaXWin. Todos los derechos reservados.
+            &copy; 2025 RafflyWin. Todos los derechos reservados.
           </p>
         </div>
       </footer>
