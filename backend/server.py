@@ -1171,6 +1171,432 @@ async def get_creator_raffles_count(creator_id: str):
     count = await db.raffles.count_documents({"creator_id": creator_id})
     return {"count": count}
 
+# ============================================
+# ADMIN PANEL - ENHANCED ENDPOINTS
+# ============================================
+
+class SuspendUserRequest(BaseModel):
+    duration_hours: Optional[int] = None  # None = permanent
+    reason: str
+
+class AdminSettingsUpdate(BaseModel):
+    negative_review_alert_threshold: int = 3
+
+@api_router.get("/admin/creators")
+async def get_admin_creators(
+    search: Optional[str] = None,
+    sort_by: str = "created_at",
+    sort_order: str = "desc",
+    page: int = 1,
+    per_page: int = 10,
+    current_user: User = Depends(get_current_user)
+):
+    """Get all creators with search, filter and pagination"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    query = {"role": UserRole.CREATOR}
+    
+    # Search by name or email
+    if search:
+        query["$or"] = [
+            {"full_name": {"$regex": search, "$options": "i"}},
+            {"email": {"$regex": search, "$options": "i"}}
+        ]
+    
+    # Get total count
+    total = await db.users.count_documents(query)
+    
+    # Sort options
+    sort_field = sort_by
+    sort_direction = -1 if sort_order == "desc" else 1
+    
+    # Get paginated results
+    skip = (page - 1) * per_page
+    creators_cursor = db.users.find(query, {"_id": 0, "password": 0}).sort(sort_field, sort_direction).skip(skip).limit(per_page)
+    creators = await creators_cursor.to_list(per_page)
+    
+    # Add raffle counts for each creator
+    for creator in creators:
+        creator["total_raffles"] = await db.raffles.count_documents({"creator_id": creator["id"]})
+        creator["active_raffles"] = await db.raffles.count_documents({"creator_id": creator["id"], "status": RaffleStatus.ACTIVE})
+        creator["followers_count"] = len(creator.get("followers", []))
+    
+    return {
+        "data": [parse_from_mongo(c) for c in creators],
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "total_pages": (total + per_page - 1) // per_page
+    }
+
+@api_router.get("/admin/raffles")
+async def get_admin_raffles(
+    search: Optional[str] = None,
+    status: Optional[str] = None,
+    sort_by: str = "created_at",
+    sort_order: str = "desc",
+    min_value: Optional[float] = None,
+    max_value: Optional[float] = None,
+    page: int = 1,
+    per_page: int = 10,
+    current_user: User = Depends(get_current_user)
+):
+    """Get all raffles with search, filter and pagination"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    query = {}
+    
+    # Search by title
+    if search:
+        query["title"] = {"$regex": search, "$options": "i"}
+    
+    # Filter by status
+    if status:
+        query["status"] = status
+    
+    # Filter by value
+    if min_value is not None:
+        query["prize_value"] = {"$gte": min_value}
+    if max_value is not None:
+        if "prize_value" in query:
+            query["prize_value"]["$lte"] = max_value
+        else:
+            query["prize_value"] = {"$lte": max_value}
+    
+    # Get total count
+    total = await db.raffles.count_documents(query)
+    
+    # Sort options
+    sort_field = sort_by
+    sort_direction = -1 if sort_order == "desc" else 1
+    
+    # Get paginated results
+    skip = (page - 1) * per_page
+    raffles_cursor = db.raffles.find(query, {"_id": 0}).sort(sort_field, sort_direction).skip(skip).limit(per_page)
+    raffles = await raffles_cursor.to_list(per_page)
+    
+    return {
+        "data": [parse_from_mongo(r) for r in raffles],
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "total_pages": (total + per_page - 1) // per_page
+    }
+
+@api_router.get("/admin/raffles/calendar")
+async def get_raffles_calendar(
+    year: int,
+    month: int,
+    current_user: User = Depends(get_current_user)
+):
+    """Get raffles for calendar view by month"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    # Get start and end of month
+    start_date = datetime(year, month, 1, tzinfo=timezone.utc)
+    if month == 12:
+        end_date = datetime(year + 1, 1, 1, tzinfo=timezone.utc)
+    else:
+        end_date = datetime(year, month + 1, 1, tzinfo=timezone.utc)
+    
+    raffles = await db.raffles.find({
+        "raffle_date": {
+            "$gte": start_date.isoformat(),
+            "$lt": end_date.isoformat()
+        }
+    }, {"_id": 0}).to_list(None)
+    
+    # Group by day
+    calendar_data = {}
+    for raffle in raffles:
+        raffle = parse_from_mongo(raffle)
+        date_str = raffle["raffle_date"][:10]  # Get YYYY-MM-DD
+        if date_str not in calendar_data:
+            calendar_data[date_str] = []
+        calendar_data[date_str].append(raffle)
+    
+    return calendar_data
+
+@api_router.post("/admin/users/{user_id}/suspend")
+async def suspend_user(
+    user_id: str,
+    request: SuspendUserRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """Suspend a user for a specific time or permanently"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    update_data = {
+        "is_active": False,
+        "suspension_reason": request.reason
+    }
+    
+    if request.duration_hours:
+        suspended_until = datetime.now(timezone.utc) + timedelta(hours=request.duration_hours)
+        update_data["suspended_until"] = suspended_until.isoformat()
+    else:
+        update_data["suspended_until"] = None  # Permanent
+    
+    await db.users.update_one({"id": user_id}, {"$set": update_data})
+    
+    # Create notification for user
+    notification = {
+        "id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "type": "account_suspended",
+        "title": "Cuenta Suspendida",
+        "message": f"Tu cuenta ha sido suspendida. Razón: {request.reason}",
+        "read": False,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.notifications.insert_one(notification)
+    
+    return {"message": "Usuario suspendido exitosamente"}
+
+@api_router.post("/admin/users/{user_id}/unsuspend")
+async def unsuspend_user(user_id: str, current_user: User = Depends(get_current_user)):
+    """Remove suspension from a user"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    await db.users.update_one(
+        {"id": user_id},
+        {"$set": {
+            "is_active": True,
+            "suspended_until": None,
+            "suspension_reason": None
+        }}
+    )
+    
+    return {"message": "Suspensión removida exitosamente"}
+
+@api_router.get("/admin/statistics")
+async def get_admin_statistics(
+    period: str = "month",  # day, week, month, year
+    current_user: User = Depends(get_current_user)
+):
+    """Get registration and revenue statistics"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    now = datetime.now(timezone.utc)
+    
+    # Calculate date ranges
+    periods = {
+        "day": now - timedelta(days=1),
+        "week": now - timedelta(weeks=1),
+        "month": now - timedelta(days=30),
+        "year": now - timedelta(days=365)
+    }
+    
+    start_date = periods.get(period, periods["month"])
+    
+    # Get user registrations
+    all_users = await db.users.find({}, {"_id": 0, "created_at": 1, "role": 1}).to_list(None)
+    
+    # Count registrations by period
+    registrations = {"users": 0, "creators": 0, "total": 0}
+    for user in all_users:
+        user = parse_from_mongo(user)
+        created = user.get("created_at")
+        if created and created >= start_date:
+            registrations["total"] += 1
+            if user.get("role") == "creator":
+                registrations["creators"] += 1
+            else:
+                registrations["users"] += 1
+    
+    # Get revenue statistics
+    tickets = await db.tickets.find({}, {"_id": 0, "amount_paid": 1, "purchased_at": 1}).to_list(None)
+    
+    revenue = {"total": 0, "commission": 0}
+    for ticket in tickets:
+        ticket = parse_from_mongo(ticket)
+        purchased = ticket.get("purchased_at")
+        if purchased and purchased >= start_date:
+            amount = ticket.get("amount_paid", 0)
+            revenue["total"] += amount
+            revenue["commission"] += amount * PLATFORM_COMMISSION / 100
+    
+    # Get daily breakdown for charts
+    daily_data = {}
+    for i in range(30 if period in ["month", "year"] else 7):
+        date = (now - timedelta(days=i)).strftime("%Y-%m-%d")
+        daily_data[date] = {"registrations": 0, "revenue": 0}
+    
+    for user in all_users:
+        user = parse_from_mongo(user)
+        created = user.get("created_at")
+        if created:
+            date_str = created.strftime("%Y-%m-%d")
+            if date_str in daily_data:
+                daily_data[date_str]["registrations"] += 1
+    
+    for ticket in tickets:
+        ticket = parse_from_mongo(ticket)
+        purchased = ticket.get("purchased_at")
+        if purchased:
+            date_str = purchased.strftime("%Y-%m-%d")
+            if date_str in daily_data:
+                daily_data[date_str]["revenue"] += ticket.get("amount_paid", 0)
+    
+    return {
+        "period": period,
+        "registrations": registrations,
+        "revenue": revenue,
+        "daily_data": daily_data
+    }
+
+@api_router.get("/admin/users-by-reviews")
+async def get_users_by_reviews(
+    page: int = 1,
+    per_page: int = 20,
+    current_user: User = Depends(get_current_user)
+):
+    """Get users sorted by negative reviews for moderation"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    # Get all ratings grouped by user
+    pipeline = [
+        {"$match": {"score": {"$lte": 2}}},  # Negative reviews (1-2 stars)
+        {"$group": {
+            "_id": "$rated_user_id",
+            "negative_count": {"$sum": 1},
+            "avg_score": {"$avg": "$score"}
+        }},
+        {"$sort": {"negative_count": -1}},
+        {"$skip": (page - 1) * per_page},
+        {"$limit": per_page}
+    ]
+    
+    results = await db.ratings.aggregate(pipeline).to_list(per_page)
+    
+    # Get user details
+    users_with_reviews = []
+    for result in results:
+        user = await db.users.find_one({"id": result["_id"]}, {"_id": 0, "password": 0})
+        if user:
+            user["negative_reviews_count"] = result["negative_count"]
+            user["avg_review_score"] = round(result["avg_score"], 2)
+            users_with_reviews.append(parse_from_mongo(user))
+    
+    total = await db.ratings.aggregate([
+        {"$match": {"score": {"$lte": 2}}},
+        {"$group": {"_id": "$rated_user_id"}},
+        {"$count": "total"}
+    ]).to_list(1)
+    
+    total_count = total[0]["total"] if total else 0
+    
+    return {
+        "data": users_with_reviews,
+        "total": total_count,
+        "page": page,
+        "per_page": per_page,
+        "total_pages": (total_count + per_page - 1) // per_page
+    }
+
+@api_router.get("/admin/review-alerts")
+async def get_review_alerts(current_user: User = Depends(get_current_user)):
+    """Get users with consecutive negative reviews"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    # Get admin settings for threshold
+    settings = await db.admin_settings.find_one({}, {"_id": 0})
+    threshold = settings.get("negative_review_alert_threshold", 3) if settings else 3
+    
+    # Find users with consecutive negative reviews
+    users = await db.users.find({
+        "consecutive_negative_reviews": {"$gte": threshold}
+    }, {"_id": 0, "password": 0}).to_list(None)
+    
+    return {
+        "threshold": threshold,
+        "alerts": [parse_from_mongo(u) for u in users]
+    }
+
+@api_router.put("/admin/settings")
+async def update_admin_settings(
+    settings: AdminSettingsUpdate,
+    current_user: User = Depends(get_current_user)
+):
+    """Update admin settings"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    await db.admin_settings.update_one(
+        {},
+        {"$set": settings.dict()},
+        upsert=True
+    )
+    
+    return {"message": "Configuración actualizada"}
+
+@api_router.get("/admin/settings")
+async def get_admin_settings(current_user: User = Depends(get_current_user)):
+    """Get admin settings"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    settings = await db.admin_settings.find_one({}, {"_id": 0})
+    return settings or {"negative_review_alert_threshold": 3}
+
+@api_router.get("/admin/all-users")
+async def get_all_users(
+    search: Optional[str] = None,
+    role: Optional[str] = None,
+    status: Optional[str] = None,
+    sort_by: str = "created_at",
+    sort_order: str = "desc",
+    page: int = 1,
+    per_page: int = 10,
+    current_user: User = Depends(get_current_user)
+):
+    """Get all users with filters"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    query = {}
+    
+    if search:
+        query["$or"] = [
+            {"full_name": {"$regex": search, "$options": "i"}},
+            {"email": {"$regex": search, "$options": "i"}}
+        ]
+    
+    if role:
+        query["role"] = role
+    
+    if status == "active":
+        query["is_active"] = True
+    elif status == "suspended":
+        query["is_active"] = False
+    
+    total = await db.users.count_documents(query)
+    
+    sort_direction = -1 if sort_order == "desc" else 1
+    skip = (page - 1) * per_page
+    
+    users = await db.users.find(query, {"_id": 0, "password": 0}).sort(sort_by, sort_direction).skip(skip).limit(per_page).to_list(per_page)
+    
+    return {
+        "data": [parse_from_mongo(u) for u in users],
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "total_pages": (total + per_page - 1) // per_page
+    }
+
 # Messaging System
 @api_router.post("/messages")
 async def send_message(message_data: MessageCreate, current_user: User = Depends(get_current_user)):
