@@ -126,15 +126,18 @@ backend:
 
   - task: "Endpoints de gestión de perfil"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Endpoints: PUT /api/users/profile, POST /api/users/upload-profile-image, POST /api/users/upload-cover-image"
+      - working: true
+        agent: "main"
+        comment: "Probado con curl - PUT /api/users/profile actualiza full_name y description correctamente"
 
   - task: "Endpoints de configuración de privacidad"
     implemented: true
