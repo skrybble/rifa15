@@ -943,7 +943,7 @@ async def mark_read(notification_id: str, current_user: User = Depends(get_curre
 # Admin endpoints
 @api_router.post("/admin/draw")
 async def manual_draw(current_user: User = Depends(get_current_user)):
-    if current_user.role != UserRole.ADMIN:
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail="Solo administradores")
     
     await run_daily_draw()
@@ -1047,7 +1047,7 @@ async def get_creator_stats(current_user: User = Depends(get_current_user)):
 
 @api_router.get("/dashboard/admin-stats")
 async def get_admin_stats(current_user: User = Depends(get_current_user)):
-    if current_user.role != UserRole.ADMIN:
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail="Solo administradores")
     
     total_users = await db.users.count_documents({"role": UserRole.USER})
@@ -1076,7 +1076,7 @@ async def get_commissions(
     end_date: Optional[str] = None,
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.role != UserRole.ADMIN:
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail="Solo administradores")
     
     query = {}
@@ -1131,7 +1131,7 @@ async def get_commissions(
 
 @api_router.post("/admin/users/{user_id}/toggle-active")
 async def toggle_user_active(user_id: str, current_user: User = Depends(get_current_user)):
-    if current_user.role != UserRole.ADMIN:
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail="Solo administradores")
     
     user = await db.users.find_one({"id": user_id}, {"_id": 0})
@@ -1148,7 +1148,7 @@ async def toggle_user_active(user_id: str, current_user: User = Depends(get_curr
 
 @api_router.delete("/admin/users/{user_id}")
 async def delete_user(user_id: str, current_user: User = Depends(get_current_user)):
-    if current_user.role != UserRole.ADMIN:
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail="Solo administradores")
     
     # Delete user's raffles, tickets, ratings, notifications, messages
@@ -1739,7 +1739,7 @@ async def unarchive_message(message_id: str, current_user: User = Depends(get_cu
 @api_router.delete("/messages/{message_id}")
 async def delete_message(message_id: str, current_user: User = Depends(get_current_user)):
     """Delete a message (admin only)"""
-    if current_user.role != UserRole.ADMIN:
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail="Solo los administradores pueden eliminar mensajes")
     
     result = await db.messages.delete_one({"id": message_id})
@@ -1751,7 +1751,7 @@ async def delete_message(message_id: str, current_user: User = Depends(get_curre
 @api_router.get("/admin/messages/all")
 async def get_all_messages(current_user: User = Depends(get_current_user)):
     """Get all messages in the system (admin only)"""
-    if current_user.role != UserRole.ADMIN:
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail="Solo administradores")
     
     messages = await db.messages.find({}, {"_id": 0}).sort("created_at", -1).to_list(None)
@@ -1771,7 +1771,7 @@ async def get_all_messages(current_user: User = Depends(get_current_user)):
 @api_router.get("/admin/messages/user/{user_id}")
 async def get_user_messages(user_id: str, current_user: User = Depends(get_current_user)):
     """Get all messages for a specific user (admin only)"""
-    if current_user.role != UserRole.ADMIN:
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail="Solo administradores")
     
     messages = await db.messages.find(
