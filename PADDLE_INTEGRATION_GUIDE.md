@@ -1,11 +1,11 @@
-# Guía de Integración de Paddle - RifaXWin
+# Guía de Integración de Paddle - RafflyWin
 ## Sistema de Pagos con Paddle (Reemplazo de Stripe)
 
 ---
 
 ## 🎯 ¿Por qué Paddle en lugar de Stripe?
 
-### Ventajas de Paddle para RifaXWin
+### Ventajas de Paddle para RafflyWin
 
 ✅ **Merchant of Record (MoR)**
 - Paddle asume toda la responsabilidad legal de las transacciones
@@ -44,7 +44,7 @@
 | **Chargebacks** | ✅ Paddle maneja | ⚠️ Tú manejas |
 | **Mejor para** | SaaS, Digital Goods | Marketplaces, Physical |
 
-**Para RifaXWin, Paddle es superior** porque:
+**Para RafflyWin, Paddle es superior** porque:
 - Rifas son productos digitales
 - Ventas internacionales
 - Menor riesgo legal
@@ -88,7 +88,7 @@
 
 ### 1.4 Configurar Productos
 1. **Catalog** → **Products**
-2. Crear producto: "RifaXWin Tickets"
+2. Crear producto: "RafflyWin Tickets"
    - Tipo: One-time purchase
    - Pricing: Variable (se pasa dinámicamente)
 3. Crear planes premium (opcional):
@@ -257,7 +257,7 @@ async def create_paddle_checkout(
         
         # Crear items para Paddle
         items = [{
-            "price_id": "pri_rifaxwin_ticket",  # ID del producto en Paddle
+            "price_id": "pri_rafflywin_ticket",  # ID del producto en Paddle
             "quantity": len(checkout_data.ticket_numbers)
         }]
         
@@ -788,7 +788,7 @@ En modo sandbox, usa estas tarjetas:
 
 **Plan Growth - $49/mes:**
 ```
-Product: RifaXWin Growth
+Product: RafflyWin Growth
 Price: $49.00 USD
 Billing: Monthly (recurring)
 Trial: 14 days (opcional)
@@ -796,7 +796,7 @@ Trial: 14 days (opcional)
 
 **Plan Pro - $199/mes:**
 ```
-Product: RifaXWin Pro
+Product: RafflyWin Pro
 Price: $199.00 USD
 Billing: Monthly (recurring)
 Trial: 14 days (opcional)

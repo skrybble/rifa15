@@ -1,4 +1,4 @@
-# Estado del Proyecto RifaXWin - Resumen Completo
+# Estado del Proyecto RafflyWin - Resumen Completo
 ## ¿Qué tenemos y qué falta?
 
 ---

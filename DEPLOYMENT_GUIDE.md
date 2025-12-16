@@ -1,4 +1,4 @@
-# Guía de Deployment - RifaXWin
+# Guía de Deployment - RafflyWin
 
 ## 📋 Requisitos del Servidor
 
@@ -85,16 +85,16 @@ sudo npm install -g pm2
 
 ### 2.1 Crear Usuario para la Aplicación
 ```bash
-sudo adduser rifaxwin
-sudo usermod -aG sudo rifaxwin
-su - rifaxwin
+sudo adduser rafflywin
+sudo usermod -aG sudo rafflywin
+su - rafflywin
 ```
 
 ### 2.2 Clonar Repositorio
 ```bash
-cd /home/rifaxwin
-git clone <URL_DE_TU_REPOSITORIO> rifaxwin-app
-cd rifaxwin-app
+cd /home/rafflywin
+git clone <URL_DE_TU_REPOSITORIO> rafflywin-app
+cd rafflywin-app
 ```
 
 ### 2.3 Configurar MongoDB
@@ -103,13 +103,13 @@ cd rifaxwin-app
 mongosh
 
 # Crear base de datos y usuario
-use rifaxwin_db
+use rafflywin_db
 
 db.createUser({
-  user: "rifaxwin_user",
+  user: "rafflywin_user",
   pwd: "TU_PASSWORD_SEGURO",
   roles: [
-    { role: "readWrite", db: "rifaxwin_db" }
+    { role: "readWrite", db: "rafflywin_db" }
   ]
 })
 
@@ -122,14 +122,14 @@ exit
 
 ### 3.1 Backend (.env)
 ```bash
-cd /home/rifaxwin/rifaxwin-app/backend
+cd /home/rafflywin/rafflywin-app/backend
 nano .env
 ```
 
 **Contenido del archivo:**
 ```env
 # MongoDB
-MONGO_URL=mongodb://rifaxwin_user:TU_PASSWORD_SEGURO@localhost:27017/rifaxwin_db
+MONGO_URL=mongodb://rafflywin_user:TU_PASSWORD_SEGURO@localhost:27017/rafflywin_db
 
 # JWT Secret (generar uno aleatorio)
 JWT_SECRET=tu_jwt_secret_muy_seguro_y_largo_aqui
@@ -147,7 +147,7 @@ PORT=8001
 
 ### 3.2 Frontend (.env)
 ```bash
-cd /home/rifaxwin/rifaxwin-app/frontend
+cd /home/rafflywin/rafflywin-app/frontend
 nano .env
 ```
 
@@ -162,7 +162,7 @@ REACT_APP_BACKEND_URL=https://api.tu-dominio.com
 
 ### 4.1 Backend
 ```bash
-cd /home/rifaxwin/rifaxwin-app/backend
+cd /home/rafflywin/rafflywin-app/backend
 
 # Crear entorno virtual
 python3 -m venv venv
@@ -179,7 +179,7 @@ deactivate
 
 ### 4.2 Frontend
 ```bash
-cd /home/rifaxwin/rifaxwin-app/frontend
+cd /home/rafflywin/rafflywin-app/frontend
 
 # Instalar dependencias
 yarn install
@@ -194,7 +194,7 @@ yarn build
 
 ### 5.1 Crear archivo de configuración PM2
 ```bash
-cd /home/rifaxwin/rifaxwin-app
+cd /home/rafflywin/rafflywin-app
 nano ecosystem.config.js
 ```
 
@@ -203,10 +203,10 @@ nano ecosystem.config.js
 module.exports = {
   apps: [
     {
-      name: 'rifaxwin-backend',
+      name: 'rafflywin-backend',
       script: 'venv/bin/uvicorn',
       args: 'server:app --host 0.0.0.0 --port 8001',
-      cwd: '/home/rifaxwin/rifaxwin-app/backend',
+      cwd: '/home/rafflywin/rafflywin-app/backend',
       instances: 1,
       autorestart: true,
       watch: false,
@@ -221,7 +221,7 @@ module.exports = {
 
 ### 5.2 Iniciar Backend con PM2
 ```bash
-cd /home/rifaxwin/rifaxwin-app
+cd /home/rafflywin/rafflywin-app
 pm2 start ecosystem.config.js
 
 # Configurar PM2 para iniciar al arranque
@@ -230,7 +230,7 @@ pm2 save
 
 # Verificar estado
 pm2 status
-pm2 logs rifaxwin-backend
+pm2 logs rafflywin-backend
 ```
 
 ---
@@ -239,7 +239,7 @@ pm2 logs rifaxwin-backend
 
 ### 6.1 Crear configuración de Nginx
 ```bash
-sudo nano /etc/nginx/sites-available/rifaxwin
+sudo nano /etc/nginx/sites-available/rafflywin
 ```
 
 **Contenido:**
@@ -276,7 +276,7 @@ server {
     listen 80;
     server_name tu-dominio.com www.tu-dominio.com;
 
-    root /home/rifaxwin/rifaxwin-app/frontend/build;
+    root /home/rafflywin/rafflywin-app/frontend/build;
     index index.html;
 
     # Gzip compression
@@ -308,7 +308,7 @@ server {
 ### 6.2 Habilitar sitio
 ```bash
 # Crear enlace simbólico
-sudo ln -s /etc/nginx/sites-available/rifaxwin /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/rafflywin /etc/nginx/sites-enabled/
 
 # Eliminar configuración por defecto
 sudo rm /etc/nginx/sites-enabled/default
@@ -371,8 +371,8 @@ sudo ufw status
 
 ### 9.1 Ver logs del backend
 ```bash
-pm2 logs rifaxwin-backend
-pm2 logs rifaxwin-backend --lines 100
+pm2 logs rafflywin-backend
+pm2 logs rafflywin-backend --lines 100
 ```
 
 ### 9.2 Ver logs de Nginx
@@ -404,7 +404,7 @@ Crear archivo `deploy.sh`:
 echo "🚀 Iniciando deployment..."
 
 # Navegar al directorio
-cd /home/rifaxwin/rifaxwin-app
+cd /home/rafflywin/rafflywin-app
 
 # Obtener últimos cambios
 echo "📥 Obteniendo últimos cambios..."
@@ -425,7 +425,7 @@ yarn build
 
 # Reiniciar backend
 echo "🔄 Reiniciando backend..."
-pm2 restart rifaxwin-backend
+pm2 restart rafflywin-backend
 
 # Limpiar caché de Nginx
 echo "🧹 Limpiando caché..."
@@ -485,13 +485,13 @@ sudo dpkg-reconfigure -plow unattended-upgrades
 ### Backend no inicia
 ```bash
 # Ver logs detallados
-pm2 logs rifaxwin-backend --lines 200
+pm2 logs rafflywin-backend --lines 200
 
 # Reiniciar
-pm2 restart rifaxwin-backend
+pm2 restart rafflywin-backend
 
 # Si persiste, iniciar manualmente para ver error
-cd /home/rifaxwin/rifaxwin-app/backend
+cd /home/rafflywin/rafflywin-app/backend
 source venv/bin/activate
 uvicorn server:app --host 0.0.0.0 --port 8001
 ```
@@ -523,14 +523,14 @@ sudo systemctl restart mongod
 ### Frontend no carga
 ```bash
 # Verificar que el build exista
-ls -la /home/rifaxwin/rifaxwin-app/frontend/build
+ls -la /home/rafflywin/rafflywin-app/frontend/build
 
 # Reconstruir
-cd /home/rifaxwin/rifaxwin-app/frontend
+cd /home/rafflywin/rafflywin-app/frontend
 yarn build
 
 # Verificar permisos
-sudo chown -R rifaxwin:rifaxwin /home/rifaxwin/rifaxwin-app/frontend/build
+sudo chown -R rafflywin:rafflywin /home/rafflywin/rafflywin-app/frontend/build
 ```
 
 ---

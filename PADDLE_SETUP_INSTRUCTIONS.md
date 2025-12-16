@@ -45,7 +45,7 @@ La integración de Paddle está **100% implementada y lista para usar**. El sist
 #### 2.2 Obtener Auth Code (API Key)
 1. Ve a **Developer Tools** → **Authentication**
 2. Click en "**Generate Key**"
-3. Dale un nombre (ej: "RifaXWin Production")
+3. Dale un nombre (ej: "RafflyWin Production")
 4. Copia el **Auth Code** (empieza con algo como `pdl_ntfnd_...`)
 5. ⚠️ **Guárdalo en un lugar seguro**, no se mostrará de nuevo
 
@@ -246,10 +246,10 @@ curl https://api.tu-dominio.com/api/paddle/status
 Ticket de $10 vendido:
 - Precio pagado por usuario: $10.00
 - Fee de Paddle (5% + $0.50): -$1.00
-- Comisión RifaXWin (1%): -$0.09
+- Comisión RafflyWin (1%): -$0.09
 - Recibe el creador: $8.91
 
-RifaXWin recibe: $0.09 por ticket
+RafflyWin recibe: $0.09 por ticket
 ```
 
 ---
