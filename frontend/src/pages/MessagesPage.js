@@ -400,12 +400,19 @@ const MessagesPage = ({ user, onLogout }) => {
                 <div className="p-4 border-b border-slate-200">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                      {/* Back button for mobile */}
+                      <button
+                        onClick={() => setSelectedConversation(null)}
+                        className="lg:hidden p-2 -ml-2 text-slate-600 hover:text-sky-600"
+                      >
+                        <ArrowLeft className="w-5 h-5" />
+                      </button>
+                      <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
                         {selectedConversation.userName?.charAt(0) || '?'}
                       </div>
                       <div>
-                        <p className="font-bold text-slate-900">{selectedConversation.userName}</p>
-                        <p className="text-sm text-slate-600">{selectedConversation.userEmail}</p>
+                        <p className="font-bold text-slate-900 text-sm lg:text-base">{selectedConversation.userName}</p>
+                        <p className="text-xs lg:text-sm text-slate-600 hidden sm:block">{selectedConversation.userEmail}</p>
                       </div>
                     </div>
                     
