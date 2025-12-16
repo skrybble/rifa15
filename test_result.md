@@ -162,15 +162,18 @@ backend:
 
   - task: "Endpoints de métodos de pago"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Endpoints: GET/POST/DELETE /api/users/payment-methods (solo UI, sin Stripe)"
+      - working: true
+        agent: "main"
+        comment: "Probado con curl - GET/POST funcionando correctamente. Bug de routing corregido moviendo endpoint dinamico /users/{user_id} despues de rutas estaticas"
 
   - task: "Lógica de bloqueo en mensajería"
     implemented: true
