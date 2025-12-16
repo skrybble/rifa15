@@ -198,13 +198,50 @@ const RegisterPage = ({ onLogin }) => {
               </p>
             </div>
 
+            {/* Terms and Conditions */}
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 mt-0.5">
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    data-testid="accept-terms-checkbox"
+                    checked={acceptedTerms}
+                    onChange={(e) => setAcceptedTerms(e.target.checked)}
+                    className="w-5 h-5 text-sky-600 rounded focus:ring-sky-500 cursor-pointer"
+                  />
+                </div>
+                <label htmlFor="terms" className="text-sm text-slate-700 cursor-pointer">
+                  <span className="font-semibold text-amber-800">Declaro que soy mayor de 21 años</span> y acepto los{' '}
+                  <Link 
+                    to="/terms" 
+                    target="_blank"
+                    className="text-sky-600 font-semibold hover:text-sky-700 underline"
+                  >
+                    Términos y Condiciones
+                  </Link>{' '}
+                  de RafflyWin. Comprendo que:
+                  <ul className="mt-2 ml-4 list-disc text-slate-600 space-y-1">
+                    <li>RafflyWin no se hace responsable si un creador no entrega el premio</li>
+                    <li>Las rifas son juegos de azar y no hay garantía de ganar</li>
+                    <li>Soy consciente de las implicaciones de participar en rifas</li>
+                  </ul>
+                </label>
+              </div>
+            </div>
+
             <button
               type="submit"
               data-testid="register-submit-btn"
-              disabled={loading}
-              className="w-full py-3 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={loading || !acceptedTerms}
+              className={`w-full py-3 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 ${
+                acceptedTerms 
+                  ? 'bg-sky-600 text-white hover:bg-sky-700' 
+                  : 'bg-slate-300 text-slate-500 cursor-not-allowed'
+              } disabled:opacity-50`}
             >
-              {loading ? 'Registrando...' : 'Crear Cuenta'}
+              {acceptedTerms && <CheckCircle className="w-5 h-5" />}
+              <span>{loading ? 'Registrando...' : 'Crear Cuenta'}</span>
             </button>
           </form>
 
