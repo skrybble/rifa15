@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../App';
-import { Ticket, Mail, Lock, User, AlertCircle, Tag } from 'lucide-react';
+import { Ticket, Mail, Lock, User, AlertCircle, Tag, FileText, CheckCircle } from 'lucide-react';
 
 const INTEREST_OPTIONS = [
   'Tecnología', 'Deportes', 'Gaming', 'Música', 'Arte',
