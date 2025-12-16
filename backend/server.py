@@ -37,8 +37,25 @@ except ImportError:
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
+# MongoDB connection - handle special characters in password
 mongo_url = os.environ['MONGO_URL']
+
+# If the URL contains credentials with special characters, encode them
+if '@' in mongo_url and '://' in mongo_url:
+    try:
+        prefix = mongo_url.split('://')[0]  # mongodb
+        rest = mongo_url.split('://')[1]
+        
+        if '@' in rest:
+            credentials, host_part = rest.rsplit('@', 1)
+            if ':' in credentials:
+                username, password = credentials.split(':', 1)
+                username = quote_plus(username)
+                password = quote_plus(password)
+                mongo_url = f"{prefix}://{username}:{password}@{host_part}"
+    except Exception as e:
+        print(f"Warning: Could not parse MongoDB URL: {e}")
+
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
