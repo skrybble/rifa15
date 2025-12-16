@@ -1050,8 +1050,8 @@ async def get_admin_stats(current_user: User = Depends(get_current_user)):
     if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail="Solo administradores")
     
-    total_users = await db.users.count_documents({"role": UserRole.USER})
-    total_creators = await db.users.count_documents({"role": UserRole.CREATOR})
+    total_users = await db.users.count_documents({"role": "user"})
+    total_creators = await db.users.count_documents({"role": "creator"})
     total_raffles = await db.raffles.count_documents({})
     active_raffles = await db.raffles.count_documents({"status": RaffleStatus.ACTIVE})
     
