@@ -223,15 +223,18 @@ backend:
 frontend:
   - task: "Página Mi Perfil (ProfileSettingsPage)"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/pages/ProfileSettingsPage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Página completa con tabs: Perfil (foto, portada, bio), Privacidad (notificaciones, mensajería), Usuarios Bloqueados, Métodos de Pago"
+      - working: true
+        agent: "main"
+        comment: "Verificado via screenshots - todas las pestañas funcionan correctamente. Datos se cargan del backend y se muestran correctamente"
 
   - task: "Botón de mensaje en CreatorProfilePage"
     implemented: true
