@@ -61,6 +61,14 @@ const ExplorePage = ({ user, onLogout }) => {
 
             {user ? (
               <>
+                {/* Mobile Menu Button */}
+                <button
+                  onClick={() => setShowMobileMenu(!showMobileMenu)}
+                  className="md:hidden p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                >
+                  {showMobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                </button>
+                
                 <nav className="hidden md:flex items-center space-x-6">
                   <Link
                     to="/explore"
