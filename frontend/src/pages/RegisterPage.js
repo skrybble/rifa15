@@ -225,14 +225,9 @@ const RegisterPage = ({ onLogin }) => {
               type="submit"
               data-testid="register-submit-btn"
               disabled={loading || !acceptedTerms}
-              className={`w-full py-3 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 ${
-                acceptedTerms 
-                  ? 'bg-sky-600 text-white hover:bg-sky-700' 
-                  : 'bg-slate-300 text-slate-500 cursor-not-allowed'
-              } disabled:opacity-50`}
+              className="w-full py-3 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {acceptedTerms && <CheckCircle className="w-5 h-5" />}
-              <span>{loading ? 'Registrando...' : 'Crear Cuenta'}</span>
+              {loading ? 'Registrando...' : 'Crear Cuenta'}
             </button>
           </form>
 
