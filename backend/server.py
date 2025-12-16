@@ -1219,7 +1219,7 @@ async def get_admin_creators(
     # Add raffle counts for each creator
     for creator in creators:
         creator["total_raffles"] = await db.raffles.count_documents({"creator_id": creator["id"]})
-        creator["active_raffles"] = await db.raffles.count_documents({"creator_id": creator["id"], "status": RaffleStatus.ACTIVE})
+        creator["active_raffles"] = await db.raffles.count_documents({"creator_id": creator["id"], "status": "active"})
         creator["followers_count"] = len(creator.get("followers", []))
     
     return {
