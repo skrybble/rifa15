@@ -228,53 +228,53 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tabs */}
         <div className="bg-white rounded-xl shadow-lg mb-6">
-          <div className="flex border-b border-slate-200 overflow-x-auto">
+          <div className="flex border-b border-slate-200 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setActiveTab('profile')}
-              className={`flex items-center space-x-2 px-6 py-4 font-medium transition-colors ${
+              className={`flex items-center space-x-2 px-4 sm:px-6 py-3 sm:py-4 font-medium transition-colors whitespace-nowrap ${
                 activeTab === 'profile'
                   ? 'text-sky-600 border-b-2 border-sky-600'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <User className="w-5 h-5" />
-              <span>Perfil</span>
+              <User className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-sm sm:text-base">Perfil</span>
             </button>
             
             <button
               onClick={() => setActiveTab('privacy')}
-              className={`flex items-center space-x-2 px-6 py-4 font-medium transition-colors ${
+              className={`flex items-center space-x-2 px-4 sm:px-6 py-3 sm:py-4 font-medium transition-colors whitespace-nowrap ${
                 activeTab === 'privacy'
                   ? 'text-sky-600 border-b-2 border-sky-600'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Shield className="w-5 h-5" />
-              <span>Privacidad</span>
+              <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-sm sm:text-base">Privacidad</span>
             </button>
             
             <button
               onClick={() => setActiveTab('blocked')}
-              className={`flex items-center space-x-2 px-6 py-4 font-medium transition-colors ${
+              className={`flex items-center space-x-2 px-4 sm:px-6 py-3 sm:py-4 font-medium transition-colors whitespace-nowrap ${
                 activeTab === 'blocked'
                   ? 'text-sky-600 border-b-2 border-sky-600'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Shield className="w-5 h-5" />
-              <span>Bloqueados</span>
+              <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-sm sm:text-base">Bloqueados</span>
             </button>
             
             <button
               onClick={() => setActiveTab('payments')}
-              className={`flex items-center space-x-2 px-6 py-4 font-medium transition-colors ${
+              className={`flex items-center space-x-2 px-4 sm:px-6 py-3 sm:py-4 font-medium transition-colors whitespace-nowrap ${
                 activeTab === 'payments'
                   ? 'text-sky-600 border-b-2 border-sky-600'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <CreditCard className="w-5 h-5" />
-              <span>Métodos de Pago</span>
+              <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-sm sm:text-base">Pagos</span>
             </button>
           </div>
         </div>
