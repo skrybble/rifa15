@@ -105,7 +105,7 @@ function App() {
         />
         <Route
           path="/admin"
-          element={user && user.role === 'admin' ? <AdminDashboard user={user} onLogout={handleLogout} /> : <Navigate to="/explore" />}
+          element={user && (user.role === 'admin' || user.role === 'super_admin') ? <AdminDashboard user={user} onLogout={handleLogout} /> : <Navigate to="/explore" />}
         />
         <Route
           path="/raffle/:raffleId/manage"
