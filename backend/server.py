@@ -278,17 +278,15 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     try:
         token = credentials.credentials
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        logger.info(f"Token payload: {payload}")
         user = await db.users.find_one({"id": payload["user_id"]}, {"_id": 0})
-        logger.info(f"User found: {user is not None}")
         if not user:
             raise HTTPException(status_code=401, detail="Usuario no encontrado")
         return User(**user)
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expirado")
     except Exception as e:
-        logger.error(f"Token error: {e}")
-        raise HTTPException(status_code=401, detail="Token inválido")
+        logger.error(f"Auth error: {type(e).__name__}: {e}")
+        raise HTTPException(status_code=401, detail=f"Error de autenticación: {str(e)}")
 
 def prepare_for_mongo(data: dict) -> dict:
     if isinstance(data.get('created_at'), datetime):
