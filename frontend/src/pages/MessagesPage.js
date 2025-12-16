@@ -310,8 +310,8 @@ const MessagesPage = ({ user, onLogout }) => {
         </div>
         
         <div className="grid lg:grid-cols-3 gap-6">
-          {/* Conversations List */}
-          <div className="lg:col-span-1 bg-white rounded-xl shadow-lg">
+          {/* Conversations List - Hidden on mobile when conversation is selected */}
+          <div className={`lg:col-span-1 bg-white rounded-xl shadow-lg ${selectedConversation ? 'hidden lg:block' : 'block'}`}>
             <div className="p-4 border-b border-slate-200">
               <h2 className="text-lg font-bold text-slate-900 mb-3">
                 {showArchived ? 'Conversaciones Archivadas' : 'Conversaciones'}
