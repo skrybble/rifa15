@@ -132,6 +132,12 @@ class User(BaseModel):
     blocked_users: List[str] = Field(default_factory=list)
     # Payment methods (stored as JSON string for UI display)
     payment_methods: List[dict] = Field(default_factory=list)
+    # Suspension settings
+    suspended_until: Optional[datetime] = None
+    suspension_reason: Optional[str] = None
+    # Review alerts
+    negative_reviews_count: int = 0
+    consecutive_negative_reviews: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserCreate(BaseModel):
