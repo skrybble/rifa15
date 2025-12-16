@@ -21,6 +21,7 @@ const RegisterPage = ({ onLogin }) => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const toggleInterest = (interest) => {
     if (formData.interests.includes(interest)) {
