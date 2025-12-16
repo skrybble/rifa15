@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../App';
-import { Ticket, LogOut, User, Bell, LayoutDashboard, Heart, Calendar, DollarSign, Mail, Settings } from 'lucide-react';
+import { Ticket, LogOut, User, Bell, LayoutDashboard, Heart, Calendar, DollarSign, Mail, Settings, Menu, X } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 
 const ExplorePage = ({ user, onLogout }) => {
@@ -13,6 +13,7 @@ const ExplorePage = ({ user, onLogout }) => {
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   useEffect(() => {
     loadData();
