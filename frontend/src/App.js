@@ -82,6 +82,7 @@ function App() {
           path="/register"
           element={user ? <Navigate to="/explore" /> : <RegisterPage onLogin={handleLogin} />}
         />
+        <Route path="/terms" element={<TermsPage />} />
         <Route
           path="/explore"
           element={<ExplorePage user={user} onLogout={handleLogout} />}
