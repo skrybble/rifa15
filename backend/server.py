@@ -834,6 +834,8 @@ async def delete_payment_method(index: int, current_user: User = Depends(get_cur
 async def get_payment_methods(current_user: User = Depends(get_current_user)):
     """Get user's payment methods"""
     user = await db.users.find_one({"id": current_user.id}, {"_id": 0, "payment_methods": 1})
+    if not user:
+        return []
     return user.get("payment_methods", [])
 
 @api_router.post("/users/upload-profile-image")
