@@ -97,6 +97,7 @@ class UserRole(str, Enum):
     USER = "user"
     CREATOR = "creator"
     ADMIN = "admin"
+    SUPER_ADMIN = "super_admin"
 
 class RaffleStatus(str, Enum):
     ACTIVE = "active"
