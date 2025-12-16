@@ -138,15 +138,18 @@ backend:
 
   - task: "Endpoints de configuración de privacidad"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Endpoint: PUT /api/users/privacy para actualizar notificaciones y mensajería"
+      - working: true
+        agent: "main"
+        comment: "Probado con curl - actualiza correctamente notifications_enabled y messaging_enabled"
 
   - task: "Endpoints de bloqueo de usuarios"
     implemented: true
