@@ -1459,24 +1459,51 @@ async def get_admin_statistics(
 async def get_users_by_reviews(
     page: int = 1,
     per_page: int = 20,
+    filter: str = "all",  # all, positive, negative
+    sort_by: str = "total",  # total, positive, negative
+    min_negative: int = 0,
     current_user: User = Depends(get_current_user)
 ):
-    """Get users sorted by negative reviews for moderation"""
+    """Get users sorted by reviews for moderation with filters"""
     if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail="Solo administradores")
     
-    # Get all ratings grouped by user
+    # Build match condition based on filter
+    match_condition = {}
+    if filter == "positive":
+        match_condition["score"] = {"$gte": 4}
+    elif filter == "negative":
+        match_condition["score"] = {"$lte": 2}
+    # "all" = no filter
+    
+    # Build sort field
+    sort_field = "total_count"
+    if sort_by == "positive":
+        sort_field = "positive_count"
+    elif sort_by == "negative":
+        sort_field = "negative_count"
+    
+    # Aggregation pipeline to get all reviews stats per user
     pipeline = [
-        {"$match": {"score": {"$lte": 2}}},  # Negative reviews (1-2 stars)
         {"$group": {
             "_id": "$rated_user_id",
-            "negative_count": {"$sum": 1},
+            "total_count": {"$sum": 1},
+            "positive_count": {"$sum": {"$cond": [{"$gte": ["$score", 4]}, 1, 0]}},
+            "negative_count": {"$sum": {"$cond": [{"$lte": ["$score", 2]}, 1, 0]}},
             "avg_score": {"$avg": "$score"}
         }},
-        {"$sort": {"negative_count": -1}},
+    ]
+    
+    # Apply min_negative filter if set
+    if min_negative > 0:
+        pipeline.append({"$match": {"negative_count": {"$gte": min_negative}}})
+    
+    # Add sorting and pagination
+    pipeline.extend([
+        {"$sort": {sort_field: -1}},
         {"$skip": (page - 1) * per_page},
         {"$limit": per_page}
-    ]
+    ])
     
     results = await db.ratings.aggregate(pipeline).to_list(per_page)
     
@@ -1485,16 +1512,21 @@ async def get_users_by_reviews(
     for result in results:
         user = await db.users.find_one({"id": result["_id"]}, {"_id": 0, "password": 0})
         if user:
+            user["total_reviews"] = result["total_count"]
+            user["positive_reviews"] = result["positive_count"]
             user["negative_reviews_count"] = result["negative_count"]
-            user["avg_review_score"] = round(result["avg_score"], 2)
+            user["avg_review_score"] = round(result["avg_score"], 2) if result["avg_score"] else 0
             users_with_reviews.append(parse_from_mongo(user))
     
-    total = await db.ratings.aggregate([
-        {"$match": {"score": {"$lte": 2}}},
-        {"$group": {"_id": "$rated_user_id"}},
-        {"$count": "total"}
-    ]).to_list(1)
+    # Get total count
+    count_pipeline = [
+        {"$group": {"_id": "$rated_user_id", "negative_count": {"$sum": {"$cond": [{"$lte": ["$score", 2]}, 1, 0]}}}},
+    ]
+    if min_negative > 0:
+        count_pipeline.append({"$match": {"negative_count": {"$gte": min_negative}}})
+    count_pipeline.append({"$count": "total"})
     
+    total = await db.ratings.aggregate(count_pipeline).to_list(1)
     total_count = total[0]["total"] if total else 0
     
     return {
