@@ -240,7 +240,7 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
               }`}
             >
               <User className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="text-sm sm:text-base">Perfil</span>
+              <span className="text-sm sm:text-base">{t('profile.account')}</span>
             </button>
             
             <button
@@ -252,7 +252,7 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
               }`}
             >
               <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="text-sm sm:text-base">Privacidad</span>
+              <span className="text-sm sm:text-base">{t('profile.privacy')}</span>
             </button>
             
             <button
@@ -264,7 +264,7 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
               }`}
             >
               <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="text-sm sm:text-base">Bloqueados</span>
+              <span className="text-sm sm:text-base">{t('profile.blocked')}</span>
             </button>
             
             <button
@@ -276,7 +276,7 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
               }`}
             >
               <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="text-sm sm:text-base">Pagos</span>
+              <span className="text-sm sm:text-base">{t('profile.payments')}</span>
             </button>
           </div>
         </div>
