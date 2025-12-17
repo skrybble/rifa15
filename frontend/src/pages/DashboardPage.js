@@ -528,7 +528,7 @@ const DashboardPage = ({ user, onLogout }) => {
                 <div className="bg-white rounded-xl p-6 shadow-lg">
                   <Ticket className="w-8 h-8 text-sky-600 mb-2" />
                   <p className="text-3xl font-bold text-slate-900">{stats.total_raffles}</p>
-                  <p className="text-slate-600">Rifas Totales</p>
+                  <p className="text-slate-600">{t('dashboard.totalRaffles')}</p>
                 </div>
                 <div className="bg-white rounded-xl p-6 shadow-lg">
                   <TrendingUp className="w-8 h-8 text-green-600 mb-2" />
