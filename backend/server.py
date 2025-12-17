@@ -1597,6 +1597,125 @@ async def get_all_users(
         "total_pages": (total + per_page - 1) // per_page
     }
 
+# ============================================
+# ADMIN - USER DETAIL & HISTORY ENDPOINTS
+# ============================================
+
+@api_router.get("/admin/user/{user_id}")
+async def get_user_detail(user_id: str, current_user: User = Depends(get_current_user)):
+    """Get detailed user information for admin view"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    user = await db.users.find_one({"id": user_id}, {"_id": 0, "password": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    user = parse_from_mongo(user)
+    
+    # Get additional stats
+    user["total_raffles"] = await db.raffles.count_documents({"creator_id": user_id})
+    user["active_raffles"] = await db.raffles.count_documents({"creator_id": user_id, "status": "active"})
+    user["completed_raffles"] = await db.raffles.count_documents({"creator_id": user_id, "status": "completed"})
+    
+    # Get tickets purchased
+    user["tickets_purchased"] = await db.tickets.count_documents({"user_id": user_id})
+    
+    # Get ratings stats
+    ratings_given = await db.ratings.count_documents({"user_id": user_id})
+    ratings_received = await db.ratings.find({"rated_user_id": user_id}, {"_id": 0, "score": 1}).to_list(None)
+    user["ratings_given"] = ratings_given
+    user["ratings_received"] = len(ratings_received)
+    if ratings_received:
+        user["avg_rating"] = round(sum(r["score"] for r in ratings_received) / len(ratings_received), 2)
+    else:
+        user["avg_rating"] = None
+    
+    # Get followers/following counts
+    user["followers_count"] = len(user.get("followers", []))
+    user["following_count"] = len(user.get("following", []))
+    
+    return user
+
+@api_router.get("/admin/user/{user_id}/messages")
+async def get_user_messages_admin(user_id: str, current_user: User = Depends(get_current_user)):
+    """Get all messages for a user (admin super power - bypasses privacy)"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    # Get all messages where user is sender or receiver
+    messages = await db.messages.find(
+        {"$or": [{"from_user_id": user_id}, {"to_user_id": user_id}]},
+        {"_id": 0}
+    ).sort("created_at", -1).limit(100).to_list(100)
+    
+    # Get sender/receiver names
+    for msg in messages:
+        from_user = await db.users.find_one({"id": msg["from_user_id"]}, {"_id": 0, "full_name": 1})
+        to_user = await db.users.find_one({"id": msg["to_user_id"]}, {"_id": 0, "full_name": 1})
+        if from_user:
+            msg["from_user_name"] = from_user["full_name"]
+        if to_user:
+            msg["to_user_name"] = to_user["full_name"]
+    
+    return [parse_from_mongo(m) for m in messages]
+
+@api_router.get("/admin/user/{user_id}/photos")
+async def get_user_photos_admin(user_id: str, current_user: User = Depends(get_current_user)):
+    """Get all photos/images from user's raffles (admin super power)"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    # Get all raffles with images from this user
+    raffles = await db.raffles.find(
+        {"creator_id": user_id, "images": {"$exists": True, "$ne": []}},
+        {"_id": 0, "id": 1, "title": 1, "images": 1, "created_at": 1}
+    ).sort("created_at", -1).to_list(None)
+    
+    photos = []
+    for raffle in raffles:
+        raffle = parse_from_mongo(raffle)
+        for img in raffle.get("images", []):
+            photos.append({
+                "url": img,
+                "raffle_id": raffle["id"],
+                "raffle_title": raffle["title"],
+                "created_at": raffle.get("created_at")
+            })
+    
+    return photos
+
+@api_router.get("/admin/user-history")
+async def get_user_registration_history(
+    page: int = 1,
+    per_page: int = 20,
+    role: Optional[str] = None,
+    current_user: User = Depends(get_current_user)
+):
+    """Get paginated user registration history"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    query = {}
+    if role:
+        query["role"] = role
+    
+    total = await db.users.count_documents(query)
+    skip = (page - 1) * per_page
+    
+    users = await db.users.find(
+        query, 
+        {"_id": 0, "id": 1, "full_name": 1, "email": 1, "role": 1, "created_at": 1, "is_active": 1}
+    ).sort("created_at", -1).skip(skip).limit(per_page).to_list(per_page)
+    
+    return {
+        "data": [parse_from_mongo(u) for u in users],
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "total_pages": (total + per_page - 1) // per_page
+    }
+
 # Messaging System
 @api_router.post("/messages")
 async def send_message(message_data: MessageCreate, current_user: User = Depends(get_current_user)):
