@@ -83,6 +83,24 @@ const DashboardPage = ({ user, onLogout }) => {
   const [suspendDuration, setSuspendDuration] = useState('24');
   const [suspendReason, setSuspendReason] = useState('');
   const [messageContent, setMessageContent] = useState('');
+  
+  // User Detail Modal
+  const [showUserDetailModal, setShowUserDetailModal] = useState(false);
+  const [userDetail, setUserDetail] = useState(null);
+  const [userMessages, setUserMessages] = useState([]);
+  const [userRaffles, setUserRaffles] = useState([]);
+  const [loadingUserDetail, setLoadingUserDetail] = useState(false);
+  
+  // Reviews - Enhanced
+  const [reviewsFilter, setReviewsFilter] = useState('all'); // all, positive, negative
+  const [reviewsSortBy, setReviewsSortBy] = useState('total'); // total, positive, negative
+  const [minNegativeReviews, setMinNegativeReviews] = useState(0);
+  
+  // Statistics - User History
+  const [userHistory, setUserHistory] = useState([]);
+  const [historyTotal, setHistoryTotal] = useState(0);
+  const [historyPage, setHistoryPage] = useState(1);
+  const [historyPerPage, setHistoryPerPage] = useState(20);
 
   // Load data on mount
   useEffect(() => {
