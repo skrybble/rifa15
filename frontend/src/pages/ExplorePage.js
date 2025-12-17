@@ -8,6 +8,7 @@ import ShareButton from '../components/ShareButton';
 import LanguageSelector from '../components/LanguageSelector';
 
 const ExplorePage = ({ user, onLogout }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [raffles, setRaffles] = useState([]);
   const [creators, setCreators] = useState([]);
