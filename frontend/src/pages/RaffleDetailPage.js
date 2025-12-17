@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { API } from '../App';
 import { Ticket, ArrowLeft, Calendar, DollarSign, User, ShoppingCart, AlertCircle, CheckCircle } from 'lucide-react';
 
 const RaffleDetailPage = ({ user, onLogout }) => {
+  const { t } = useTranslation();
   const { raffleId } = useParams();
   const navigate = useNavigate();
   const [raffle, setRaffle] = useState(null);
