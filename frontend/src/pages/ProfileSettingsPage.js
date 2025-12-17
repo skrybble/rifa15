@@ -286,12 +286,12 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
           {/* Profile Tab */}
           {activeTab === 'profile' && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-slate-900">Información del Perfil</h2>
+              <h2 className="text-2xl font-bold text-slate-900">{t('profile.basicInfo')}</h2>
               
               {/* Cover Image */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Imagen de Portada
+                  {t('profile.coverPhoto')}
                 </label>
                 <div className="relative h-48 bg-gradient-to-br from-sky-400 to-blue-600 rounded-lg overflow-hidden">
                   {profileData.cover_image && (
