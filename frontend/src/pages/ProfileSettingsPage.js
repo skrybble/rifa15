@@ -556,21 +556,17 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-slate-900">Bloquear Usuario</h3>
+              <h3 className="text-xl font-bold text-slate-900">{t('profile.blockUserTitle')}</h3>
               <button onClick={() => setShowBlockModal(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-5 h-5" />
               </button>
             </div>
             
-            <p className="text-sm text-slate-600 mb-4">
-              Ingresa el ID del usuario que deseas bloquear. Los usuarios bloqueados no podrán enviarte mensajes ni ver tu perfil.
-            </p>
-            
             <input
               type="text"
               value={userToBlock}
               onChange={(e) => setUserToBlock(e.target.value)}
-              placeholder="ID del usuario"
+              placeholder={t('profile.enterUsername')}
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent mb-4"
             />
             
@@ -579,13 +575,13 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
                 onClick={() => setShowBlockModal(false)}
                 className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
               >
-                Cancelar
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleBlockUser}
                 className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
               >
-                Bloquear
+                {t('profile.block')}
               </button>
             </div>
           </div>
