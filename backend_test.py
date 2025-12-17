@@ -1,16 +1,21 @@
 #!/usr/bin/env python3
 """
-PWA (Progressive Web App) Configuration Testing
-Tests PWA files accessibility, manifest.json content, and index.html meta tags
+RafflyWin Backend API Testing
+Tests PWA configuration and Admin Dashboard enhancement endpoints
 """
 
 import requests
 import json
 import sys
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
-# Base URL from frontend .env (remove /api for frontend files)
-BASE_URL = "https://ticket-win.preview.emergentagent.com"
+# Base URLs
+FRONTEND_URL = "https://ticket-win.preview.emergentagent.com"
+API_BASE_URL = "https://ticket-win.preview.emergentagent.com/api"
+
+# Admin credentials for testing
+ADMIN_EMAIL = "admin@rafflywin.com"
+ADMIN_PASSWORD = "test123"
 
 class PWATestResults:
     def __init__(self):
