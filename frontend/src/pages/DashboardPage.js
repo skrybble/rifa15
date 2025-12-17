@@ -366,25 +366,6 @@ const DashboardPage = ({ user, onLogout }) => {
     }
   };
 
-  // Calendar helpers
-  const getDaysInMonth = (date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const days = [];
-    for (let i = 0; i < firstDay.getDay(); i++) days.push(null);
-    for (let i = 1; i <= lastDay.getDate(); i++) days.push(i);
-    return days;
-  };
-
-  const formatDateKey = (day) => {
-    const year = calendarDate.getFullYear();
-    const month = String(calendarDate.getMonth() + 1).padStart(2, '0');
-    const dayStr = String(day).padStart(2, '0');
-    return `${year}-${month}-${dayStr}`;
-  };
-
   // Pagination component
   const Pagination = ({ page, setPage, total, perPage, setPerPage }) => {
     const totalPages = Math.ceil(total / perPage);
