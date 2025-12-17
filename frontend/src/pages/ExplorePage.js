@@ -231,7 +231,7 @@ const ExplorePage = ({ user, onLogout }) => {
               <Settings className="w-5 h-5" />
               <span>Mi Perfil</span>
             </Link>
-            {user?.role === 'creator' && (
+            {(user?.role === 'creator' || user?.role === 'super_admin') && (
               <Link
                 to="/dashboard"
                 onClick={() => setShowMobileMenu(false)}
@@ -239,16 +239,6 @@ const ExplorePage = ({ user, onLogout }) => {
               >
                 <LayoutDashboard className="w-5 h-5" />
                 <span>Dashboard</span>
-              </Link>
-            )}
-            {user?.role === 'admin' && (
-              <Link
-                to="/admin"
-                onClick={() => setShowMobileMenu(false)}
-                className="flex items-center space-x-3 px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg"
-              >
-                <User className="w-5 h-5" />
-                <span>Admin</span>
               </Link>
             )}
             <button
