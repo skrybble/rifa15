@@ -522,11 +522,11 @@ def test_pwa_file_accessibility(results: TestResults):
                 f"Request failed: {str(e)}"
             )
 
-def test_manifest_json_content(results: PWATestResults):
+def test_manifest_json_content(results: TestResults):
     """Test manifest.json content for required PWA fields"""
     
     try:
-        url = BASE_URL + "/manifest.json"
+        url = FRONTEND_URL + "/manifest.json"
         response = requests.get(url, timeout=10)
         
         if response.status_code != 200:
