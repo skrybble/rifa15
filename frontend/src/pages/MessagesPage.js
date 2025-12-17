@@ -248,7 +248,7 @@ const MessagesPage = ({ user, onLogout }) => {
               className="flex items-center space-x-2 text-slate-700 hover:text-sky-700 font-medium"
             >
               <ArrowLeft className="w-5 h-5" />
-              <span>Volver</span>
+              <span>{t('common.back')}</span>
             </button>
             <h1 className="text-xl font-bold text-slate-900">Mensajes</h1>
             <div className="w-20"></div>
