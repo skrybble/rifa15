@@ -17,6 +17,7 @@ import MessagesPage from './pages/MessagesPage';
 import ProfileSettingsPage from './pages/ProfileSettingsPage';
 import CheckoutPage from './pages/CheckoutPage';
 import TermsPage from './pages/TermsPage';
+import InstallPWA from './components/InstallPWA';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
