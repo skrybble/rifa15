@@ -392,7 +392,7 @@ const RaffleDetailPage = ({ user, onLogout }) => {
                 ) : (
                   <div className="text-center py-8 space-y-4">
                     <p className="text-lg text-slate-700 font-semibold">
-                      Inicia sesión para comprar tickets
+                      {t('auth.login')} {t('raffle.buyTickets').toLowerCase()}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3 justify-center">
                       <Link
