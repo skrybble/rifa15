@@ -331,7 +331,7 @@ const ExplorePage = ({ user, onLogout }) => {
           ) : raffles.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl">
               <Ticket className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <p className="text-lg text-slate-500">No hay rifas activas en este momento</p>
+              <p className="text-lg text-slate-500">{t('home.noRaffles')}</p>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
