@@ -125,9 +125,9 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
         full_name: profileData.full_name,
         description: profileData.description
       });
-      alert('Perfil actualizado exitosamente');
+      alert(t('profile.changesSaved'));
     } catch (error) {
-      alert('Error al actualizar el perfil');
+      alert(t('profile.updateError'));
     } finally {
       setSaving(false);
     }
