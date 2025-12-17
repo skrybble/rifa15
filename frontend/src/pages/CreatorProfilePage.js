@@ -189,11 +189,11 @@ const CreatorProfilePage = ({ user, onLogout }) => {
 
         {/* Active Raffles */}
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">Rifas Activas</h2>
+          <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('creator.activeRaffles')}</h2>
           {raffles.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl">
               <Ticket className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <p className="text-lg text-slate-500">Este creador no tiene rifas activas</p>
+              <p className="text-lg text-slate-500">{t('creator.noActiveRaffles')}</p>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
