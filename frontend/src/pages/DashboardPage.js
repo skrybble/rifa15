@@ -686,21 +686,29 @@ const DashboardPage = ({ user, onLogout }) => {
                 <tbody>
                   {creators.map(c => (
                     <tr key={c.id} className="border-t hover:bg-slate-50">
-                      <td className="p-3 font-medium">{c.full_name}</td>
+                      <td className="p-3">
+                        <button 
+                          onClick={() => loadUserDetail(c.id)}
+                          className="font-medium text-sky-600 hover:text-sky-700 hover:underline flex items-center space-x-1"
+                        >
+                          <span>{c.full_name}</span>
+                          <Eye className="w-3 h-3" />
+                        </button>
+                      </td>
                       <td className="p-3 text-slate-600">{c.email}</td>
                       <td className="p-3 text-center">{c.followers_count || 0}</td>
                       <td className="p-3 text-center">{c.total_raffles || 0}</td>
                       <td className="p-3 text-center">
                         <span className={`px-2 py-1 rounded text-xs ${c.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                          {c.is_active ? 'Activo' : 'Suspendido'}
+                          {c.is_active ? t('common.active') : t('admin.suspended')}
                         </span>
                       </td>
                       <td className="p-3">
                         <div className="flex justify-center space-x-2">
-                          <button onClick={() => { setSelectedUser(c); setShowMessageModal(true); }} className="p-1 hover:bg-sky-100 rounded" title="Mensaje">
+                          <button onClick={() => { setSelectedUser(c); setShowMessageModal(true); }} className="p-1 hover:bg-sky-100 rounded" title={t('admin.sendMessage')}>
                             <Mail className="w-4 h-4 text-sky-600" />
                           </button>
-                          <button onClick={() => { setSelectedUser(c); setShowSuspendModal(true); }} className="p-1 hover:bg-amber-100 rounded" title="Suspender">
+                          <button onClick={() => { setSelectedUser(c); setShowSuspendModal(true); }} className="p-1 hover:bg-amber-100 rounded" title={t('admin.suspend')}>
                             <Ban className="w-4 h-4 text-amber-600" />
                           </button>
                         </div>
