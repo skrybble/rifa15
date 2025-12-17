@@ -733,55 +733,6 @@ const DashboardPage = ({ user, onLogout }) => {
         )}
 
         {/* Admin Calendar */}
-        {activeTab === 'admin-calendar' && (
-          <div className="bg-white rounded-xl shadow p-6">
-            <div className="flex items-center justify-between mb-6">
-              <button onClick={() => setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1))} className="p-2 hover:bg-slate-100 rounded">
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <h2 className="text-xl font-bold">{calendarDate.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}</h2>
-              <button onClick={() => setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1))} className="p-2 hover:bg-slate-100 rounded">
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="grid grid-cols-7 gap-1 mb-2">
-              {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(d => (
-                <div key={d} className="text-center text-sm font-medium text-slate-600 py-2">{d}</div>
-              ))}
-            </div>
-            <div className="grid grid-cols-7 gap-1">
-              {getDaysInMonth(calendarDate).map((day, i) => {
-                const dateKey = day ? formatDateKey(day) : null;
-                const dayRaffles = dateKey ? calendarRaffles[dateKey] : null;
-                return (
-                  <div key={i} onClick={() => day && setSelectedDay(dateKey)}
-                    className={`min-h-[80px] p-2 border rounded ${day ? 'cursor-pointer hover:bg-slate-50' : ''} ${selectedDay === dateKey ? 'ring-2 ring-purple-500' : ''}`}>
-                    {day && (
-                      <>
-                        <span className="text-sm font-medium">{day}</span>
-                        {dayRaffles && dayRaffles.length > 0 && (
-                          <div className="mt-1"><span className="inline-block px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded">{dayRaffles.length}</span></div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-            {selectedDay && calendarRaffles[selectedDay] && (
-              <div className="mt-6 p-4 bg-slate-50 rounded-lg">
-                <h3 className="font-bold mb-3">Rifas del {selectedDay}</h3>
-                {calendarRaffles[selectedDay].map(r => (
-                  <div key={r.id} className="bg-white p-3 rounded border mb-2">
-                    <p className="font-medium">{r.title}</p>
-                    <p className="text-sm text-slate-600">{r.creator_name} - ${r.prize_value}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
         {/* Admin Users */}
         {activeTab === 'admin-users' && (
           <div className="bg-white rounded-xl shadow p-6">
