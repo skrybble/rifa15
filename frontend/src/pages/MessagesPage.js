@@ -250,7 +250,7 @@ const MessagesPage = ({ user, onLogout }) => {
               <ArrowLeft className="w-5 h-5" />
               <span>{t('common.back')}</span>
             </button>
-            <h1 className="text-xl font-bold text-slate-900">Mensajes</h1>
+            <h1 className="text-xl font-bold text-slate-900">{t('messages.title')}</h1>
             <div className="w-20"></div>
           </div>
         </div>
