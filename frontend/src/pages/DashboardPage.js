@@ -677,7 +677,7 @@ const DashboardPage = ({ user, onLogout }) => {
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input type="text" placeholder="Buscar rifa..." value={rafflesSearch}
+                <input type="text" placeholder={t('admin.searchRaffles')} value={rafflesSearch}
                   onChange={(e) => { setRafflesSearch(e.target.value); setRafflesPage(1); }}
                   className="w-full pl-10 pr-4 py-2 border rounded-lg" />
               </div>
