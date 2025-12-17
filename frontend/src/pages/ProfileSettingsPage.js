@@ -93,9 +93,9 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
       });
       
       setProfileData(prev => ({ ...prev, profile_image: response.data.image_url }));
-      alert('Foto de perfil actualizada');
+      alert(t('profile.imageUpdated'));
     } catch (error) {
-      alert('Error al subir la imagen');
+      alert(t('profile.imageError'));
     }
   };
   
