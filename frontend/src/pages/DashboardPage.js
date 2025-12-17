@@ -580,7 +580,7 @@ const DashboardPage = ({ user, onLogout }) => {
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-slate-900 flex items-center">
               <Shield className="w-6 h-6 mr-2 text-purple-600" />
-              Panel de Administración
+              {t('dashboard.adminPanel')}
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-white rounded-xl p-6 shadow">
