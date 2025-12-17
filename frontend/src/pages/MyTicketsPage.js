@@ -107,7 +107,7 @@ const MyTicketsPage = ({ user, onLogout }) => {
                   {isWinner && (
                     <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-6 py-3 flex items-center justify-center space-x-2">
                       <Trophy className="w-6 h-6" />
-                      <span className="font-bold text-lg">¡GANASTE ESTA RIFA!</span>
+                      <span className="font-bold text-lg">{t('tickets.won').toUpperCase()}!</span>
                     </div>
                   )}
 
