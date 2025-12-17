@@ -52,14 +52,14 @@ const ExplorePage = ({ user, onLogout }) => {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-blue-50 overflow-x-hidden">
       {/* Header */}
-      <header className="border-b border-sky-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <Ticket className="w-8 h-8 text-sky-600" />
-              <span className="text-2xl font-bold text-slate-900">RafflyWin</span>
+      <header className="border-b border-sky-100 bg-white/80 backdrop-blur-md sticky top-0 z-50 w-full">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
+          <div className="flex justify-between items-center gap-2">
+            <Link to="/" className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+              <Ticket className="w-6 h-6 sm:w-8 sm:h-8 text-sky-600" />
+              <span className="text-xl sm:text-2xl font-bold text-slate-900">RafflyWin</span>
             </Link>
 
             {user ? (
