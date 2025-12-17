@@ -521,7 +521,7 @@ const DashboardPage = ({ user, onLogout }) => {
         {/* ==================== MI DASHBOARD (Creator View - only for non-super_admin) ==================== */}
         {!isSuperAdmin && (
           <>
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-6">Mi Dashboard de Creador</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-6">{t('dashboard.creatorDashboard')}</h2>
             
             {stats && (
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
