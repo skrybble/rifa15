@@ -65,11 +65,11 @@ const CreatorProfilePage = ({ user, onLogout }) => {
       formData.append('comment', comment);
       
       await axios.post(`${API}/users/${creatorId}/rate`, formData);
-      alert('¡Valoración enviada exitosamente!');
+      alert(t('creator.ratingSent'));
       setShowRatingModal(false);
       loadCreatorData();
     } catch (error) {
-      alert(error.response?.data?.detail || 'Error al enviar valoración');
+      alert(error.response?.data?.detail || t('creator.ratingError'));
     }
   };
 
