@@ -488,7 +488,7 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
                         onClick={() => handleUnblockUser(blockedUser.id)}
                         className="text-red-600 hover:text-red-700 font-medium"
                       >
-                        Desbloquear
+                        {t('profile.unblock')}
                       </button>
                     </div>
                   ))}
@@ -501,20 +501,20 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
           {activeTab === 'payments' && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-slate-900">Métodos de Pago</h2>
+                <h2 className="text-2xl font-bold text-slate-900">{t('profile.paymentMethods')}</h2>
                 <button
                   onClick={() => setShowPaymentModal(true)}
                   className="bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-all flex items-center space-x-2"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Agregar Método</span>
+                  <span>{t('profile.addPaymentMethod')}</span>
                 </button>
               </div>
               
               {paymentMethods.length === 0 ? (
                 <div className="text-center py-12">
                   <CreditCard className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                  <p className="text-slate-500">No tienes métodos de pago guardados</p>
+                  <p className="text-slate-500">{t('profile.noPaymentMethods')}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
