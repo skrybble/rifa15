@@ -348,7 +348,7 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
               {/* Name */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Nombre Completo
+                  {t('profile.fullName')}
                 </label>
                 <input
                   type="text"
@@ -361,13 +361,13 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
               {/* Description */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Biografía
+                  {t('profile.bio')}
                 </label>
                 <textarea
                   value={profileData.description}
                   onChange={(e) => setProfileData(prev => ({ ...prev, description: e.target.value }))}
                   rows={4}
-                  placeholder="Cuéntanos sobre ti..."
+                  placeholder={t('profile.yourDescription')}
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none"
                 />
               </div>
