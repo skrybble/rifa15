@@ -26,7 +26,43 @@
     "language": "Idioma",
     "spanish": "Espanhol",
     "english": "Inglês",
-    "portuguese": "Português"
+    "portuguese": "Português",
+    "or": "ou",
+    "and": "e",
+    "of": "de",
+    "from": "de",
+    "to": "até",
+    "see": "Ver",
+    "seeMore": "Ver mais",
+    "seeAll": "Ver todos",
+    "details": "Detalhes",
+    "description": "Descrição",
+    "price": "Preço",
+    "date": "Data",
+    "status": "Status",
+    "actions": "Ações",
+    "name": "Nome",
+    "email": "E-mail",
+    "phone": "Telefone",
+    "address": "Endereço",
+    "city": "Cidade",
+    "country": "País",
+    "share": "Compartilhar",
+    "copy": "Copiar",
+    "copied": "Copiado!",
+    "download": "Baixar",
+    "upload": "Enviar",
+    "select": "Selecionar",
+    "selected": "selecionados",
+    "none": "Nenhum",
+    "notFound": "Não encontrado",
+    "noResults": "Sem resultados",
+    "tryAgain": "Tentar novamente",
+    "required": "Obrigatório",
+    "optional": "Opcional",
+    "min": "Mínimo",
+    "max": "Máximo",
+    "total": "Total"
   },
   "auth": {
     "login": "Entrar",
@@ -42,7 +78,8 @@
     "fullName": "Nome completo",
     "welcomeBack": "Bem-vindo de volta!",
     "loginSubtitle": "Entre na sua conta para continuar",
-    "registerSubtitle": "Crie sua conta e comece a participar",
+    "registerTitle": "Crie sua conta",
+    "registerSubtitle": "Junte-se à comunidade de sorteios",
     "accountType": "Tipo de conta",
     "user": "Usuário",
     "creator": "Criador",
@@ -50,17 +87,38 @@
     "creatorDesc": "Crie e gerencie sorteios",
     "termsAccept": "Aceito os",
     "termsAndConditions": "Termos e Condições",
+    "termsRequired": "Você deve aceitar os Termos e Condições para criar sua conta",
     "loginError": "Erro ao entrar",
-    "registerError": "Erro ao cadastrar"
+    "registerError": "Erro ao cadastrar",
+    "selectInterests": "Selecione seus interesses",
+    "minInterests": "Selecione pelo menos 3 interesses",
+    "interestsHelp": "Isso nos ajuda a mostrar sorteios relevantes"
+  },
+  "interests": {
+    "technology": "Tecnologia",
+    "sports": "Esportes",
+    "gaming": "Gaming",
+    "music": "Música",
+    "art": "Arte",
+    "fashion": "Moda",
+    "travel": "Viagens",
+    "food": "Gastronomia",
+    "fitness": "Fitness",
+    "beauty": "Beleza",
+    "education": "Educação",
+    "entertainment": "Entretenimento",
+    "lifestyle": "Lifestyle",
+    "photography": "Fotografia"
   },
   "nav": {
     "explore": "Explorar",
     "myTickets": "Meus Bilhetes",
     "messages": "Mensagens",
     "dashboard": "Painel",
-    "profile": "Perfil",
+    "profile": "Meu Perfil",
     "settings": "Configurações",
-    "notifications": "Notificações"
+    "notifications": "Notificações",
+    "home": "Início"
   },
   "home": {
     "hero": "A plataforma de sorteios para criadores",
@@ -77,12 +135,15 @@
     "endingSoon": "Terminando em breve",
     "popular": "Populares",
     "priceLowHigh": "Preço: menor para maior",
-    "priceHighLow": "Preço: maior para menor"
+    "priceHighLow": "Preço: maior para menor",
+    "hello": "Olá",
+    "discoverRaffles": "Descubra os sorteios mais emocionantes"
   },
   "raffle": {
     "title": "Título",
     "description": "Descrição",
     "tickets": "Bilhetes",
+    "ticket": "Bilhete",
     "ticketsSold": "Bilhetes vendidos",
     "ticketsAvailable": "Bilhetes disponíveis",
     "ticketPrice": "Preço do bilhete",
@@ -121,7 +182,21 @@
     "categories": "Categorias",
     "dateWarning": "Já existem sorteios programados para esta data",
     "createSuccess": "Sorteio criado com sucesso!",
-    "createError": "Erro ao criar sorteio"
+    "createError": "Erro ao criar sorteio",
+    "viewDetails": "Ver detalhes",
+    "shareRaffle": "Compartilhar sorteio",
+    "prize": "Prêmio",
+    "progress": "Progresso",
+    "timeRemaining": "Tempo restante",
+    "selectYourTickets": "Selecione seus bilhetes",
+    "quickSelect": "Seleção rápida",
+    "random": "Aleatório",
+    "clearSelection": "Limpar seleção",
+    "proceedToPayment": "Prosseguir para pagamento",
+    "ticketNumber": "Número do bilhete",
+    "yourTickets": "Seus bilhetes",
+    "noTicketsYet": "Você ainda não tem bilhetes",
+    "purchaseDate": "Data da compra"
   },
   "dashboard": {
     "title": "Painel",
@@ -166,18 +241,37 @@
     "profilePicture": "Foto de perfil",
     "coverPhoto": "Foto de capa",
     "updateSuccess": "Perfil atualizado",
-    "updateError": "Erro ao atualizar"
+    "updateError": "Erro ao atualizar",
+    "account": "Conta",
+    "privacy": "Privacidade",
+    "security": "Segurança",
+    "blocked": "Bloqueados",
+    "personalInfo": "Informações pessoais",
+    "contactInfo": "Informações de contato",
+    "showEmail": "Mostrar e-mail publicamente",
+    "showPhone": "Mostrar telefone publicamente",
+    "allowMessages": "Permitir mensagens de qualquer pessoa",
+    "blockUser": "Bloquear usuário",
+    "unblockUser": "Desbloquear usuário",
+    "blockedUsers": "Usuários bloqueados",
+    "noBlockedUsers": "Você não tem usuários bloqueados",
+    "raffles": "Sorteios",
+    "rating": "Avaliação"
   },
   "messages": {
     "title": "Mensagens",
     "newMessage": "Nova mensagem",
     "noMessages": "Você não tem mensagens",
+    "noConversations": "Você não tem conversas",
     "typeMessage": "Digite uma mensagem...",
     "send": "Enviar",
     "online": "Online",
     "offline": "Offline",
     "lastSeen": "Visto por último",
-    "searchConversations": "Buscar conversas..."
+    "searchConversations": "Buscar conversas...",
+    "startConversation": "Iniciar conversa",
+    "selectConversation": "Selecione uma conversa",
+    "conversations": "Conversas"
   },
   "tickets": {
     "myTickets": "Meus Bilhetes",
@@ -188,7 +282,12 @@
     "won": "Vencedor",
     "lost": "Não ganhou",
     "pending": "Pendente",
-    "viewRaffle": "Ver sorteio"
+    "viewRaffle": "Ver sorteio",
+    "activeTickets": "Bilhetes Ativos",
+    "completedTickets": "Bilhetes Finalizados",
+    "wonTickets": "Bilhetes Vencedores",
+    "totalSpent": "Total gasto",
+    "totalWon": "Total ganho"
   },
   "admin": {
     "manageCreators": "Gerenciar Criadores",
@@ -231,7 +330,9 @@
     "actions": "Ações",
     "rafflesOfDay": "Sorteios do dia",
     "configuration": "Configuração",
-    "alertAfter": "Alertar após"
+    "alertAfter": "Alertar após",
+    "recentDate": "Data (recente)",
+    "oldDate": "Data (antigo)"
   },
   "pwa": {
     "installTitle": "Instalar RafflyWin",
@@ -250,5 +351,41 @@
     "about": "Sobre",
     "help": "Ajuda",
     "copyright": "© 2024 RafflyWin. Todos os direitos reservados."
+  },
+  "checkout": {
+    "title": "Finalizar Compra",
+    "summary": "Resumo do pedido",
+    "paymentMethod": "Método de pagamento",
+    "creditCard": "Cartão de crédito",
+    "paypal": "PayPal",
+    "processing": "Processando...",
+    "pay": "Pagar",
+    "success": "Pagamento realizado!",
+    "error": "Erro no pagamento"
+  },
+  "terms": {
+    "title": "Termos e Condições",
+    "lastUpdate": "Última atualização",
+    "acceptance": "Aceitação dos termos",
+    "use": "Uso do serviço",
+    "privacy": "Privacidade",
+    "modifications": "Modificações"
+  },
+  "creator": {
+    "profile": "Perfil do Criador",
+    "aboutMe": "Sobre mim",
+    "myRaffles": "Meus Sorteios",
+    "activeRaffles": "Sorteios Ativos",
+    "completedRaffles": "Sorteios Concluídos",
+    "contactCreator": "Contatar Criador",
+    "becomeCreator": "Tornar-se Criador"
+  },
+  "time": {
+    "justNow": "Agora mesmo",
+    "minutesAgo": "há {{count}} minutos",
+    "hoursAgo": "há {{count}} horas",
+    "daysAgo": "há {{count}} dias",
+    "today": "Hoje",
+    "yesterday": "Ontem"
   }
 }
