@@ -533,7 +533,7 @@ const DashboardPage = ({ user, onLogout }) => {
                 <div className="bg-white rounded-xl p-6 shadow-lg">
                   <TrendingUp className="w-8 h-8 text-green-600 mb-2" />
                   <p className="text-3xl font-bold text-slate-900">{stats.active_raffles}</p>
-                  <p className="text-slate-600">Rifas Activas</p>
+                  <p className="text-slate-600">{t('dashboard.activeRaffles')}</p>
                 </div>
                 <div className="bg-white rounded-xl p-6 shadow-lg">
                   <Users className="w-8 h-8 text-purple-600 mb-2" />
@@ -596,7 +596,7 @@ const DashboardPage = ({ user, onLogout }) => {
               <div className="bg-white rounded-xl p-6 shadow">
                 <Ticket className="w-8 h-8 text-green-600 mb-2" />
                 <p className="text-3xl font-bold">{adminStats.active_raffles}</p>
-                <p className="text-slate-600">Rifas Activas</p>
+                <p className="text-slate-600">{t('dashboard.activeRaffles')}</p>
               </div>
               <div className="bg-white rounded-xl p-6 shadow">
                 <DollarSign className="w-8 h-8 text-amber-600 mb-2" />
