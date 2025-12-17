@@ -610,7 +610,7 @@ const DashboardPage = ({ user, onLogout }) => {
         {/* Admin Creators */}
         {activeTab === 'admin-creators' && (
           <div className="bg-white rounded-xl shadow p-6">
-            <h2 className="text-xl font-bold mb-4">Gestión de Creadores</h2>
+            <h2 className="text-xl font-bold mb-4">{t('admin.manageCreators')}</h2>
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
