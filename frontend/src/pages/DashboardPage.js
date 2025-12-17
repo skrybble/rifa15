@@ -889,7 +889,15 @@ const DashboardPage = ({ user, onLogout }) => {
                 {reviewAlerts.map(u => (
                   <div key={u.id} className="bg-white p-4 rounded-lg border border-red-200 mb-2">
                     <div className="flex justify-between items-center">
-                      <div><p className="font-medium">{u.full_name}</p><p className="text-sm text-slate-600">{u.email}</p></div>
+                      <div>
+                        <button 
+                          onClick={() => openUserDetail(u.id)}
+                          className="font-medium text-sky-600 hover:underline"
+                        >
+                          {u.full_name}
+                        </button>
+                        <p className="text-sm text-slate-600">{u.email}</p>
+                      </div>
                       <button onClick={() => { setSelectedUser(u); setShowSuspendModal(true); }} className="px-3 py-1 bg-red-600 text-white rounded text-sm">Suspender</button>
                     </div>
                   </div>
@@ -897,16 +905,79 @@ const DashboardPage = ({ user, onLogout }) => {
               </div>
             )}
             <div className="bg-white rounded-xl shadow p-6">
-              <h2 className="text-lg font-bold mb-4">Usuarios por Reseñas Negativas</h2>
-              {usersByReviews.length === 0 ? (
-                <p className="text-slate-500">No hay usuarios con reseñas negativas</p>
-              ) : (
-                usersByReviews.map(u => (
-                  <div key={u.id} className="flex justify-between items-center p-4 bg-slate-50 rounded-lg mb-2">
-                    <div><p className="font-medium">{u.full_name}</p><p className="text-sm text-slate-600">{u.email}</p></div>
-                    <div className="text-right"><p className="font-bold text-red-600">{u.negative_reviews_count} negativas</p></div>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <h2 className="text-lg font-bold flex items-center">
+                  <Star className="w-5 h-5 mr-2 text-amber-500" />
+                  Usuarios por Reseñas
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  <select 
+                    value={reviewsFilter} 
+                    onChange={(e) => setReviewsFilter(e.target.value)}
+                    className="border rounded-lg px-3 py-2 text-sm"
+                  >
+                    <option value="all">Todas las reseñas</option>
+                    <option value="positive">Solo positivas (4-5⭐)</option>
+                    <option value="negative">Solo negativas (1-2⭐)</option>
+                  </select>
+                  <select 
+                    value={reviewsSortBy} 
+                    onChange={(e) => setReviewsSortBy(e.target.value)}
+                    className="border rounded-lg px-3 py-2 text-sm"
+                  >
+                    <option value="total">Ordenar: Total</option>
+                    <option value="negative">Ordenar: Negativas</option>
+                    <option value="positive">Ordenar: Positivas</option>
+                  </select>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-slate-600">Min negativas:</span>
+                    <input 
+                      type="number" 
+                      value={minNegativeReviews} 
+                      onChange={(e) => setMinNegativeReviews(parseInt(e.target.value) || 0)}
+                      className="w-16 border rounded-lg px-2 py-2 text-sm"
+                      min="0"
+                    />
                   </div>
-                ))
+                </div>
+              </div>
+              {usersByReviews.length === 0 ? (
+                <p className="text-slate-500 text-center py-8">No hay usuarios con reseñas</p>
+              ) : (
+                <div className="space-y-2">
+                  {usersByReviews.map(u => (
+                    <div key={u.id} className="flex justify-between items-center p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                      <div className="flex items-center space-x-3">
+                        <button 
+                          onClick={() => openUserDetail(u.id)}
+                          className="font-medium text-sky-600 hover:underline"
+                        >
+                          {u.full_name}
+                        </button>
+                        <span className={`px-2 py-0.5 rounded text-xs ${
+                          u.role === 'creator' ? 'bg-purple-100 text-purple-700' : 'bg-sky-100 text-sky-700'
+                        }`}>
+                          {u.role === 'creator' ? 'Creador' : 'Usuario'}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-4 text-sm">
+                        <div className="flex items-center space-x-1">
+                          <ThumbsUp className="w-4 h-4 text-green-600" />
+                          <span className="font-medium text-green-600">{u.positive_reviews || 0}</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <ThumbsDown className="w-4 h-4 text-red-600" />
+                          <span className="font-medium text-red-600">{u.negative_reviews_count || 0}</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Star className="w-4 h-4 text-amber-500" />
+                          <span className="font-medium">{u.avg_review_score || '-'}</span>
+                        </div>
+                        <span className="text-slate-500">({u.total_reviews || 0} total)</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>
