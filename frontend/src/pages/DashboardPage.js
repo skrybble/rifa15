@@ -238,17 +238,6 @@ const DashboardPage = ({ user, onLogout }) => {
     }
   };
 
-  const loadCalendar = async () => {
-    try {
-      const year = calendarDate.getFullYear();
-      const month = calendarDate.getMonth() + 1;
-      const res = await axios.get(`${API}/admin/raffles/calendar?year=${year}&month=${month}`);
-      setCalendarRaffles(res.data);
-    } catch (error) {
-      console.error('Error loading calendar:', error);
-    }
-  };
-
   const loadStatistics = async () => {
     try {
       const res = await axios.get(`${API}/admin/statistics?period=${statisticsPeriod}`);
