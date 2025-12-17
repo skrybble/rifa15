@@ -386,7 +386,16 @@
     "activeRaffles": "Sorteios Ativos",
     "completedRaffles": "Sorteios Concluídos",
     "contactCreator": "Contatar Criador",
-    "becomeCreator": "Tornar-se Criador"
+    "becomeCreator": "Tornar-se Criador",
+    "notFound": "Criador não encontrado",
+    "noActiveRaffles": "Este criador não tem sorteios ativos",
+    "ratings": "avaliações",
+    "rateCreator": "Avaliar",
+    "ratingSent": "Avaliação enviada com sucesso!",
+    "ratingError": "Erro ao enviar avaliação",
+    "yourRating": "Sua avaliação",
+    "addComment": "Adicionar comentário (opcional)",
+    "sendRating": "Enviar Avaliação"
   },
   "time": {
     "justNow": "Agora mesmo",
