@@ -382,7 +382,7 @@ const RaffleDetailPage = ({ user, onLogout }) => {
                       className="w-full py-4 bg-sky-600 text-white rounded-lg font-bold text-lg hover:bg-sky-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                     >
                       <ShoppingCart className="w-6 h-6" />
-                      <span>Comprar Tickets</span>
+                      <span>{t('raffle.buyTickets')}</span>
                     </button>
 
                     <p className="text-xs text-center text-slate-500">
