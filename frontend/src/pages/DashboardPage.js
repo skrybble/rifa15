@@ -101,10 +101,6 @@ const DashboardPage = ({ user, onLogout }) => {
   }, [activeTab, rafflesPage, rafflesPerPage, rafflesSearch, rafflesSortBy, rafflesSortOrder, rafflesStatus]);
 
   useEffect(() => {
-    if (isSuperAdmin && activeTab === 'admin-calendar') loadCalendar();
-  }, [activeTab, calendarDate]);
-
-  useEffect(() => {
     if (isSuperAdmin && activeTab === 'admin-statistics') loadStatistics();
   }, [activeTab, statisticsPeriod]);
 
