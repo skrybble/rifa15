@@ -837,23 +837,31 @@ const DashboardPage = ({ user, onLogout }) => {
                 <tbody>
                   {allUsers.map(u => (
                     <tr key={u.id} className="border-t hover:bg-slate-50">
-                      <td className="p-3 font-medium">{u.full_name}</td>
+                      <td className="p-3">
+                        <button 
+                          onClick={() => loadUserDetail(u.id)}
+                          className="font-medium text-sky-600 hover:text-sky-700 hover:underline flex items-center space-x-1"
+                        >
+                          <span>{u.full_name}</span>
+                          <Eye className="w-3 h-3" />
+                        </button>
+                      </td>
                       <td className="p-3 text-slate-600">{u.email}</td>
                       <td className="p-3 text-center capitalize">{u.role}</td>
                       <td className="p-3 text-center">
                         <span className={`px-2 py-1 rounded text-xs ${u.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                          {u.is_active ? 'Activo' : 'Suspendido'}
+                          {u.is_active ? t('common.active') : t('admin.suspended')}
                         </span>
                       </td>
                       <td className="p-3">
                         <div className="flex justify-center space-x-1">
-                          <button onClick={() => { setSelectedUser(u); setShowMessageModal(true); }} className="p-1 hover:bg-sky-100 rounded"><Mail className="w-4 h-4 text-sky-600" /></button>
+                          <button onClick={() => { setSelectedUser(u); setShowMessageModal(true); }} className="p-1 hover:bg-sky-100 rounded" title={t('admin.sendMessage')}><Mail className="w-4 h-4 text-sky-600" /></button>
                           {u.is_active ? (
-                            <button onClick={() => { setSelectedUser(u); setShowSuspendModal(true); }} className="p-1 hover:bg-amber-100 rounded"><Ban className="w-4 h-4 text-amber-600" /></button>
+                            <button onClick={() => { setSelectedUser(u); setShowSuspendModal(true); }} className="p-1 hover:bg-amber-100 rounded" title={t('admin.suspend')}><Ban className="w-4 h-4 text-amber-600" /></button>
                           ) : (
-                            <button onClick={() => handleUnsuspendUser(u.id)} className="p-1 hover:bg-green-100 rounded"><RefreshCw className="w-4 h-4 text-green-600" /></button>
+                            <button onClick={() => handleUnsuspendUser(u.id)} className="p-1 hover:bg-green-100 rounded" title={t('admin.unsuspend')}><RefreshCw className="w-4 h-4 text-green-600" /></button>
                           )}
-                          <button onClick={() => handleDeleteUser(u.id)} className="p-1 hover:bg-red-100 rounded"><Trash2 className="w-4 h-4 text-red-600" /></button>
+                          <button onClick={() => handleDeleteUser(u.id)} className="p-1 hover:bg-red-100 rounded" title={t('common.delete')}><Trash2 className="w-4 h-4 text-red-600" /></button>
                         </div>
                       </td>
                     </tr>
