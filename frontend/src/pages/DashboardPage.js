@@ -438,13 +438,9 @@ const DashboardPage = ({ user, onLogout }) => {
     );
   }
 
-  // Define tabs - creator tabs for all, admin tabs only for super_admin
-  const creatorTabs = [
-    { id: 'mi-dashboard', label: 'Mi Dashboard', icon: Home },
-  ];
-
+  // Define tabs - admin tabs only for super_admin, creator tabs for creators
   const adminTabs = [
-    { id: 'admin-overview', label: 'Resumen Admin', icon: BarChart3 },
+    { id: 'admin-overview', label: 'Resumen', icon: BarChart3 },
     { id: 'admin-creators', label: 'Creadores', icon: Users },
     { id: 'admin-raffles', label: 'Todas las Rifas', icon: Ticket },
     { id: 'admin-calendar', label: 'Calendario', icon: Calendar },
@@ -454,7 +450,7 @@ const DashboardPage = ({ user, onLogout }) => {
     { id: 'admin-earnings', label: 'Ganancias', icon: DollarSign },
   ];
 
-  const allTabs = isSuperAdmin ? [...creatorTabs, ...adminTabs] : creatorTabs;
+  const allTabs = isSuperAdmin ? adminTabs : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-blue-50">
