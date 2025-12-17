@@ -84,7 +84,7 @@ const CreatorProfilePage = ({ user, onLogout }) => {
   if (!creator) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-50">
-        <p className="text-slate-600">Creador no encontrado</p>
+        <p className="text-slate-600">{t('creator.notFound')}</p>
       </div>
     );
   }
