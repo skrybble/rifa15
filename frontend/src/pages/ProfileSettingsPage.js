@@ -378,7 +378,7 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
                 className="w-full bg-sky-600 text-white px-6 py-3 rounded-lg hover:bg-sky-700 transition-all disabled:opacity-50 flex items-center justify-center space-x-2"
               >
                 <Save className="w-5 h-5" />
-                <span>{saving ? 'Guardando...' : 'Guardar Cambios'}</span>
+                <span>{saving ? t('common.loading') : t('profile.saveChanges')}</span>
               </button>
             </div>
           )}
@@ -386,7 +386,7 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
           {/* Privacy Tab */}
           {activeTab === 'privacy' && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-slate-900">Configuración de Privacidad</h2>
+              <h2 className="text-2xl font-bold text-slate-900">{t('profile.privacySettings')}</h2>
               
               <div className="space-y-4">
                 {/* Notifications */}
