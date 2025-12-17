@@ -694,7 +694,7 @@ def test_index_html_pwa_meta_tags(results: TestResults):
             f"Request failed: {str(e)}"
         )
 
-def test_additional_pwa_icons(results: PWATestResults):
+def test_additional_pwa_icons(results: TestResults):
     """Test additional PWA icon sizes for completeness"""
     
     additional_icons = [
@@ -710,7 +710,7 @@ def test_additional_pwa_icons(results: PWATestResults):
     
     for icon_path in additional_icons:
         try:
-            url = BASE_URL + icon_path
+            url = FRONTEND_URL + icon_path
             response = requests.get(url, timeout=10)
             
             if response.status_code == 200:
