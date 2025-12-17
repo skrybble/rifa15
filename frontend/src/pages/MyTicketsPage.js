@@ -77,13 +77,13 @@ const MyTicketsPage = ({ user, onLogout }) => {
         ) : tickets.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl">
             <Ticket className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <p className="text-lg text-slate-500 mb-6">Aún no has comprado tickets</p>
+            <p className="text-lg text-slate-500 mb-6">{t('tickets.noTickets')}</p>
             <Link
               to="/explore"
               data-testid="explore-link"
               className="inline-block px-6 py-3 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition-all"
             >
-              Explorar Rifas
+              {t('nav.explore')}
             </Link>
           </div>
         ) : (
