@@ -297,7 +297,7 @@ const ExplorePage = ({ user, onLogout }) => {
                       </div>
                       <div className="flex items-center space-x-1 text-sm text-slate-500 mb-3">
                         <Heart className="w-4 h-4" />
-                        <span>{creator.followers?.length || 0} seguidores</span>
+                        <span>{creator.followers?.length || 0} {t('profile.followers').toLowerCase()}</span>
                       </div>
                     </div>
                   </Link>
