@@ -244,11 +244,11 @@ const CreatorProfilePage = ({ user, onLogout }) => {
       {showRatingModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6">
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">Valorar Creador</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mb-4">{t('creator.rateCreator')}</h2>
             
             <div className="mb-4">
               <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Calificación (1-5 estrellas)
+                {t('creator.yourRating')}
               </label>
               <div className="flex space-x-2">
                 {[1, 2, 3, 4, 5].map((star) => (
