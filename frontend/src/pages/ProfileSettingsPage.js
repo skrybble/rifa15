@@ -442,7 +442,7 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
                 className="w-full bg-sky-600 text-white px-6 py-3 rounded-lg hover:bg-sky-700 transition-all disabled:opacity-50 flex items-center justify-center space-x-2"
               >
                 <Save className="w-5 h-5" />
-                <span>{saving ? 'Guardando...' : 'Guardar Cambios'}</span>
+                <span>{saving ? t('common.loading') : t('profile.saveChanges')}</span>
               </button>
             </div>
           )}
@@ -451,20 +451,20 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
           {activeTab === 'blocked' && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-slate-900">Usuarios Bloqueados</h2>
+                <h2 className="text-2xl font-bold text-slate-900">{t('profile.blockedUsers')}</h2>
                 <button
                   onClick={() => setShowBlockModal(true)}
                   className="bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-all flex items-center space-x-2"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Bloquear Usuario</span>
+                  <span>{t('profile.blockUser')}</span>
                 </button>
               </div>
               
               {blockedUsers.length === 0 ? (
                 <div className="text-center py-12">
                   <Shield className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                  <p className="text-slate-500">No has bloqueado a ningún usuario</p>
+                  <p className="text-slate-500">{t('profile.noBlockedUsers')}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
