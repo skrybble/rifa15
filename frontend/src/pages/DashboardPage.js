@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { API } from '../App';
 import { 
   Ticket, ArrowLeft, Plus, TrendingUp, DollarSign, Users, Calendar, X,
   Search, ChevronLeft, ChevronRight, Mail, Ban, Trash2, RefreshCw, Settings,
-  AlertTriangle, BarChart3, Play, Shield, Home
+  AlertTriangle, BarChart3, Play, Shield, Home, Globe
 } from 'lucide-react';
+import LanguageSelector from '../components/LanguageSelector';
 
 const DashboardPage = ({ user, onLogout }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const isSuperAdmin = user?.role === 'super_admin';
   
