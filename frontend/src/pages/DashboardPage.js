@@ -724,7 +724,6 @@ const DashboardPage = ({ user, onLogout }) => {
           </div>
         )}
 
-        {/* Admin Calendar */}
         {/* Admin Users */}
         {activeTab === 'admin-users' && (
           <div className="bg-white rounded-xl shadow p-6">
