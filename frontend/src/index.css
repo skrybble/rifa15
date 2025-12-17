@@ -5,7 +5,17 @@
 /* Prevent horizontal scroll on mobile */
 html, body {
     overflow-x: hidden;
-    max-width: 100vw;
+    max-width: 100%;
+    width: 100%;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* Ensure all containers respect viewport */
+.max-w-7xl {
+    max-width: 100%;
 }
 
 body {
