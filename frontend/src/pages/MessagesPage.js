@@ -525,7 +525,7 @@ const MessagesPage = ({ user, onLogout }) => {
               <div className="flex-1 flex items-center justify-center">
                 <div className="text-center">
                   <Mail className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                  <p className="text-lg text-slate-500">Selecciona una conversación</p>
+                  <p className="text-lg text-slate-500">{t('messages.selectConversation')}</p>
                   <p className="text-sm text-slate-400">para ver los mensajes</p>
                 </div>
               </div>
