@@ -59,11 +59,7 @@ const DashboardPage = ({ user, onLogout }) => {
   const [rafflesSortBy, setRafflesSortBy] = useState('created_at');
   const [rafflesSortOrder, setRafflesSortOrder] = useState('desc');
   const [rafflesStatus, setRafflesStatus] = useState('');
-  
-  // Admin - Calendar
-  const [calendarDate, setCalendarDate] = useState(new Date());
-  const [calendarRaffles, setCalendarRaffles] = useState({});
-  const [selectedDay, setSelectedDay] = useState(null);
+  const [expandedRaffle, setExpandedRaffle] = useState(null);
   
   // Admin - Users
   const [allUsers, setAllUsers] = useState([]);
