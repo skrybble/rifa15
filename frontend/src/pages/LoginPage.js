@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { API } from '../App';
 import { Ticket, Mail, Lock, AlertCircle } from 'lucide-react';
+import LanguageSelector from '../components/LanguageSelector';
 
 const LoginPage = ({ onLogin }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
@@ -21,14 +24,13 @@ const LoginPage = ({ onLogin }) => {
     try {
       const response = await axios.post(`${API}/auth/login`, formData);
       onLogin(response.data.token, response.data.user);
-      // Super admin goes to dashboard, others to explore
       if (response.data.user.role === 'super_admin') {
         navigate('/dashboard');
       } else {
         navigate('/explore');
       }
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error al iniciar sesión');
+      setError(err.response?.data?.detail || t('auth.loginError'));
     } finally {
       setLoading(false);
     }
@@ -38,14 +40,19 @@ const LoginPage = ({ onLogin }) => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-blue-50 flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl shadow-xl p-8">
+          {/* Language Selector */}
+          <div className="flex justify-end mb-4">
+            <LanguageSelector />
+          </div>
+
           {/* Logo */}
           <div className="flex items-center justify-center space-x-2 mb-8">
             <Ticket className="w-10 h-10 text-sky-600" />
             <span className="text-3xl font-bold text-slate-900">RafflyWin</span>
           </div>
 
-          <h1 className="text-2xl font-bold text-center text-slate-900 mb-2">Bienvenido de vuelta</h1>
-          <p className="text-center text-slate-600 mb-8">Ingresa a tu cuenta para continuar</p>
+          <h1 className="text-2xl font-bold text-center text-slate-900 mb-2">{t('auth.welcomeBack')}</h1>
+          <p className="text-center text-slate-600 mb-8">{t('auth.loginSubtitle')}</p>
 
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center space-x-2 text-red-700">
@@ -57,7 +64,7 @@ const LoginPage = ({ onLogin }) => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Correo Electrónico
+                {t('auth.email')}
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -75,7 +82,7 @@ const LoginPage = ({ onLogin }) => {
 
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Contraseña
+                {t('auth.password')}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -97,14 +104,14 @@ const LoginPage = ({ onLogin }) => {
               disabled={loading}
               className="w-full py-3 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+              {loading ? t('common.loading') : t('auth.login')}
             </button>
           </form>
 
           <p className="mt-6 text-center text-slate-600">
-            ¿No tienes cuenta?{' '}
+            {t('auth.noAccount')}{' '}
             <Link to="/register" className="text-sky-600 font-semibold hover:text-sky-700">
-              Regístrate aquí
+              {t('auth.register')}
             </Link>
           </p>
         </div>
