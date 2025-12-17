@@ -514,8 +514,8 @@ const DashboardPage = ({ user, onLogout }) => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
-        {/* ==================== MI DASHBOARD (Creator View) ==================== */}
-        {activeTab === 'mi-dashboard' && (
+        {/* ==================== MI DASHBOARD (Creator View - only for non-super_admin) ==================== */}
+        {!isSuperAdmin && (
           <>
             <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-6">Mi Dashboard de Creador</h2>
             
