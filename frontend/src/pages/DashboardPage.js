@@ -6,7 +6,8 @@ import { API } from '../App';
 import { 
   Ticket, ArrowLeft, Plus, TrendingUp, DollarSign, Users, Calendar, X,
   Search, ChevronLeft, ChevronRight, Mail, Ban, Trash2, RefreshCw, Settings,
-  AlertTriangle, BarChart3, Play, Shield, Home, Globe
+  AlertTriangle, BarChart3, Play, Shield, Home, Globe, Eye, ExternalLink,
+  MessageSquare, Image, Star, ThumbsUp, ThumbsDown, UserCheck, Clock
 } from 'lucide-react';
 import LanguageSelector from '../components/LanguageSelector';
 
