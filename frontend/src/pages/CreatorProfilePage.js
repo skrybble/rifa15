@@ -267,14 +267,14 @@ const CreatorProfilePage = ({ user, onLogout }) => {
 
             <div className="mb-6">
               <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Comentario (opcional)
+                {t('creator.addComment')}
               </label>
               <textarea
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 rows={4}
                 className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-                placeholder="Comparte tu experiencia..."
+                placeholder="..."
               />
             </div>
 
@@ -283,14 +283,14 @@ const CreatorProfilePage = ({ user, onLogout }) => {
                 onClick={() => setShowRatingModal(false)}
                 className="flex-1 px-4 py-3 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200 transition-all"
               >
-                Cancelar
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleRating}
                 data-testid="submit-rating-btn"
                 className="flex-1 px-4 py-3 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition-all"
               >
-                Enviar
+                {t('creator.sendRating')}
               </button>
             </div>
           </div>
