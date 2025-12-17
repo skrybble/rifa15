@@ -303,7 +303,7 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
                   )}
                   <label className="absolute bottom-4 right-4 cursor-pointer bg-white text-sky-600 px-4 py-2 rounded-lg shadow-lg hover:bg-slate-50 transition-colors flex items-center space-x-2">
                     <Camera className="w-4 h-4" />
-                    <span className="text-sm font-medium">Cambiar Portada</span>
+                    <span className="text-sm font-medium">{t('profile.coverPhoto')}</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -317,7 +317,7 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
               {/* Profile Image */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Foto de Perfil
+                  {t('profile.profilePicture')}
                 </label>
                 <div className="flex items-center space-x-4">
                   <div className="relative">
