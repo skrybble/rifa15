@@ -473,12 +473,14 @@ const DashboardPage = ({ user, onLogout }) => {
               {isSuperAdmin && (
                 <button onClick={handleManualDraw} className="flex items-center space-x-2 px-3 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700">
                   <Play className="w-4 h-4" />
-                  <span className="hidden sm:inline">Sorteo</span>
+                  <span className="hidden sm:inline">Sorteo Manual</span>
                 </button>
               )}
-              <button onClick={() => setShowCreateModal(true)} className="flex items-center space-x-2 px-4 py-2 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700">
-                <Plus className="w-5 h-5" /><span className="hidden sm:inline">Nueva Rifa</span>
-              </button>
+              {!isSuperAdmin && (
+                <button onClick={() => setShowCreateModal(true)} className="flex items-center space-x-2 px-4 py-2 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700">
+                  <Plus className="w-5 h-5" /><span className="hidden sm:inline">Nueva Rifa</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
