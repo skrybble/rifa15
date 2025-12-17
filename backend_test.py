@@ -732,12 +732,13 @@ def test_additional_pwa_icons(results: TestResults):
             f"Only {accessible_icons}/{len(additional_icons)} additional icons accessible"
         )
 
-def main():
+def run_pwa_tests():
+    """Run PWA configuration tests"""
     print("Starting PWA Configuration Tests...")
-    print(f"Base URL: {BASE_URL}")
+    print(f"Frontend URL: {FRONTEND_URL}")
     print("="*60)
     
-    results = PWATestResults()
+    results = TestResults()
     
     # Run all PWA tests
     print("Testing PWA file accessibility...")
@@ -753,10 +754,70 @@ def main():
     test_additional_pwa_icons(results)
     
     # Print results
-    results.print_summary()
+    results.print_summary("PWA")
+    
+    return results.failed == 0
+
+def run_admin_dashboard_tests():
+    """Run Admin Dashboard enhancement tests"""
+    print("\n" + "="*60)
+    print("Starting Admin Dashboard Enhancement Tests...")
+    print(f"API Base URL: {API_BASE_URL}")
+    print(f"Admin Credentials: {ADMIN_EMAIL}")
+    print("="*60)
+    
+    results = TestResults()
+    admin_tester = AdminAPITester()
+    
+    # Step 1: Login as admin
+    print("Step 1: Logging in as admin...")
+    if not admin_tester.login_admin(results):
+        results.print_summary("ADMIN DASHBOARD")
+        return False
+    
+    # Step 2: Get a creator ID
+    print("Step 2: Getting creator ID for testing...")
+    creator_id = admin_tester.get_creator_id(results)
+    if not creator_id:
+        results.print_summary("ADMIN DASHBOARD")
+        return False
+    
+    # Step 3: Test admin endpoints
+    print("Step 3: Testing admin dashboard endpoints...")
+    admin_tester.test_admin_endpoints(results, creator_id)
+    
+    # Step 4: Test authorization
+    print("Step 4: Testing endpoint authorization...")
+    admin_tester.test_authorization(results, creator_id)
+    
+    # Print results
+    results.print_summary("ADMIN DASHBOARD")
+    
+    return results.failed == 0
+
+def main():
+    """Main test runner"""
+    print("RafflyWin Backend API Testing Suite")
+    print("="*60)
+    
+    # Run PWA tests (existing functionality)
+    pwa_success = run_pwa_tests()
+    
+    # Run Admin Dashboard tests (new functionality)
+    admin_success = run_admin_dashboard_tests()
+    
+    # Overall summary
+    print("\n" + "="*60)
+    print("OVERALL TEST SUMMARY")
+    print("="*60)
+    print(f"PWA Tests: {'✅ PASSED' if pwa_success else '❌ FAILED'}")
+    print(f"Admin Dashboard Tests: {'✅ PASSED' if admin_success else '❌ FAILED'}")
+    
+    overall_success = pwa_success and admin_success
+    print(f"Overall Result: {'✅ ALL TESTS PASSED' if overall_success else '❌ SOME TESTS FAILED'}")
     
     # Return appropriate exit code
-    return 0 if results.failed == 0 else 1
+    return 0 if overall_success else 1
 
 if __name__ == "__main__":
     exit_code = main()
