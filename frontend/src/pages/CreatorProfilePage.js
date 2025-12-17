@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { API } from '../App';
 import { Ticket, Heart, Star, ArrowLeft, Calendar, DollarSign, Mail } from 'lucide-react';
