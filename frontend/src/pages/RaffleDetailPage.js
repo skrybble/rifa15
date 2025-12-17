@@ -268,7 +268,7 @@ const RaffleDetailPage = ({ user, onLogout }) => {
                   ></div>
                 </div>
                 <p className="text-sm text-slate-500 mt-2 text-center">
-                  {raffle.tickets_sold} tickets vendidos ({progressPercentage.toFixed(1)}%)
+                  {raffle.tickets_sold} {t('raffle.ticketsSold')} ({progressPercentage.toFixed(1)}%)
                 </p>
               </div>
 
