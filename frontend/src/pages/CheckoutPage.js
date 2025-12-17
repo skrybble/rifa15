@@ -1,9 +1,11 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PaddleCheckout from '../components/PaddleCheckout';
 import { ArrowLeft, Ticket } from 'lucide-react';
 
 const CheckoutPage = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { raffleId, ticketNumbers, amount, raffleTitle } = location.state || {};
@@ -16,7 +18,7 @@ const CheckoutPage = () => {
   const handleSuccess = () => {
     navigate('/my-tickets', {
       state: { 
-        message: '¡Compra exitosa! Tus tickets han sido añadidos.',
+        message: t('checkout.successMessage'),
         showConfetti: true
       }
     });
@@ -32,7 +34,7 @@ const CheckoutPage = () => {
             className="flex items-center space-x-2 text-slate-700 hover:text-sky-700 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span className="font-medium">Volver</span>
+            <span className="font-medium">{t('common.back')}</span>
           </button>
         </div>
       </header>
@@ -45,7 +47,7 @@ const CheckoutPage = () => {
             <Ticket className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-slate-900 mb-2">
-            Completar Compra
+            {t('checkout.completePurchase')}
           </h1>
           {raffleTitle && (
             <p className="text-slate-600">
@@ -67,25 +69,24 @@ const CheckoutPage = () => {
         {/* Trust Indicators */}
         <div className="mt-8 text-center">
           <p className="text-sm text-slate-600 mb-4">
-            Tu información está protegida
+            {t('checkout.infoProtected')}
           </p>
           <div className="flex items-center justify-center space-x-6 text-xs text-slate-500">
-            <span>🔒 SSL Encriptado</span>
+            <span>🔒 {t('checkout.sslEncrypted')}</span>
             <span>•</span>
-            <span>✅ PCI Compliant</span>
+            <span>✅ {t('checkout.pciCompliant')}</span>
             <span>•</span>
-            <span>🛡️ Datos Seguros</span>
+            <span>🛡️ {t('checkout.secureData')}</span>
           </div>
         </div>
 
         {/* Help */}
         <div className="mt-8 p-4 bg-slate-50 rounded-lg border border-slate-200">
           <p className="text-sm text-slate-700 mb-2">
-            <strong>¿Necesitas ayuda?</strong>
+            <strong>{t('checkout.needHelp')}</strong>
           </p>
           <p className="text-xs text-slate-600">
-            Si tienes problemas con el pago, contacta nuestro soporte o intenta con otra tarjeta.
-            Todos los pagos son procesados de forma segura por Paddle.
+            {t('checkout.helpText')}
           </p>
         </div>
       </div>
