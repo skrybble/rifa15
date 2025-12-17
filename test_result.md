@@ -125,7 +125,7 @@ frontend:
     working: true
     file: "/app/frontend/src/pages/ExplorePage.js"
     stuck_count: 0
-    priority: "high"
+    priority: "medium"
     needs_retesting: false
     status_history:
       - working: true
@@ -137,7 +137,7 @@ frontend:
     working: true
     file: "/app/frontend/src/components/LanguageSelector.js"
     stuck_count: 0
-    priority: "high"
+    priority: "medium"
     needs_retesting: false
     status_history:
       - working: true
@@ -149,7 +149,7 @@ frontend:
     working: true
     file: "/app/frontend/src/i18n/index.js"
     stuck_count: 0
-    priority: "high"
+    priority: "medium"
     needs_retesting: false
     status_history:
       - working: true
@@ -167,6 +167,54 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ Mobile menu button found and functional. For non-authenticated users on /explore, mobile menu button opens language selector (this appears to be intended design behavior). Mobile menu implementation exists in ExplorePage.js with proper responsive classes and navigation links for authenticated users. Button responds to clicks correctly."
+
+  - task: "Admin Dashboard - User Detail Modal from Creators Tab"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/UserDetailModal.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ User Detail Modal fully functional from Creators tab. Modal opens when clicking creator names (Luis Viajes tested). Shows complete user info header with name, email (luis@creator.com), role badge (Creador), status badge (Activo). Displays quick stats: 2 Rifas Creadas, 0 Tickets Comprados, 3 Seguidores, - Calificación. Has all 4 tabs working: Información, Mensajes, Fotos, Rifas (with count). Action buttons present: Enviar Mensaje, Suspender. Modal closes properly with X button. Personal information and account status sections display correctly."
+
+  - task: "Admin Dashboard - Statistics Tab User Registration History"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/DashboardPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ Statistics Tab with User Registration History fully functional. Period buttons working: Día, Semana, Mes, Año. Registros section shows: Users (6), Creators (5), Total (11). Ingresos section shows: Total Sales ($876.50), Commissions ($8.77). Historial de Registros table perfect with all required columns: Usuario, Email, Rol, Estado, Fecha de Registro, Acciones. 11 rows of user data with proper role/status badges (Usuario, Creador, Admin). Eye icons in Actions column for user details. Pagination working (Página 1 de 2)."
+
+  - task: "Admin Dashboard - Reviews Tab New Filters"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/DashboardPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ Reviews Tab with new filters fully functional. Configuration section found with alert threshold input (set to 3). Usuarios por Reseñas section present with all required filter controls: Filter dropdown (Todas las reseñas/Solo positivas/Solo negativas), Sort dropdown (Ordenar: Total/Positivas/Negativas), Min negativas input field (0). All 2 filter dropdowns and 2 number inputs working correctly. UI shows 'No hay usuarios con reseñas' which is expected for new system."
+
+  - task: "Admin Dashboard - User Detail Modal from Users Tab"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/DashboardPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ User Detail Modal from Users Tab fully functional. Users table displays correctly with 10 rows of user data. All required columns present: Usuario, Email, Rol, Estado, Acciones. Search functionality available ('Search users...'). 3 filter dropdowns working (role and status filters). Clickable user names (blue links) open detail modal correctly. Pagination working (Página 1 de 2, showing 10 de 11 total). Action buttons (mail, ban, delete) present for each user."
 
 metadata:
   created_by: "testing_agent"
