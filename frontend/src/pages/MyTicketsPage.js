@@ -58,10 +58,10 @@ const MyTicketsPage = ({ user, onLogout }) => {
               className="flex items-center space-x-2 text-slate-700 hover:text-sky-700 font-medium"
             >
               <ArrowLeft className="w-5 h-5" />
-              <span>Volver</span>
+              <span>{t('common.back')}</span>
             </button>
             <Link to="/explore" className="text-sky-600 font-semibold hover:text-sky-700">
-              Explorar Rifas
+              {t('nav.explore')}
             </Link>
           </div>
         </div>
