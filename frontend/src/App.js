@@ -72,6 +72,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <InstallPWA />
       <Routes>
         <Route path="/" element={<LandingPage user={user} />} />
         <Route
