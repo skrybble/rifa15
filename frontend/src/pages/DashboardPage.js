@@ -740,7 +740,15 @@ const DashboardPage = ({ user, onLogout }) => {
                   >
                     <div className="flex-1">
                       <h3 className="font-semibold text-slate-900">{r.title}</h3>
-                      <p className="text-sm text-slate-500">{r.creator_name} • ${r.prize_value}</p>
+                      <p className="text-sm text-slate-500">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); loadUserDetail(r.creator_id); }}
+                          className="text-sky-600 hover:text-sky-700 hover:underline font-medium"
+                        >
+                          {r.creator_name}
+                        </button>
+                        {' '} • ${r.prize_value}
+                      </p>
                     </div>
                     <div className="flex items-center space-x-4">
                       <div className="text-right">
