@@ -21,7 +21,12 @@ const LoginPage = ({ onLogin }) => {
     try {
       const response = await axios.post(`${API}/auth/login`, formData);
       onLogin(response.data.token, response.data.user);
-      navigate('/explore');
+      // Super admin goes to dashboard, others to explore
+      if (response.data.user.role === 'super_admin') {
+        navigate('/dashboard');
+      } else {
+        navigate('/explore');
+      }
     } catch (err) {
       setError(err.response?.data?.detail || 'Error al iniciar sesión');
     } finally {
