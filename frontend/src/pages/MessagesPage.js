@@ -316,7 +316,7 @@ const MessagesPage = ({ user, onLogout }) => {
           <div className={`lg:col-span-1 bg-white rounded-xl shadow-lg ${selectedConversation ? 'hidden lg:block' : 'block'}`}>
             <div className="p-4 border-b border-slate-200">
               <h2 className="text-lg font-bold text-slate-900 mb-3">
-                {showArchived ? 'Conversaciones Archivadas' : 'Conversaciones'}
+                {showArchived ? t('messages.conversations') + ' (Archived)' : t('messages.conversations')}
               </h2>
               
               {/* Search Bar */}
