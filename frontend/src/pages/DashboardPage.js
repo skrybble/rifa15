@@ -7,9 +7,10 @@ import {
   Ticket, ArrowLeft, Plus, TrendingUp, DollarSign, Users, Calendar, X,
   Search, ChevronLeft, ChevronRight, Mail, Ban, Trash2, RefreshCw, Settings,
   AlertTriangle, BarChart3, Play, Shield, Home, Globe, Eye, ExternalLink,
-  MessageSquare, Image, Star, ThumbsUp, ThumbsDown, UserCheck, Clock
+  MessageSquare, Image, Star, ThumbsUp, ThumbsDown, UserCheck, Clock, Filter
 } from 'lucide-react';
 import LanguageSelector from '../components/LanguageSelector';
+import UserDetailModal from '../components/UserDetailModal';
 
 const DashboardPage = ({ user, onLogout }) => {
   const { t } = useTranslation();
