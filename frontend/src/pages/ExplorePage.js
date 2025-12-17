@@ -96,7 +96,7 @@ const ExplorePage = ({ user, onLogout }) => {
                       </span>
                     )}
                   </Link>
-                  {user?.role === 'creator' && (
+                  {(user?.role === 'creator' || user?.role === 'super_admin') && (
                     <Link
                       to="/dashboard"
                       data-testid="dashboard-nav"
@@ -104,15 +104,6 @@ const ExplorePage = ({ user, onLogout }) => {
                     >
                       <LayoutDashboard className="w-4 h-4" />
                       <span>Dashboard</span>
-                    </Link>
-                  )}
-                  {user?.role === 'admin' && (
-                    <Link
-                      to="/admin"
-                      data-testid="admin-nav"
-                      className="text-slate-700 hover:text-sky-700 font-medium"
-                    >
-                      Admin
                     </Link>
                   )}
                 </nav>
