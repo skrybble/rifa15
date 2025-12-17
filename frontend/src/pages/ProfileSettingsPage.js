@@ -593,7 +593,7 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-slate-900">Agregar Método de Pago</h3>
+              <h3 className="text-xl font-bold text-slate-900">{t('profile.addPaymentMethod')}</h3>
               <button onClick={() => setShowPaymentModal(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-5 h-5" />
               </button>
@@ -601,13 +601,13 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Tipo</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">{t('checkout.paymentMethod')}</label>
                 <select
                   value={newPayment.type}
                   onChange={(e) => setNewPayment(prev => ({ ...prev, type: e.target.value }))}
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                 >
-                  <option value="card">Tarjeta de Crédito/Débito</option>
+                  <option value="card">{t('checkout.creditCard')}</option>
                   <option value="paypal">PayPal</option>
                   <option value="google_pay">Google Pay</option>
                 </select>
