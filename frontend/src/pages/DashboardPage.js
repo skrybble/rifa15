@@ -691,38 +691,68 @@ const DashboardPage = ({ user, onLogout }) => {
                   className="w-full pl-10 pr-4 py-2 border rounded-lg" />
               </div>
               <select value={rafflesStatus} onChange={(e) => { setRafflesStatus(e.target.value); setRafflesPage(1); }} className="border rounded-lg px-3 py-2">
-                <option value="">Todos</option>
-                <option value="active">Activas</option>
-                <option value="completed">Completadas</option>
+                <option value="">{t('common.all')}</option>
+                <option value="active">{t('raffle.active')}</option>
+                <option value="completed">{t('raffle.completed')}</option>
               </select>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-slate-50">
-                  <tr>
-                    <th className="text-left p-3">Título</th>
-                    <th className="text-left p-3">Creador</th>
-                    <th className="text-center p-3">Valor</th>
-                    <th className="text-center p-3">Tickets</th>
-                    <th className="text-center p-3">Fecha</th>
-                    <th className="text-center p-3">Estado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {adminRaffles.map(r => (
-                    <tr key={r.id} className="border-t hover:bg-slate-50">
-                      <td className="p-3 font-medium">{r.title}</td>
-                      <td className="p-3 text-slate-600">{r.creator_name}</td>
-                      <td className="p-3 text-center">${r.prize_value}</td>
-                      <td className="p-3 text-center">{r.tickets_sold}/{r.ticket_range}</td>
-                      <td className="p-3 text-center">{new Date(r.raffle_date).toLocaleDateString('es-ES')}</td>
-                      <td className="p-3 text-center">
-                        <span className={`px-2 py-1 rounded text-xs ${r.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>{r.status}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="space-y-3">
+              {adminRaffles.map(r => (
+                <div key={r.id} className="border rounded-lg overflow-hidden">
+                  <div 
+                    onClick={() => setExpandedRaffle(expandedRaffle === r.id ? null : r.id)}
+                    className="flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 cursor-pointer transition-colors"
+                  >
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-slate-900">{r.title}</h3>
+                      <p className="text-sm text-slate-500">{r.creator_name} • ${r.prize_value}</p>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <div className="text-right">
+                        <span className={`px-2 py-1 rounded text-xs ${r.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                          {r.status === 'active' ? t('raffle.active') : t('raffle.completed')}
+                        </span>
+                      </div>
+                      <ChevronRight className={`w-5 h-5 text-slate-400 transition-transform ${expandedRaffle === r.id ? 'rotate-90' : ''}`} />
+                    </div>
+                  </div>
+                  
+                  {expandedRaffle === r.id && (
+                    <div className="p-4 bg-white border-t">
+                      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="bg-green-50 rounded-lg p-4">
+                          <p className="text-sm text-green-600 font-medium">{t('raffle.ticketsSold')}</p>
+                          <p className="text-2xl font-bold text-green-700">{r.tickets_sold}</p>
+                        </div>
+                        <div className="bg-sky-50 rounded-lg p-4">
+                          <p className="text-sm text-sky-600 font-medium">{t('raffle.ticketsAvailable')}</p>
+                          <p className="text-2xl font-bold text-sky-700">{r.ticket_range - r.tickets_sold}</p>
+                        </div>
+                        <div className="bg-purple-50 rounded-lg p-4">
+                          <p className="text-sm text-purple-600 font-medium">{t('raffle.ticketRange')}</p>
+                          <p className="text-2xl font-bold text-purple-700">{r.ticket_range}</p>
+                        </div>
+                        <div className="bg-amber-50 rounded-lg p-4">
+                          <p className="text-sm text-amber-600 font-medium">{t('raffle.endDate')}</p>
+                          <p className="text-lg font-bold text-amber-700">{new Date(r.raffle_date).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <div className="mt-4 pt-4 border-t">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm text-slate-600">{t('raffle.progress')}</span>
+                          <span className="text-sm font-medium">{((r.tickets_sold / r.ticket_range) * 100).toFixed(1)}%</span>
+                        </div>
+                        <div className="w-full bg-slate-200 rounded-full h-3">
+                          <div 
+                            className="bg-gradient-to-r from-sky-500 to-green-500 h-3 rounded-full transition-all"
+                            style={{ width: `${Math.min((r.tickets_sold / r.ticket_range) * 100, 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
             <Pagination page={rafflesPage} setPage={setRafflesPage} total={adminRafflesTotal} perPage={rafflesPerPage} setPerPage={setRafflesPerPage} />
           </div>
