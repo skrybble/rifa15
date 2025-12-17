@@ -678,7 +678,7 @@ const DashboardPage = ({ user, onLogout }) => {
                     <tr key={c.id} className="border-t hover:bg-slate-50">
                       <td className="p-3">
                         <button 
-                          onClick={() => loadUserDetail(c.id)}
+                          onClick={() => openUserDetail(c.id)}
                           className="font-medium text-sky-600 hover:text-sky-700 hover:underline flex items-center space-x-1"
                         >
                           <span>{c.full_name}</span>
@@ -740,7 +740,7 @@ const DashboardPage = ({ user, onLogout }) => {
                       <h3 className="font-semibold text-slate-900">{r.title}</h3>
                       <p className="text-sm text-slate-500">
                         <button 
-                          onClick={(e) => { e.stopPropagation(); loadUserDetail(r.creator_id); }}
+                          onClick={(e) => { e.stopPropagation(); openUserDetail(r.creator_id); }}
                           className="text-sky-600 hover:text-sky-700 hover:underline font-medium"
                         >
                           {r.creator_name}
@@ -837,7 +837,7 @@ const DashboardPage = ({ user, onLogout }) => {
                     <tr key={u.id} className="border-t hover:bg-slate-50">
                       <td className="p-3">
                         <button 
-                          onClick={() => loadUserDetail(u.id)}
+                          onClick={() => openUserDetail(u.id)}
                           className="font-medium text-sky-600 hover:text-sky-700 hover:underline flex items-center space-x-1"
                         >
                           <span>{u.full_name}</span>
