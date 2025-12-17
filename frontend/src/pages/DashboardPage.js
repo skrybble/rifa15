@@ -120,8 +120,11 @@ const DashboardPage = ({ user, onLogout }) => {
   }, [activeTab, rafflesPage, rafflesPerPage, rafflesSearch, rafflesSortBy, rafflesSortOrder, rafflesStatus]);
 
   useEffect(() => {
-    if (isSuperAdmin && activeTab === 'admin-statistics') loadStatistics();
-  }, [activeTab, statisticsPeriod]);
+    if (isSuperAdmin && activeTab === 'admin-statistics') {
+      loadStatistics();
+      loadUserHistory();
+    }
+  }, [activeTab, statisticsPeriod, historyPage, historyPerPage]);
 
   useEffect(() => {
     if (isSuperAdmin && activeTab === 'admin-users') loadAllUsers();
@@ -132,7 +135,7 @@ const DashboardPage = ({ user, onLogout }) => {
       loadReviewAlerts();
       loadUsersByReviews();
     }
-  }, [activeTab]);
+  }, [activeTab, reviewsFilter, reviewsSortBy, minNegativeReviews]);
 
   // Creator functions
   const loadDashboard = async () => {
