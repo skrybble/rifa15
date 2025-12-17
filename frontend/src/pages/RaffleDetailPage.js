@@ -276,7 +276,7 @@ const RaffleDetailPage = ({ user, onLogout }) => {
               {myTickets.length > 0 && (
                 <div className="mb-6 p-4 bg-sky-50 rounded-lg border border-sky-200">
                   <p className="font-semibold text-sky-900 mb-2">
-                    Tus tickets: {myTickets.length}
+                    {t('raffle.yourTickets')}: {myTickets.length}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {myTickets.map((ticket) => (
