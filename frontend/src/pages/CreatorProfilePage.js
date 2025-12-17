@@ -124,12 +124,12 @@ const CreatorProfilePage = ({ user, onLogout }) => {
                     <div className="flex items-center space-x-1">
                       <Heart className="w-5 h-5 text-red-500" />
                       <span className="font-semibold">{creator.followers?.length || 0}</span>
-                      <span>seguidores</span>
+                      <span>{t('profile.followers').toLowerCase()}</span>
                     </div>
                     <div className="flex items-center space-x-1">
                       <Star className="w-5 h-5 text-amber-500" />
                       <span className="font-semibold">{creator.rating.toFixed(1)}</span>
-                      <span className="text-sm">({creator.rating_count} valoraciones)</span>
+                      <span className="text-sm">({creator.rating_count} {t('creator.ratings')})</span>
                     </div>
                   </div>
                 </div>
