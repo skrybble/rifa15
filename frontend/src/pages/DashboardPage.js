@@ -443,14 +443,14 @@ const DashboardPage = ({ user, onLogout }) => {
 
   // Define tabs - admin tabs only for super_admin, creator tabs for creators
   const adminTabs = [
-    { id: 'admin-overview', label: 'Resumen', icon: BarChart3 },
-    { id: 'admin-creators', label: 'Creadores', icon: Users },
-    { id: 'admin-raffles', label: 'Todas las Rifas', icon: Ticket },
-    { id: 'admin-calendar', label: 'Calendario', icon: Calendar },
-    { id: 'admin-users', label: 'Usuarios', icon: Users },
-    { id: 'admin-reviews', label: 'Reseñas', icon: AlertTriangle },
-    { id: 'admin-statistics', label: 'Estadísticas', icon: TrendingUp },
-    { id: 'admin-earnings', label: 'Ganancias', icon: DollarSign },
+    { id: 'admin-overview', label: t('dashboard.overview'), icon: BarChart3 },
+    { id: 'admin-creators', label: t('dashboard.creators'), icon: Users },
+    { id: 'admin-raffles', label: t('dashboard.allRaffles'), icon: Ticket },
+    { id: 'admin-calendar', label: t('dashboard.calendar'), icon: Calendar },
+    { id: 'admin-users', label: t('dashboard.users'), icon: Users },
+    { id: 'admin-reviews', label: t('dashboard.reviews'), icon: AlertTriangle },
+    { id: 'admin-statistics', label: t('dashboard.statistics'), icon: TrendingUp },
+    { id: 'admin-earnings', label: t('dashboard.earnings'), icon: DollarSign },
   ];
 
   const allTabs = isSuperAdmin ? adminTabs : [];
