@@ -205,7 +205,7 @@ const ExplorePage = ({ user, onLogout }) => {
               className="flex items-center space-x-3 px-4 py-3 text-sky-700 font-semibold bg-sky-50 rounded-lg"
             >
               <Ticket className="w-5 h-5" />
-              <span>Explorar</span>
+              <span>{t('nav.explore')}</span>
             </Link>
             <Link
               to="/my-tickets"
@@ -213,7 +213,7 @@ const ExplorePage = ({ user, onLogout }) => {
               className="flex items-center space-x-3 px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg"
             >
               <Heart className="w-5 h-5" />
-              <span>Mis Tickets</span>
+              <span>{t('nav.myTickets')}</span>
             </Link>
             <Link
               to="/messages"
@@ -221,7 +221,7 @@ const ExplorePage = ({ user, onLogout }) => {
               className="flex items-center space-x-3 px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg"
             >
               <Mail className="w-5 h-5" />
-              <span>Mensajes</span>
+              <span>{t('nav.messages')}</span>
               {unreadMessagesCount > 0 && (
                 <span className="ml-auto px-2 py-0.5 bg-red-500 text-white text-xs rounded-full">
                   {unreadMessagesCount}
@@ -234,7 +234,7 @@ const ExplorePage = ({ user, onLogout }) => {
               className="flex items-center space-x-3 px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg"
             >
               <Settings className="w-5 h-5" />
-              <span>Mi Perfil</span>
+              <span>{t('nav.profile')}</span>
             </Link>
             {(user?.role === 'creator' || user?.role === 'super_admin') && (
               <Link
@@ -243,7 +243,7 @@ const ExplorePage = ({ user, onLogout }) => {
                 className="flex items-center space-x-3 px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg"
               >
                 <LayoutDashboard className="w-5 h-5" />
-                <span>Dashboard</span>
+                <span>{t('nav.dashboard')}</span>
               </Link>
             )}
             <button
@@ -251,8 +251,9 @@ const ExplorePage = ({ user, onLogout }) => {
               className="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg w-full"
             >
               <LogOut className="w-5 h-5" />
-              <span>Cerrar Sesión</span>
+              <span>{t('auth.logout')}</span>
             </button>
+            <LanguageSelector variant="mobile" />
           </nav>
         </div>
       )}
