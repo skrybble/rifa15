@@ -354,6 +354,7 @@
   },
   "checkout": {
     "title": "Checkout",
+    "completePurchase": "Complete Purchase",
     "summary": "Order summary",
     "paymentMethod": "Payment method",
     "creditCard": "Credit card",
@@ -361,7 +362,14 @@
     "processing": "Processing...",
     "pay": "Pay",
     "success": "Payment successful!",
-    "error": "Payment error"
+    "successMessage": "Purchase successful! Your tickets have been added.",
+    "error": "Payment error",
+    "infoProtected": "Your information is protected",
+    "sslEncrypted": "SSL Encrypted",
+    "pciCompliant": "PCI Compliant",
+    "secureData": "Secure Data",
+    "needHelp": "Need help?",
+    "helpText": "If you have problems with payment, contact our support or try another card. All payments are securely processed by Paddle."
   },
   "terms": {
     "title": "Terms and Conditions",
