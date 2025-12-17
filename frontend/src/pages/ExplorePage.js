@@ -77,14 +77,14 @@ const ExplorePage = ({ user, onLogout }) => {
                     to="/explore"
                     className="text-sky-700 font-semibold"
                   >
-                    Explorar
+                    {t('nav.explore')}
                   </Link>
                   <Link
                     to="/my-tickets"
                     data-testid="my-tickets-nav"
                     className="text-slate-700 hover:text-sky-700 font-medium"
                   >
-                    Mis Tickets
+                    {t('nav.myTickets')}
                   </Link>
                   <Link
                     to="/messages"
@@ -92,7 +92,7 @@ const ExplorePage = ({ user, onLogout }) => {
                     className="text-slate-700 hover:text-sky-700 font-medium flex items-center space-x-1 relative"
                   >
                     <Mail className="w-4 h-4" />
-                    <span>Mensajes</span>
+                    <span>{t('nav.messages')}</span>
                     {unreadMessagesCount > 0 && (
                       <span className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                         {unreadMessagesCount}
@@ -106,9 +106,10 @@ const ExplorePage = ({ user, onLogout }) => {
                       className="text-slate-700 hover:text-sky-700 font-medium flex items-center space-x-1"
                     >
                       <LayoutDashboard className="w-4 h-4" />
-                      <span>Dashboard</span>
+                      <span>{t('nav.dashboard')}</span>
                     </Link>
                   )}
+                  <LanguageSelector />
                 </nav>
 
                 <div className="flex items-center space-x-4">
