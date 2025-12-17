@@ -623,11 +623,11 @@ def test_manifest_json_content(results: TestResults):
             f"Request failed: {str(e)}"
         )
 
-def test_index_html_pwa_meta_tags(results: PWATestResults):
+def test_index_html_pwa_meta_tags(results: TestResults):
     """Test index.html for required PWA meta tags"""
     
     try:
-        url = BASE_URL + "/"
+        url = FRONTEND_URL + "/"
         response = requests.get(url, timeout=10)
         
         if response.status_code != 200:
