@@ -100,7 +100,7 @@ const CreatorProfilePage = ({ user, onLogout }) => {
             className="flex items-center space-x-2 text-slate-700 hover:text-sky-700 font-medium"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span>Volver</span>
+            <span>{t('common.back')}</span>
           </button>
         </div>
       </header>
