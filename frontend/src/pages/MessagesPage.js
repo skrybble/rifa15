@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { API } from '../App';
 import { Mail, Send, Archive, Trash2, ArrowLeft, X, User as UserIcon, Search, ArchiveRestore, CheckSquare } from 'lucide-react';
 
 const MessagesPage = ({ user, onLogout }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [conversations, setConversations] = useState([]);
