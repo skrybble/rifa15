@@ -97,7 +97,7 @@ function App() {
         />
         <Route
           path="/dashboard"
-          element={user && (user.role === 'creator' || user.role === 'admin') ? <DashboardPage user={user} onLogout={handleLogout} /> : <Navigate to="/explore" />}
+          element={user && (user.role === 'creator' || user.role === 'admin' || user.role === 'super_admin') ? <DashboardPage user={user} onLogout={handleLogout} /> : <Navigate to="/explore" />}
         />
         <Route
           path="/my-tickets"
@@ -109,7 +109,7 @@ function App() {
         />
         <Route
           path="/raffle/:raffleId/manage"
-          element={user && (user.role === 'creator' || user.role === 'admin') ? <RaffleManagementPage user={user} /> : <Navigate to="/explore" />}
+          element={user && (user.role === 'creator' || user.role === 'admin' || user.role === 'super_admin') ? <RaffleManagementPage user={user} /> : <Navigate to="/explore" />}
         />
         <Route
           path="/messages"
