@@ -10,7 +10,7 @@ import sys
 from typing import Dict, Any, List
 
 # Base URL from frontend .env (remove /api for frontend files)
-BASE_URL = "https://win-raffle.preview.emergentagent.com"
+BASE_URL = "https://ticket-win.preview.emergentagent.com"
 
 class PWATestResults:
     def __init__(self):
