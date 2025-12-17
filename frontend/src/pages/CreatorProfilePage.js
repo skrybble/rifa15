@@ -144,7 +144,7 @@ const CreatorProfilePage = ({ user, onLogout }) => {
                       : 'bg-sky-600 text-white hover:bg-sky-700'
                   }`}
                 >
-                  {isFollowing ? 'Siguiendo' : 'Seguir'}
+                  {isFollowing ? t('profile.following') : t('profile.follow')}
                 </button>
                 {user && user.id !== creatorId && (
                   <button
@@ -153,7 +153,7 @@ const CreatorProfilePage = ({ user, onLogout }) => {
                     className="px-6 py-3 rounded-lg font-semibold transition-all bg-sky-100 text-sky-700 hover:bg-sky-200 flex items-center space-x-2"
                   >
                     <Mail className="w-4 h-4" />
-                    <span>Mensaje</span>
+                    <span>{t('messages.newMessage')}</span>
                   </button>
                 )}
                 {canRate && user.id !== creatorId && (
@@ -162,7 +162,7 @@ const CreatorProfilePage = ({ user, onLogout }) => {
                     data-testid="rate-btn"
                     className="px-6 py-3 rounded-lg font-semibold transition-all bg-amber-500 text-white hover:bg-amber-600"
                   >
-                    Valorar
+                    {t('creator.rateCreator')}
                   </button>
                 )}
               </div>
