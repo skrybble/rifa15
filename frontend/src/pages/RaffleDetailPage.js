@@ -355,7 +355,7 @@ const RaffleDetailPage = ({ user, onLogout }) => {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-2">
-                        Cantidad de tickets
+                        {t('raffle.ticketRange')}
                       </label>
                       <input
                         type="number"
