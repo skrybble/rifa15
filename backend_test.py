@@ -460,7 +460,7 @@ class AdminAPITester:
                 f"Only {unauthorized_count}/{len(endpoints_to_test)} endpoints require authentication"
             )
 
-def test_pwa_file_accessibility(results: PWATestResults):
+def test_pwa_file_accessibility(results: TestResults):
     """Test if PWA files are accessible via HTTP requests"""
     
     pwa_files = [
@@ -488,7 +488,7 @@ def test_pwa_file_accessibility(results: PWATestResults):
     
     for file_info in pwa_files:
         try:
-            url = BASE_URL + file_info["path"]
+            url = FRONTEND_URL + file_info["path"]
             response = requests.get(url, timeout=10)
             
             if response.status_code == 200:
