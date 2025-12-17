@@ -1,17 +1,21 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { API } from '../App';
 import { Ticket, Mail, Lock, User, AlertCircle, Tag } from 'lucide-react';
-
-const INTEREST_OPTIONS = [
-  'Tecnología', 'Deportes', 'Gaming', 'Música', 'Arte',
-  'Moda', 'Viajes', 'Gastronomía', 'Fitness', 'Belleza',
-  'Educación', 'Entretenimiento', 'Lifestyle', 'Fotografía'
-];
+import LanguageSelector from '../components/LanguageSelector';
 
 const RegisterPage = ({ onLogin }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
+  
+  const INTEREST_KEYS = [
+    'technology', 'sports', 'gaming', 'music', 'art',
+    'fashion', 'travel', 'food', 'fitness', 'beauty',
+    'education', 'entertainment', 'lifestyle', 'photography'
+  ];
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -42,12 +46,12 @@ const RegisterPage = ({ onLogin }) => {
     setError('');
 
     if (!acceptedTerms) {
-      setError('Debes aceptar los Términos y Condiciones para crear tu cuenta');
+      setError(t('auth.termsRequired'));
       return;
     }
 
     if (formData.interests.length < 3) {
-      setError('Debes seleccionar al menos 3 intereses');
+      setError(t('auth.minInterests'));
       return;
     }
 
@@ -58,24 +62,29 @@ const RegisterPage = ({ onLogin }) => {
       onLogin(response.data.token, response.data.user);
       navigate('/explore');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error al registrarse');
+      setError(err.response?.data?.detail || t('auth.registerError'));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-blue-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-blue-50 py-12 px-4 overflow-x-hidden">
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+          {/* Language Selector */}
+          <div className="flex justify-end mb-4">
+            <LanguageSelector />
+          </div>
+
           {/* Logo */}
           <div className="flex items-center justify-center space-x-2 mb-6">
             <Ticket className="w-10 h-10 text-sky-600" />
             <span className="text-3xl font-bold text-slate-900">RafflyWin</span>
           </div>
 
-          <h1 className="text-2xl font-bold text-center text-slate-900 mb-2">Crea tu cuenta</h1>
-          <p className="text-center text-slate-600 mb-8">Únete a la comunidad de rifas</p>
+          <h1 className="text-2xl font-bold text-center text-slate-900 mb-2">{t('auth.registerTitle')}</h1>
+          <p className="text-center text-slate-600 mb-8">{t('auth.registerSubtitle')}</p>
 
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center space-x-2 text-red-700">
@@ -87,7 +96,7 @@ const RegisterPage = ({ onLogin }) => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Nombre Completo
+                {t('auth.fullName')}
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -105,7 +114,7 @@ const RegisterPage = ({ onLogin }) => {
 
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Correo Electrónico
+                {t('auth.email')}
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -123,7 +132,7 @@ const RegisterPage = ({ onLogin }) => {
 
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Contraseña
+                {t('auth.password')}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -142,7 +151,7 @@ const RegisterPage = ({ onLogin }) => {
 
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Tipo de Cuenta
+                {t('auth.accountType')}
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <button
@@ -155,7 +164,7 @@ const RegisterPage = ({ onLogin }) => {
                       : 'border-slate-300 bg-white text-slate-700 hover:border-slate-400'
                   }`}
                 >
-                  Usuario
+                  {t('auth.user')}
                 </button>
                 <button
                   type="button"
@@ -167,7 +176,7 @@ const RegisterPage = ({ onLogin }) => {
                       : 'border-slate-300 bg-white text-slate-700 hover:border-slate-400'
                   }`}
                 >
-                  Creador
+                  {t('auth.creator')}
                 </button>
               </div>
             </div>
@@ -175,49 +184,48 @@ const RegisterPage = ({ onLogin }) => {
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">
                 <Tag className="inline w-4 h-4 mr-1" />
-                Intereses (mínimo 3)
+                {t('auth.selectInterests')} ({t('common.min')} 3)
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {INTEREST_OPTIONS.map((interest) => (
+                {INTEREST_KEYS.map((key) => (
                   <button
-                    key={interest}
+                    key={key}
                     type="button"
-                    onClick={() => toggleInterest(interest)}
+                    onClick={() => toggleInterest(key)}
                     className={`py-2 px-3 rounded-lg text-sm font-medium transition-all ${
-                      formData.interests.includes(interest)
+                      formData.interests.includes(key)
                         ? 'bg-sky-600 text-white'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
-                    {interest}
+                    {t(`interests.${key}`)}
                   </button>
                 ))}
               </div>
               <p className="mt-2 text-sm text-slate-500">
-                Seleccionados: {formData.interests.length}
+                {t('common.selected')}: {formData.interests.length}
               </p>
             </div>
 
             {/* Terms and Conditions */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-start space-x-3">
               <input
                 type="checkbox"
                 id="terms"
                 data-testid="accept-terms-checkbox"
                 checked={acceptedTerms}
                 onChange={(e) => setAcceptedTerms(e.target.checked)}
-                className="w-5 h-5 text-sky-600 rounded focus:ring-sky-500 cursor-pointer"
+                className="w-5 h-5 text-sky-600 rounded focus:ring-sky-500 cursor-pointer mt-0.5"
               />
               <label htmlFor="terms" className="text-sm text-slate-700 cursor-pointer">
-                He leído y acepto los{' '}
+                {t('auth.termsAccept')}{' '}
                 <Link 
                   to="/terms" 
                   target="_blank"
                   className="text-sky-600 font-semibold hover:text-sky-700 underline"
                 >
-                  Términos y Condiciones
-                </Link>{' '}
-                de RafflyWin
+                  {t('auth.termsAndConditions')}
+                </Link>
               </label>
             </div>
 
@@ -227,14 +235,14 @@ const RegisterPage = ({ onLogin }) => {
               disabled={loading || !acceptedTerms}
               className="w-full py-3 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Registrando...' : 'Crear Cuenta'}
+              {loading ? t('common.loading') : t('auth.createAccount')}
             </button>
           </form>
 
           <p className="mt-6 text-center text-slate-600">
-            ¿Ya tienes cuenta?{' '}
+            {t('auth.hasAccount')}{' '}
             <Link to="/login" className="text-sky-600 font-semibold hover:text-sky-700">
-              Inicia sesión aquí
+              {t('auth.login')}
             </Link>
           </p>
         </div>
