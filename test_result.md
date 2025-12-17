@@ -116,10 +116,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "PWA manifest.json accessibility"
-    - "PWA service-worker.js accessibility"
-    - "PWA icons accessibility"
-    - "PWA meta tags in index.html"
+    - "Responsive design mobile viewport"
+    - "Language switching functionality"
+    - "Language persistence across navigation"
+    - "Mobile menu navigation"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
