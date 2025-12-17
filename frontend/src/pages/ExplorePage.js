@@ -322,7 +322,7 @@ const ExplorePage = ({ user, onLogout }) => {
 
         {/* Active Raffles */}
         <section>
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">Rifas Activas</h2>
+          <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('home.activeRaffles')}</h2>
           {loading ? (
             <div className="flex justify-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600"></div>
