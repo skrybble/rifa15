@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { API } from '../App';
 import { Ticket, ArrowLeft, Calendar, DollarSign, Trophy } from 'lucide-react';
 
 const MyTicketsPage = ({ user, onLogout }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [tickets, setTickets] = useState([]);
   const [raffles, setRaffles] = useState({});
