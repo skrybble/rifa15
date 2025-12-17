@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { API } from '../App';
 import { Ticket, LogOut, User, Bell, LayoutDashboard, Heart, Calendar, DollarSign, Mail, Settings, Menu, X } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
+import LanguageSelector from '../components/LanguageSelector';
 
 const ExplorePage = ({ user, onLogout }) => {
   const navigate = useNavigate();
