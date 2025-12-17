@@ -446,7 +446,6 @@ const DashboardPage = ({ user, onLogout }) => {
     { id: 'admin-overview', label: t('dashboard.overview'), icon: BarChart3 },
     { id: 'admin-creators', label: t('dashboard.creators'), icon: Users },
     { id: 'admin-raffles', label: t('dashboard.allRaffles'), icon: Ticket },
-    { id: 'admin-calendar', label: t('dashboard.calendar'), icon: Calendar },
     { id: 'admin-users', label: t('dashboard.users'), icon: Users },
     { id: 'admin-reviews', label: t('dashboard.reviews'), icon: AlertTriangle },
     { id: 'admin-statistics', label: t('dashboard.statistics'), icon: TrendingUp },
