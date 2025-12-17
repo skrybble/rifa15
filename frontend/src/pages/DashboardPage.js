@@ -548,7 +548,7 @@ const DashboardPage = ({ user, onLogout }) => {
               </div>
             )}
 
-            <h3 className="text-xl font-bold text-slate-900 mb-4">Mis Rifas</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">{t('raffle.myRaffles')}</h3>
             {raffles.length === 0 ? (
               <div className="bg-white rounded-xl p-8 text-center shadow">
                 <Ticket className="w-12 h-12 text-slate-300 mx-auto mb-4" />
