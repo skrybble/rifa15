@@ -601,7 +601,7 @@ const DashboardPage = ({ user, onLogout }) => {
               <div className="bg-white rounded-xl p-6 shadow">
                 <DollarSign className="w-8 h-8 text-amber-600 mb-2" />
                 <p className="text-3xl font-bold">${adminStats.commission_revenue?.toFixed(2)}</p>
-                <p className="text-slate-600">Comisiones</p>
+                <p className="text-slate-600">{t('dashboard.commissions')}</p>
               </div>
             </div>
           </div>
