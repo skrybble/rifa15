@@ -6,6 +6,7 @@ import { API } from '../App';
 import { Ticket, Heart, Star, ArrowLeft, Calendar, DollarSign, Mail } from 'lucide-react';
 
 const CreatorProfilePage = ({ user, onLogout }) => {
+  const { t } = useTranslation();
   const { creatorId } = useParams();
   const navigate = useNavigate();
   const [creator, setCreator] = useState(null);
