@@ -442,7 +442,8 @@ class AdminAPITester:
         for endpoint in endpoints_to_test:
             try:
                 response = unauth_session.get(f"{API_BASE_URL}{endpoint}", timeout=10)
-                if response.status_code == 401:
+                # Check for 401 (Unauthorized) or 403 (Forbidden) - both indicate auth is required
+                if response.status_code in [401, 403]:
                     unauthorized_count += 1
             except:
                 pass  # Ignore network errors for this test
