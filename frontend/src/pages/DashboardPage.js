@@ -565,7 +565,7 @@ const DashboardPage = ({ user, onLogout }) => {
                         {raffle.status}
                       </span>
                     </div>
-                    <Link to={`/raffle/${raffle.id}`} className="text-sky-600 hover:text-sky-700 font-medium text-sm">Ver detalles →</Link>
+                    <Link to={`/raffle/${raffle.id}`} className="text-sky-600 hover:text-sky-700 font-medium text-sm">{t('raffle.viewDetails')} →</Link>
                   </div>
                 ))}
               </div>
