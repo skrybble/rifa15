@@ -168,12 +168,12 @@ const ExplorePage = ({ user, onLogout }) => {
       {showNotifications && (
         <div className="fixed top-20 right-4 w-96 bg-white rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto">
           <div className="p-4 border-b border-slate-200">
-            <h3 className="font-bold text-slate-900">Notificaciones</h3>
+            <h3 className="font-bold text-slate-900">{t('nav.notifications')}</h3>
           </div>
           <div className="divide-y divide-slate-100">
             {notifications.length === 0 ? (
               <div className="p-4 text-center text-slate-500">
-                No tienes notificaciones
+                {t('messages.noMessages')}
               </div>
             ) : (
               notifications.map((notif) => (
