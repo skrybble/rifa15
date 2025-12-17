@@ -386,7 +386,16 @@
     "activeRaffles": "Active Raffles",
     "completedRaffles": "Completed Raffles",
     "contactCreator": "Contact Creator",
-    "becomeCreator": "Become a Creator"
+    "becomeCreator": "Become a Creator",
+    "notFound": "Creator not found",
+    "noActiveRaffles": "This creator has no active raffles",
+    "ratings": "ratings",
+    "rateCreator": "Rate",
+    "ratingSent": "Rating sent successfully!",
+    "ratingError": "Error sending rating",
+    "yourRating": "Your rating",
+    "addComment": "Add comment (optional)",
+    "sendRating": "Send Rating"
   },
   "time": {
     "justNow": "Just now",
