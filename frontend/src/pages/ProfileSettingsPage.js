@@ -394,8 +394,8 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
                   <div className="flex items-center space-x-3">
                     <Bell className="w-5 h-5 text-slate-600" />
                     <div>
-                      <p className="font-medium text-slate-900">Notificaciones</p>
-                      <p className="text-sm text-slate-600">Recibir notificaciones de la plataforma</p>
+                      <p className="font-medium text-slate-900">{t('profile.notifications')}</p>
+                      <p className="text-sm text-slate-600">{t('profile.receiveNotifications')}</p>
                     </div>
                   </div>
                   <button
@@ -417,8 +417,8 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
                   <div className="flex items-center space-x-3">
                     <MessageSquare className="w-5 h-5 text-slate-600" />
                     <div>
-                      <p className="font-medium text-slate-900">Mensajería</p>
-                      <p className="text-sm text-slate-600">Permitir que otros usuarios te envíen mensajes</p>
+                      <p className="font-medium text-slate-900">{t('profile.messaging')}</p>
+                      <p className="text-sm text-slate-600">{t('profile.receiveMessages')}</p>
                     </div>
                   </div>
                   <button
