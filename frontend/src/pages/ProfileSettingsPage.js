@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 
 const ProfileSettingsPage = ({ user, onLogout }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
