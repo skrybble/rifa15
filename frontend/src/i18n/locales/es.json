@@ -386,7 +386,16 @@
     "activeRaffles": "Rifas Activas",
     "completedRaffles": "Rifas Completadas",
     "contactCreator": "Contactar Creador",
-    "becomeCreator": "Convertirse en Creador"
+    "becomeCreator": "Convertirse en Creador",
+    "notFound": "Creador no encontrado",
+    "noActiveRaffles": "Este creador no tiene rifas activas",
+    "ratings": "valoraciones",
+    "rateCreator": "Valorar",
+    "ratingSent": "¡Valoración enviada exitosamente!",
+    "ratingError": "Error al enviar valoración",
+    "yourRating": "Tu valoración",
+    "addComment": "Añadir comentario (opcional)",
+    "sendRating": "Enviar Valoración"
   },
   "time": {
     "justNow": "Justo ahora",
