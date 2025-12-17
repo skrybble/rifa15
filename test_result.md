@@ -47,6 +47,66 @@ backend:
         agent: "testing"
         comment: "✅ All required PWA meta tags found in index.html: manifest link (rel='manifest'), apple-mobile-web-app-capable meta tag, theme-color meta tag. Service worker registration script also present."
 
+  - task: "Admin Dashboard - User Detail Endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ GET /api/admin/user/{user_id} endpoint working perfectly. Successfully retrieves detailed user information including full_name, email, role, total_raffles (2), tickets_purchased, followers_count (3), avg_rating. Tested with creator Luis Viajes (luis@creator.com). Proper admin authentication required (403 Forbidden without token)."
+
+  - task: "Admin Dashboard - User Messages Endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ GET /api/admin/user/{user_id}/messages endpoint working correctly. Returns array of messages (sent and received) for specified user. Admin super power bypasses privacy settings as intended. Proper authentication required (403 Forbidden without token)."
+
+  - task: "Admin Dashboard - User Photos Endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ GET /api/admin/user/{user_id}/photos endpoint working correctly. Returns array of photos from user's raffles with required fields: url, raffle_id, raffle_title. Admin super power accesses all user photos. Proper authentication required (403 Forbidden without token)."
+
+  - task: "Admin Dashboard - User History Endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ GET /api/admin/user-history endpoint working perfectly. Supports pagination (page, per_page) and role filtering. Returns proper pagination structure: data array, total (11 users), page (1/2), per_page. Tested with role=creator filter successfully. Proper authentication required (403 Forbidden without token)."
+
+  - task: "Admin Dashboard - Users by Reviews Endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ GET /api/admin/users-by-reviews endpoint working correctly. Enhanced with filters: filter (all/positive/negative), sort_by (total/positive/negative), min_negative, page, per_page. Returns proper pagination structure with review fields: positive_reviews, negative_reviews_count, total_reviews, avg_review_score. Tested multiple filter combinations successfully. Proper authentication required (403 Forbidden without token)."
+
 frontend:
   - task: "PWA InstallPWA component"
     implemented: true
