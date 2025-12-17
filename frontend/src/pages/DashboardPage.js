@@ -543,7 +543,7 @@ const DashboardPage = ({ user, onLogout }) => {
                 <div className="bg-white rounded-xl p-6 shadow-lg">
                   <DollarSign className="w-8 h-8 text-amber-600 mb-2" />
                   <p className="text-3xl font-bold text-slate-900">${stats.net_earnings?.toFixed(2) || '0.00'}</p>
-                  <p className="text-slate-600">Ganancias Netas</p>
+                  <p className="text-slate-600">{t('dashboard.netEarnings')}</p>
                 </div>
               </div>
             )}
