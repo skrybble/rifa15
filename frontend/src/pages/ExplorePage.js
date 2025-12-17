@@ -311,7 +311,7 @@ const ExplorePage = ({ user, onLogout }) => {
                       title="Enviar mensaje"
                     >
                       <Mail className="w-4 h-4" />
-                      <span className="text-sm font-medium">Mensaje</span>
+                      <span className="text-sm font-medium">{t('nav.messages')}</span>
                     </button>
                   )}
                 </div>
