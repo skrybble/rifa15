@@ -12,8 +12,8 @@ const DashboardPage = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const isSuperAdmin = user?.role === 'super_admin';
   
-  // Tab state - starts with 'mi-dashboard' for everyone
-  const [activeTab, setActiveTab] = useState('mi-dashboard');
+  // Tab state - super_admin starts with admin-overview, creators with mi-dashboard
+  const [activeTab, setActiveTab] = useState(user?.role === 'super_admin' ? 'admin-overview' : 'mi-dashboard');
   
   // Creator state
   const [stats, setStats] = useState(null);
