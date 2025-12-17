@@ -538,7 +538,7 @@ const DashboardPage = ({ user, onLogout }) => {
                 <div className="bg-white rounded-xl p-6 shadow-lg">
                   <Users className="w-8 h-8 text-purple-600 mb-2" />
                   <p className="text-3xl font-bold text-slate-900">{stats.total_tickets_sold}</p>
-                  <p className="text-slate-600">Tickets Vendidos</p>
+                  <p className="text-slate-600">{t('dashboard.ticketsSold')}</p>
                 </div>
                 <div className="bg-white rounded-xl p-6 shadow-lg">
                   <DollarSign className="w-8 h-8 text-amber-600 mb-2" />
