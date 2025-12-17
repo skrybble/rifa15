@@ -263,10 +263,10 @@ const ExplorePage = ({ user, onLogout }) => {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
-            {user ? `¡Hola, ${user.full_name}!` : '¡Hola!'}
+            {user ? `${t('home.hello')}, ${user.full_name}!` : `${t('home.hello')}!`}
           </h1>
           <p className="text-lg text-slate-600">
-            Descubre rifas emocionantes de tus creadores favoritos
+            {t('home.discoverRaffles')}
           </p>
         </div>
 
