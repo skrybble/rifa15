@@ -942,6 +942,75 @@ const DashboardPage = ({ user, onLogout }) => {
                 </div>
               </div>
             )}
+
+            {/* User Registration History */}
+            <div className="bg-white rounded-xl shadow p-6">
+              <h3 className="font-bold mb-4 flex items-center">
+                <Clock className="w-5 h-5 mr-2 text-purple-600" />
+                Historial de Registros
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-slate-50">
+                    <tr>
+                      <th className="text-left p-3">Usuario</th>
+                      <th className="text-left p-3">Email</th>
+                      <th className="text-center p-3">Rol</th>
+                      <th className="text-center p-3">Estado</th>
+                      <th className="text-left p-3">Fecha de Registro</th>
+                      <th className="text-center p-3">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {userHistory.length === 0 ? (
+                      <tr><td colSpan="6" className="p-6 text-center text-slate-500">No hay registros</td></tr>
+                    ) : (
+                      userHistory.map(u => (
+                        <tr key={u.id} className="border-t hover:bg-slate-50">
+                          <td className="p-3 font-medium">{u.full_name}</td>
+                          <td className="p-3 text-slate-600">{u.email}</td>
+                          <td className="p-3 text-center">
+                            <span className={`px-2 py-1 rounded text-xs ${
+                              u.role === 'creator' ? 'bg-purple-100 text-purple-700' :
+                              u.role === 'super_admin' ? 'bg-red-100 text-red-700' :
+                              'bg-sky-100 text-sky-700'
+                            }`}>
+                              {u.role === 'creator' ? 'Creador' : u.role === 'super_admin' ? 'Admin' : 'Usuario'}
+                            </span>
+                          </td>
+                          <td className="p-3 text-center">
+                            <span className={`px-2 py-1 rounded text-xs ${u.is_active !== false ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                              {u.is_active !== false ? 'Activo' : 'Suspendido'}
+                            </span>
+                          </td>
+                          <td className="p-3 text-slate-600">
+                            {u.created_at ? new Date(u.created_at).toLocaleDateString('es-ES', {
+                              year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                            }) : '-'}
+                          </td>
+                          <td className="p-3 text-center">
+                            <button 
+                              onClick={() => openUserDetail(u.id)}
+                              className="p-1 hover:bg-purple-100 rounded" 
+                              title="Ver detalles"
+                            >
+                              <Eye className="w-4 h-4 text-purple-600" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              <Pagination 
+                page={historyPage} 
+                setPage={setHistoryPage} 
+                total={historyTotal} 
+                perPage={historyPerPage} 
+                setPerPage={setHistoryPerPage} 
+              />
+            </div>
           </div>
         )}
 
