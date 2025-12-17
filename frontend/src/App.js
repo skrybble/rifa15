@@ -75,11 +75,11 @@ function App() {
         <Route path="/" element={<LandingPage user={user} />} />
         <Route
           path="/login"
-          element={user ? <Navigate to="/explore" /> : <LoginPage onLogin={handleLogin} />}
+          element={user ? <Navigate to={user.role === 'super_admin' ? '/dashboard' : '/explore'} /> : <LoginPage onLogin={handleLogin} />}
         />
         <Route
           path="/register"
-          element={user ? <Navigate to="/explore" /> : <RegisterPage onLogin={handleLogin} />}
+          element={user ? <Navigate to={user.role === 'super_admin' ? '/dashboard' : '/explore'} /> : <RegisterPage onLogin={handleLogin} />}
         />
         <Route path="/terms" element={<TermsPage />} />
         <Route
