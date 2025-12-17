@@ -26,7 +26,43 @@
     "language": "Language",
     "spanish": "Spanish",
     "english": "English",
-    "portuguese": "Portuguese"
+    "portuguese": "Portuguese",
+    "or": "or",
+    "and": "and",
+    "of": "of",
+    "from": "from",
+    "to": "to",
+    "see": "See",
+    "seeMore": "See more",
+    "seeAll": "See all",
+    "details": "Details",
+    "description": "Description",
+    "price": "Price",
+    "date": "Date",
+    "status": "Status",
+    "actions": "Actions",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "city": "City",
+    "country": "Country",
+    "share": "Share",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "download": "Download",
+    "upload": "Upload",
+    "select": "Select",
+    "selected": "selected",
+    "none": "None",
+    "notFound": "Not found",
+    "noResults": "No results",
+    "tryAgain": "Try again",
+    "required": "Required",
+    "optional": "Optional",
+    "min": "Minimum",
+    "max": "Maximum",
+    "total": "Total"
   },
   "auth": {
     "login": "Sign In",
@@ -42,7 +78,8 @@
     "fullName": "Full name",
     "welcomeBack": "Welcome back!",
     "loginSubtitle": "Sign in to your account to continue",
-    "registerSubtitle": "Create your account and start participating",
+    "registerTitle": "Create your account",
+    "registerSubtitle": "Join the raffle community",
     "accountType": "Account type",
     "user": "User",
     "creator": "Creator",
@@ -50,17 +87,38 @@
     "creatorDesc": "Create and manage raffles",
     "termsAccept": "I accept the",
     "termsAndConditions": "Terms and Conditions",
+    "termsRequired": "You must accept the Terms and Conditions to create your account",
     "loginError": "Login error",
-    "registerError": "Registration error"
+    "registerError": "Registration error",
+    "selectInterests": "Select your interests",
+    "minInterests": "Select at least 3 interests",
+    "interestsHelp": "This helps us show you relevant raffles"
+  },
+  "interests": {
+    "technology": "Technology",
+    "sports": "Sports",
+    "gaming": "Gaming",
+    "music": "Music",
+    "art": "Art",
+    "fashion": "Fashion",
+    "travel": "Travel",
+    "food": "Food",
+    "fitness": "Fitness",
+    "beauty": "Beauty",
+    "education": "Education",
+    "entertainment": "Entertainment",
+    "lifestyle": "Lifestyle",
+    "photography": "Photography"
   },
   "nav": {
     "explore": "Explore",
     "myTickets": "My Tickets",
     "messages": "Messages",
     "dashboard": "Dashboard",
-    "profile": "Profile",
+    "profile": "My Profile",
     "settings": "Settings",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "home": "Home"
   },
   "home": {
     "hero": "The raffle platform for creators",
@@ -77,12 +135,15 @@
     "endingSoon": "Ending soon",
     "popular": "Popular",
     "priceLowHigh": "Price: low to high",
-    "priceHighLow": "Price: high to low"
+    "priceHighLow": "Price: high to low",
+    "hello": "Hello",
+    "discoverRaffles": "Discover the most exciting raffles"
   },
   "raffle": {
     "title": "Title",
     "description": "Description",
     "tickets": "Tickets",
+    "ticket": "Ticket",
     "ticketsSold": "Tickets sold",
     "ticketsAvailable": "Tickets available",
     "ticketPrice": "Ticket price",
@@ -121,7 +182,21 @@
     "categories": "Categories",
     "dateWarning": "There are already raffles scheduled for this date",
     "createSuccess": "Raffle created successfully!",
-    "createError": "Error creating raffle"
+    "createError": "Error creating raffle",
+    "viewDetails": "View details",
+    "shareRaffle": "Share raffle",
+    "prize": "Prize",
+    "progress": "Progress",
+    "timeRemaining": "Time remaining",
+    "selectYourTickets": "Select your tickets",
+    "quickSelect": "Quick select",
+    "random": "Random",
+    "clearSelection": "Clear selection",
+    "proceedToPayment": "Proceed to payment",
+    "ticketNumber": "Ticket number",
+    "yourTickets": "Your tickets",
+    "noTicketsYet": "You don't have tickets yet",
+    "purchaseDate": "Purchase date"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -166,18 +241,37 @@
     "profilePicture": "Profile picture",
     "coverPhoto": "Cover photo",
     "updateSuccess": "Profile updated",
-    "updateError": "Error updating"
+    "updateError": "Error updating",
+    "account": "Account",
+    "privacy": "Privacy",
+    "security": "Security",
+    "blocked": "Blocked",
+    "personalInfo": "Personal information",
+    "contactInfo": "Contact information",
+    "showEmail": "Show email publicly",
+    "showPhone": "Show phone publicly",
+    "allowMessages": "Allow messages from anyone",
+    "blockUser": "Block user",
+    "unblockUser": "Unblock user",
+    "blockedUsers": "Blocked users",
+    "noBlockedUsers": "You have no blocked users",
+    "raffles": "Raffles",
+    "rating": "Rating"
   },
   "messages": {
     "title": "Messages",
     "newMessage": "New message",
     "noMessages": "You have no messages",
+    "noConversations": "You have no conversations",
     "typeMessage": "Type a message...",
     "send": "Send",
     "online": "Online",
     "offline": "Offline",
     "lastSeen": "Last seen",
-    "searchConversations": "Search conversations..."
+    "searchConversations": "Search conversations...",
+    "startConversation": "Start conversation",
+    "selectConversation": "Select a conversation",
+    "conversations": "Conversations"
   },
   "tickets": {
     "myTickets": "My Tickets",
@@ -188,7 +282,12 @@
     "won": "Winner",
     "lost": "Didn't win",
     "pending": "Pending",
-    "viewRaffle": "View raffle"
+    "viewRaffle": "View raffle",
+    "activeTickets": "Active Tickets",
+    "completedTickets": "Completed Tickets",
+    "wonTickets": "Winning Tickets",
+    "totalSpent": "Total spent",
+    "totalWon": "Total won"
   },
   "admin": {
     "manageCreators": "Manage Creators",
@@ -231,7 +330,9 @@
     "actions": "Actions",
     "rafflesOfDay": "Raffles of the day",
     "configuration": "Configuration",
-    "alertAfter": "Alert after"
+    "alertAfter": "Alert after",
+    "recentDate": "Date (recent)",
+    "oldDate": "Date (oldest)"
   },
   "pwa": {
     "installTitle": "Install RafflyWin",
@@ -250,5 +351,41 @@
     "about": "About",
     "help": "Help",
     "copyright": "© 2024 RafflyWin. All rights reserved."
+  },
+  "checkout": {
+    "title": "Checkout",
+    "summary": "Order summary",
+    "paymentMethod": "Payment method",
+    "creditCard": "Credit card",
+    "paypal": "PayPal",
+    "processing": "Processing...",
+    "pay": "Pay",
+    "success": "Payment successful!",
+    "error": "Payment error"
+  },
+  "terms": {
+    "title": "Terms and Conditions",
+    "lastUpdate": "Last update",
+    "acceptance": "Acceptance of terms",
+    "use": "Use of service",
+    "privacy": "Privacy",
+    "modifications": "Modifications"
+  },
+  "creator": {
+    "profile": "Creator Profile",
+    "aboutMe": "About me",
+    "myRaffles": "My Raffles",
+    "activeRaffles": "Active Raffles",
+    "completedRaffles": "Completed Raffles",
+    "contactCreator": "Contact Creator",
+    "becomeCreator": "Become a Creator"
+  },
+  "time": {
+    "justNow": "Just now",
+    "minutesAgo": "{{count}} minutes ago",
+    "hoursAgo": "{{count}} hours ago",
+    "daysAgo": "{{count}} days ago",
+    "today": "Today",
+    "yesterday": "Yesterday"
   }
 }
