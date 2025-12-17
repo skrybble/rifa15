@@ -325,32 +325,21 @@ const DashboardPage = ({ user, onLogout }) => {
     }
   };
 
-  const loadUserDetail = async (userId) => {
-    setLoadingUserDetail(true);
-    try {
-      // Load user info
-      const userRes = await axios.get(`${API}/admin/user/${userId}`);
-      setUserDetail(userRes.data);
-      
-      // Load user's messages (admin can see all)
-      try {
-        const msgRes = await axios.get(`${API}/admin/user/${userId}/messages`);
-        setUserMessages(msgRes.data || []);
-      } catch { setUserMessages([]); }
-      
-      // Load user's raffles
-      try {
-        const rafflesRes = await axios.get(`${API}/raffles?creator_id=${userId}`);
-        setUserRaffles(rafflesRes.data || []);
-      } catch { setUserRaffles([]); }
-      
-      setShowUserDetailModal(true);
-    } catch (error) {
-      console.error('Error loading user detail:', error);
-      alert('Error al cargar información del usuario');
-    } finally {
-      setLoadingUserDetail(false);
-    }
+  const openUserDetail = (userId) => {
+    setSelectedUser({ id: userId });
+    setShowUserDetailModal(true);
+  };
+
+  const handleUserModalSuspend = (userFromModal) => {
+    setSelectedUser(userFromModal);
+    setShowUserDetailModal(false);
+    setShowSuspendModal(true);
+  };
+
+  const handleUserModalMessage = (userFromModal) => {
+    setSelectedUser(userFromModal);
+    setShowUserDetailModal(false);
+    setShowMessageModal(true);
   };
 
   const handleManualDraw = async () => {
