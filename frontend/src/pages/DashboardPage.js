@@ -295,10 +295,57 @@ const DashboardPage = ({ user, onLogout }) => {
 
   const loadUsersByReviews = async () => {
     try {
-      const res = await axios.get(`${API}/admin/users-by-reviews`);
-      setUsersByReviews(res.data.data);
+      const params = new URLSearchParams({
+        filter: reviewsFilter,
+        sort_by: reviewsSortBy,
+        ...(minNegativeReviews > 0 && { min_negative: minNegativeReviews })
+      });
+      const res = await axios.get(`${API}/admin/users-by-reviews?${params}`);
+      setUsersByReviews(res.data.data || res.data);
     } catch (error) {
       console.error('Error loading users by reviews:', error);
+    }
+  };
+
+  const loadUserHistory = async () => {
+    try {
+      const params = new URLSearchParams({
+        page: historyPage,
+        per_page: historyPerPage
+      });
+      const res = await axios.get(`${API}/admin/user-history?${params}`);
+      setUserHistory(res.data.data || []);
+      setHistoryTotal(res.data.total || 0);
+    } catch (error) {
+      console.error('Error loading user history:', error);
+    }
+  };
+
+  const loadUserDetail = async (userId) => {
+    setLoadingUserDetail(true);
+    try {
+      // Load user info
+      const userRes = await axios.get(`${API}/admin/user/${userId}`);
+      setUserDetail(userRes.data);
+      
+      // Load user's messages (admin can see all)
+      try {
+        const msgRes = await axios.get(`${API}/admin/user/${userId}/messages`);
+        setUserMessages(msgRes.data || []);
+      } catch { setUserMessages([]); }
+      
+      // Load user's raffles
+      try {
+        const rafflesRes = await axios.get(`${API}/raffles?creator_id=${userId}`);
+        setUserRaffles(rafflesRes.data || []);
+      } catch { setUserRaffles([]); }
+      
+      setShowUserDetailModal(true);
+    } catch (error) {
+      console.error('Error loading user detail:', error);
+      alert('Error al cargar información del usuario');
+    } finally {
+      setLoadingUserDetail(false);
     }
   };
 
