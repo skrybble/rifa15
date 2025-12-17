@@ -353,8 +353,8 @@ const MessagesPage = ({ user, onLogout }) => {
                     {searchQuery 
                       ? 'No se encontraron conversaciones' 
                       : showArchived 
-                        ? 'No tienes conversaciones archivadas'
-                        : 'No tienes conversaciones'
+                        ? t('messages.noConversations')
+                        : t('messages.noConversations')
                     }
                   </p>
                 </div>
