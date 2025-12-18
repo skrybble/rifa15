@@ -1,207 +1,386 @@
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Ticket, Trophy, Users, Zap } from 'lucide-react';
+import axios from 'axios';
+import { API } from '../App';
+import { Ticket, Search, Plus, Home, Compass, Bell, User, BadgeCheck, Image, X } from 'lucide-react';
 import LanguageSelector from '../components/LanguageSelector';
+import FeedCard from '../components/FeedCard';
 
 const LandingPage = ({ user }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [feed, setFeed] = useState([]);
+  const [featuredCreators, setFeaturedCreators] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [showPostModal, setShowPostModal] = useState(false);
+  const [newPostContent, setNewPostContent] = useState('');
+  const [newPostImages, setNewPostImages] = useState([]);
+  const [isStory, setIsStory] = useState(false);
+  const [posting, setPosting] = useState(false);
+  const observerRef = useRef();
+  const lastItemRef = useRef();
+
+  useEffect(() => {
+    loadFeed();
+    loadFeaturedCreators();
+  }, []);
+
+  const loadFeed = async (pageNum = 1, append = false) => {
+    if (pageNum === 1) setLoading(true);
+    else setLoadingMore(true);
+    
+    try {
+      const res = await axios.get(`${API}/feed?page=${pageNum}&per_page=10`);
+      if (append) {
+        setFeed(prev => [...prev, ...res.data.items]);
+      } else {
+        setFeed(res.data.items);
+      }
+      setHasMore(res.data.has_more);
+      setPage(pageNum);
+    } catch (error) {
+      console.error('Error loading feed:', error);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  const loadFeaturedCreators = async () => {
+    try {
+      const res = await axios.get(`${API}/creators/featured`);
+      setFeaturedCreators(res.data);
+    } catch (error) {
+      console.error('Error loading featured creators:', error);
+    }
+  };
+
+  // Infinite scroll
+  const lastItemCallback = useCallback(node => {
+    if (loadingMore) return;
+    if (observerRef.current) observerRef.current.disconnect();
+    
+    observerRef.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        loadFeed(page + 1, true);
+      }
+    });
+    
+    if (node) observerRef.current.observe(node);
+  }, [loadingMore, hasMore, page]);
+
+  const handleImageSelect = (e) => {
+    const files = Array.from(e.target.files);
+    const newImages = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }));
+    setNewPostImages(prev => [...prev, ...newImages].slice(0, 4));
+  };
+
+  const removeImage = (index) => {
+    setNewPostImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleCreatePost = async () => {
+    if (!newPostContent.trim() && newPostImages.length === 0) return;
+    
+    setPosting(true);
+    try {
+      const formData = new FormData();
+      formData.append('content', newPostContent);
+      formData.append('is_story', isStory);
+      newPostImages.forEach(img => {
+        formData.append('images', img.file);
+      });
+      
+      const res = await axios.post(`${API}/posts`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      // Add to feed
+      const newPost = { ...res.data, type: 'post', creator: user };
+      setFeed(prev => [newPost, ...prev]);
+      
+      // Reset
+      setNewPostContent('');
+      setNewPostImages([]);
+      setIsStory(false);
+      setShowPostModal(false);
+    } catch (error) {
+      console.error('Error creating post:', error);
+      alert('Error al crear publicación');
+    } finally {
+      setPosting(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-blue-50">
-      {/* Header */}
-      <header className="border-b border-sky-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              <Ticket className="w-8 h-8 text-sky-600" />
-              <span className="text-2xl font-bold text-slate-900">RafflyWin</span>
-            </div>
-            <div className="flex items-center space-x-4">
+    <div className="min-h-screen bg-slate-50">
+      {/* Header - Fixed */}
+      <header className="fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-50">
+        <div className="max-w-lg mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <Link to="/" className="flex items-center space-x-2">
+              <Ticket className="w-7 h-7 text-purple-600" />
+              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                RafflyWin
+              </span>
+            </Link>
+            
+            <div className="flex items-center space-x-3">
               <LanguageSelector />
               {user ? (
-                <Link
-                  to="/explore"
-                  data-testid="explore-link"
-                  className="px-6 py-2.5 bg-sky-600 text-white rounded-full font-semibold hover:bg-sky-700 transition-all"
-                >
-                  {t('nav.explore')}
-                </Link>
-              ) : (
                 <>
-                  <Link
-                    to="/login"
-                    data-testid="login-link"
-                    className="px-6 py-2.5 text-sky-700 font-semibold hover:text-sky-900 transition-colors"
-                  >
-                    {t('auth.login')}
+                  <Link to="/explore" className="p-2 hover:bg-slate-100 rounded-full">
+                    <Search className="w-5 h-5 text-slate-600" />
                   </Link>
-                  <Link
-                    to="/register"
-                    data-testid="register-link"
-                    className="px-6 py-2.5 bg-sky-600 text-white rounded-full font-semibold hover:bg-sky-700 transition-all"
-                  >
-                    {t('auth.register')}
+                  <Link to="/notifications" className="p-2 hover:bg-slate-100 rounded-full relative">
+                    <Bell className="w-5 h-5 text-slate-600" />
                   </Link>
                 </>
+              ) : (
+                <Link 
+                  to="/login"
+                  className="px-4 py-2 bg-purple-600 text-white rounded-full text-sm font-semibold hover:bg-purple-700"
+                >
+                  {t('auth.login')}
+                </Link>
               )}
             </div>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center space-y-8">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 leading-tight">
-            {t('landing.heroTitle1')}
-            <br />
-            <span className="bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">
-              {t('landing.heroTitle2')}
-            </span>
-          </h1>
-          <p className="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-            {t('landing.heroDesc')}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-            <Link
-              to="/register"
-              data-testid="hero-register-btn"
-              className="px-8 py-4 bg-sky-600 text-white text-lg rounded-full font-semibold hover:bg-sky-700 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+      {/* Main Content */}
+      <main className="pt-16 pb-20">
+        <div className="max-w-lg mx-auto px-4">
+          
+          {/* Featured Creators - Stories Style */}
+          {featuredCreators.length > 0 && (
+            <div className="py-4 border-b border-slate-200 mb-4 -mx-4 px-4 bg-white">
+              <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
+                {/* Add Story Button (for creators) */}
+                {user && user.role === 'creator' && (
+                  <button 
+                    onClick={() => { setIsStory(true); setShowPostModal(true); }}
+                    className="flex-shrink-0 flex flex-col items-center"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center border-2 border-dashed border-slate-300">
+                      <Plus className="w-6 h-6 text-slate-500" />
+                    </div>
+                    <span className="text-xs text-slate-600 mt-1">{t('feed.newStory')}</span>
+                  </button>
+                )}
+                
+                {featuredCreators.map(creator => (
+                  <Link 
+                    key={creator.id}
+                    to={`/creator/${creator.id}`}
+                    className="flex-shrink-0 flex flex-col items-center"
+                  >
+                    <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-purple-500 via-pink-500 to-orange-500">
+                      {creator.profile_image ? (
+                        <img 
+                          src={creator.profile_image.startsWith('/') ? `${API.replace('/api', '')}${creator.profile_image}` : creator.profile_image}
+                          alt={creator.full_name}
+                          className="w-full h-full rounded-full object-cover border-2 border-white"
+                        />
+                      ) : (
+                        <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold text-lg border-2 border-white">
+                          {creator.full_name.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-xs text-slate-700 mt-1 truncate w-16 text-center">
+                      {creator.full_name.split(' ')[0]}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Create Post (for creators) */}
+          {user && user.role === 'creator' && (
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+                  {user.full_name?.charAt(0)}
+                </div>
+                <button 
+                  onClick={() => { setIsStory(false); setShowPostModal(true); }}
+                  className="flex-1 px-4 py-2.5 bg-slate-100 rounded-full text-left text-slate-500 hover:bg-slate-200 transition-colors"
+                >
+                  {t('feed.whatsOnYourMind')}
+                </button>
+                <button 
+                  onClick={() => { setIsStory(false); setShowPostModal(true); }}
+                  className="p-2 hover:bg-slate-100 rounded-full text-green-600"
+                >
+                  <Image className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Feed */}
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600"></div>
+            </div>
+          ) : feed.length === 0 ? (
+            <div className="text-center py-20">
+              <Ticket className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+              <p className="text-slate-500">{t('feed.noContent')}</p>
+              <Link 
+                to="/explore"
+                className="mt-4 inline-block px-6 py-2 bg-purple-600 text-white rounded-full font-semibold hover:bg-purple-700"
+              >
+                {t('nav.explore')}
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {feed.map((item, index) => (
+                <div 
+                  key={`${item.type}-${item.id}`}
+                  ref={index === feed.length - 1 ? lastItemCallback : null}
+                >
+                  <FeedCard item={item} user={user} />
+                </div>
+              ))}
+              
+              {loadingMore && (
+                <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* Bottom Navigation - Mobile */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 sm:hidden">
+        <div className="flex items-center justify-around py-2">
+          <Link to="/" className="flex flex-col items-center p-2 text-purple-600">
+            <Home className="w-6 h-6" />
+          </Link>
+          <Link to="/explore" className="flex flex-col items-center p-2 text-slate-500">
+            <Compass className="w-6 h-6" />
+          </Link>
+          {user && user.role === 'creator' && (
+            <button 
+              onClick={() => { setIsStory(false); setShowPostModal(true); }}
+              className="flex flex-col items-center p-2"
             >
-              {t('landing.startNow')}
-            </Link>
-            <Link
-              to="/explore"
-              className="px-8 py-4 bg-white text-sky-700 text-lg rounded-full font-semibold hover:bg-slate-50 transition-all border-2 border-sky-200"
-            >
-              {t('landing.viewRaffles')}
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all">
-            <div className="w-14 h-14 bg-sky-100 rounded-xl flex items-center justify-center mb-4">
-              <Ticket className="w-7 h-7 text-sky-600" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">{t('landing.digitalRaffles')}</h3>
-            <p className="text-slate-600">
-              {t('landing.digitalRafflesDesc')}
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all">
-            <div className="w-14 h-14 bg-sky-100 rounded-xl flex items-center justify-center mb-4">
-              <Trophy className="w-7 h-7 text-sky-600" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">{t('landing.amazingPrizes')}</h3>
-            <p className="text-slate-600">
-              {t('landing.amazingPrizesDesc')}
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all">
-            <div className="w-14 h-14 bg-sky-100 rounded-xl flex items-center justify-center mb-4">
-              <Users className="w-7 h-7 text-sky-600" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">{t('landing.community')}</h3>
-            <p className="text-slate-600">
-              {t('landing.communityDesc')}
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all">
-            <div className="w-14 h-14 bg-sky-100 rounded-xl flex items-center justify-center mb-4">
-              <Zap className="w-7 h-7 text-sky-600" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">{t('landing.dailyDraw')}</h3>
-            <p className="text-slate-600">
-              {t('landing.dailyDrawDesc')}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section className="bg-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-center text-slate-900 mb-16">
-            {t('landing.howItWorks')}
-          </h2>
-          <div className="grid md:grid-cols-3 gap-12">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-sky-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
-                1
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                <Plus className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">{t('landing.step1Title')}</h3>
-              <p className="text-slate-600">
-                {t('landing.step1Desc')}
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-sky-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
-                2
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">{t('landing.step2Title')}</h3>
-              <p className="text-slate-600">
-                {t('landing.step2Desc')}
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-sky-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
-                3
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">{t('landing.step3Title')}</h3>
-              <p className="text-slate-600">
-                {t('landing.step3Desc')}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="bg-gradient-to-r from-sky-600 to-blue-600 rounded-3xl p-8 md:p-16 text-center text-white">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {t('landing.ctaTitle')}
-          </h2>
-          <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
-            {t('landing.ctaDesc')}
-          </p>
-          <Link
-            to="/register"
-            className="inline-block px-8 py-4 bg-white text-sky-700 text-lg rounded-full font-semibold hover:bg-slate-100 transition-all shadow-lg"
-          >
-            {t('landing.createAccount')}
+            </button>
+          )}
+          <Link to="/my-tickets" className="flex flex-col items-center p-2 text-slate-500">
+            <Ticket className="w-6 h-6" />
+          </Link>
+          <Link to={user ? "/dashboard" : "/login"} className="flex flex-col items-center p-2 text-slate-500">
+            <User className="w-6 h-6" />
           </Link>
         </div>
-      </section>
+      </nav>
 
-      {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <Ticket className="w-6 h-6 text-sky-400" />
-              <span className="text-xl font-bold">RafflyWin</span>
+      {/* Create Post Modal */}
+      {showPostModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center">
+          <div className="bg-white w-full sm:max-w-lg sm:rounded-xl rounded-t-3xl max-h-[90vh] overflow-hidden">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 border-b">
+              <button onClick={() => setShowPostModal(false)} className="text-slate-500">
+                <X className="w-6 h-6" />
+              </button>
+              <h2 className="font-bold text-lg">
+                {isStory ? t('feed.newStory') : t('feed.newPost')}
+              </h2>
+              <button 
+                onClick={handleCreatePost}
+                disabled={posting || (!newPostContent.trim() && newPostImages.length === 0)}
+                className="px-4 py-1.5 bg-purple-600 text-white rounded-full text-sm font-semibold disabled:opacity-50"
+              >
+                {posting ? '...' : t('feed.post')}
+              </button>
             </div>
-            <div className="flex space-x-6 text-sm text-slate-400">
-              <Link to="/terms" className="hover:text-white transition-colors">{t('footer.terms')}</Link>
-              <Link to="/privacy" className="hover:text-white transition-colors">{t('footer.privacy')}</Link>
-              <Link to="/contact" className="hover:text-white transition-colors">{t('footer.contact')}</Link>
+            
+            {/* Modal Content */}
+            <div className="p-4 max-h-[60vh] overflow-y-auto">
+              <div className="flex space-x-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                  {user?.full_name?.charAt(0)}
+                </div>
+                <textarea
+                  value={newPostContent}
+                  onChange={(e) => setNewPostContent(e.target.value)}
+                  placeholder={t('feed.whatsOnYourMind')}
+                  className="flex-1 resize-none border-none outline-none text-lg"
+                  rows={4}
+                  autoFocus
+                />
+              </div>
+              
+              {/* Selected Images */}
+              {newPostImages.length > 0 && (
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  {newPostImages.map((img, idx) => (
+                    <div key={idx} className="relative aspect-square">
+                      <img 
+                        src={img.preview}
+                        alt=""
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                      <button 
+                        onClick={() => removeImage(idx)}
+                        className="absolute top-2 right-2 w-6 h-6 bg-black/50 rounded-full flex items-center justify-center"
+                      >
+                        <X className="w-4 h-4 text-white" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-          <div className="border-t border-slate-800 mt-8 pt-8 text-center text-sm text-slate-500">
-            © {new Date().getFullYear()} RafflyWin. {t('footer.rights')}
+            
+            {/* Modal Footer */}
+            <div className="p-4 border-t flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <label className="cursor-pointer text-green-600 hover:bg-green-50 p-2 rounded-full">
+                  <Image className="w-6 h-6" />
+                  <input 
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageSelect}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+              
+              {/* Story toggle */}
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <input 
+                  type="checkbox"
+                  checked={isStory}
+                  onChange={(e) => setIsStory(e.target.checked)}
+                  className="w-4 h-4 text-purple-600 rounded"
+                />
+                <span className="text-sm text-slate-600">{t('feed.story24h')}</span>
+              </label>
+            </div>
           </div>
         </div>
-      </footer>
+      )}
     </div>
   );
 };
