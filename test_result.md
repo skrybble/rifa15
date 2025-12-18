@@ -262,6 +262,18 @@ agent_communication:
         agent: "testing"
         comment: "✅ i18n translation system fully functional. Tested all requested pages: 1) Landing Page - Hero text, features, how-it-works sections display translated content correctly. Language selector (Globe icon) visible and functional. 2) Login Page - Form labels (Email, Password) and welcome text properly translated. Login successful with juan@user.com. 3) Profile Settings - Tab labels (Account, Privacy, Blocked, Payment Methods) show translated text. Form fields (Full name, Bio) display translated labels. Tab navigation working. 4) Creator Profile - Navigation working, translation keys connected. Language switching functionality works correctly between English, Spanish, and Portuguese. All translation keys properly connected and displaying text (not blank). Content displays in browser's default language as expected."
 
+  - task: "Instagram/TikTok style social feed implementation"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/LandingPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ Instagram/TikTok style social feed fully functional. Landing Page: Featured Creators section with gradient borders (3 creators found), feed items with raffle details, creator avatars with badge checks, like/comment/share buttons, 'Login to buy' button for non-auth users. Creator Profile: Profile header with stats (Posts/Followers/Following), badge checks, Follow/Message buttons, Posts/Raffles tabs working. Creator Posts: Successfully logged in as carlos@creator.com, 'What's on your mind?' composer found, post modal with text area/image upload/story checkbox working, Add Story button present. User Interactions: Logged in as juan@user.com, 'Buy Tickets' button for auth users, like button functionality (likes count updated), comment section expansion with input field, share button working. Admin Featured Toggle: Admin login successful, dashboard accessible, Creators tab visible in navigation. All core social feed features working as expected."
+
 test_plan:
   current_focus: []
   stuck_tasks: []
