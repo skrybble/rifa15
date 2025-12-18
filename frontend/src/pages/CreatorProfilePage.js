@@ -38,7 +38,7 @@ const CreatorProfilePage = ({ user }) => {
     setLoading(true);
     try {
       const [creatorRes, rafflesRes, postsRes, storiesRes] = await Promise.all([
-        axios.get(`${API}/users/${creatorId}`),
+        axios.get(`${API}/creators/${creatorId}/profile`),
         axios.get(`${API}/raffles?creator_id=${creatorId}`),
         axios.get(`${API}/creators/${creatorId}/posts?page=1&per_page=10`),
         axios.get(`${API}/creators/${creatorId}/stories`)
