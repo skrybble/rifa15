@@ -669,6 +669,7 @@ const DashboardPage = ({ user, onLogout }) => {
                     <th className="text-left p-3">Email</th>
                     <th className="text-center p-3">Seguidores</th>
                     <th className="text-center p-3">Rifas</th>
+                    <th className="text-center p-3">Destacado</th>
                     <th className="text-center p-3">Estado</th>
                     <th className="text-center p-3">Acciones</th>
                   </tr>
