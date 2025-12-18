@@ -79,7 +79,7 @@ const RaffleDetailPage = ({ user, onLogout }) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-slate-200 to-slate-300">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600"></div>
       </div>
     );
   }
@@ -130,12 +130,12 @@ const RaffleDetailPage = ({ user, onLogout }) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-200 to-slate-300">
       {/* Header */}
-      <header className="border-b border-purple-100 bg-white/90 backdrop-blur-md">
+      <header className="border-b border-sky-100 bg-white/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <button
             onClick={() => navigate(-1)}
             data-testid="back-btn"
-            className="flex items-center space-x-2 text-slate-700 hover:text-purple-700 font-medium"
+            className="flex items-center space-x-2 text-slate-700 hover:text-sky-700 font-medium"
           >
             <ArrowLeft className="w-5 h-5" />
             <span>{t('common.back')}</span>
@@ -148,7 +148,7 @@ const RaffleDetailPage = ({ user, onLogout }) => {
           {/* Left: Images & Info */}
           <div className="space-y-6">
             {/* Main Image */}
-            <div className="bg-gradient-to-br from-white to-purple-50/50 rounded-2xl overflow-hidden shadow-xl border-2 border-purple-200/60">
+            <div className="bg-white rounded-2xl overflow-hidden shadow-xl border-2 border-sky-200/60">
               {raffle.images && raffle.images.length > 0 ? (
                 <img
                   src={`${process.env.REACT_APP_BACKEND_URL}${raffle.images[0]}`}
@@ -156,14 +156,14 @@ const RaffleDetailPage = ({ user, onLogout }) => {
                   className="w-full h-96 object-cover"
                 />
               ) : (
-                <div className="w-full h-96 bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center">
+                <div className="w-full h-96 bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center">
                   <Ticket className="w-24 h-24 text-white" />
                 </div>
               )}
             </div>
 
             {/* Description */}
-            <div className="bg-gradient-to-br from-white to-purple-50/50 rounded-2xl p-6 shadow-xl border-2 border-purple-200/60">
+            <div className="bg-white rounded-2xl p-6 shadow-xl border-2 border-sky-200/60">
               <h2 className="text-xl font-bold text-slate-900 mb-4">Descripción</h2>
               <p className="text-slate-600 leading-relaxed">{raffle.description}</p>
 
@@ -174,7 +174,7 @@ const RaffleDetailPage = ({ user, onLogout }) => {
                     {raffle.categories.map((cat, idx) => (
                       <span
                         key={idx}
-                        className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
+                        className="px-3 py-1 bg-sky-100 text-sky-700 rounded-full text-sm font-medium"
                       >
                         {cat}
                       </span>
@@ -186,13 +186,13 @@ const RaffleDetailPage = ({ user, onLogout }) => {
 
             {/* Creator Info */}
             {creator && (
-              <div className="bg-gradient-to-br from-white to-purple-50/50 rounded-2xl p-6 shadow-xl border-2 border-purple-200/60">
+              <div className="bg-white rounded-2xl p-6 shadow-xl border-2 border-sky-200/60">
                 <h2 className="text-xl font-bold text-slate-900 mb-4">Creador</h2>
                 <Link
                   to={`/creator/${creator.id}`}
-                  className="flex items-center space-x-4 hover:bg-purple-50 p-3 rounded-lg transition-colors"
+                  className="flex items-center space-x-4 hover:bg-sky-50 p-3 rounded-lg transition-colors"
                 >
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                  <div className="w-16 h-16 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
                     {creator.full_name.charAt(0)}
                   </div>
                   <div>
@@ -208,7 +208,7 @@ const RaffleDetailPage = ({ user, onLogout }) => {
 
           {/* Right: Purchase Section */}
           <div className="space-y-6">
-            <div className="bg-gradient-to-br from-white to-purple-50/50 rounded-2xl p-8 shadow-xl border-2 border-purple-200/60 sticky top-8">
+            <div className="bg-white rounded-2xl p-8 shadow-xl border-2 border-sky-200/60 sticky top-8">
               <h1 className="text-3xl font-bold text-slate-900 mb-6">{raffle.title}</h1>
 
               {/* Status Messages */}
@@ -230,15 +230,15 @@ const RaffleDetailPage = ({ user, onLogout }) => {
               <div className="space-y-4 mb-6">
                 <div className="flex items-center justify-between text-slate-600">
                   <div className="flex items-center space-x-2">
-                    <DollarSign className="w-5 h-5 text-purple-600" />
+                    <DollarSign className="w-5 h-5 text-sky-600" />
                     <span className="font-semibold">Precio por ticket</span>
                   </div>
-                  <span className="text-2xl font-bold text-purple-600">${raffle.ticket_price}</span>
+                  <span className="text-2xl font-bold text-sky-600">${raffle.ticket_price}</span>
                 </div>
 
                 <div className="flex items-center justify-between text-slate-600">
                   <div className="flex items-center space-x-2">
-                    <Calendar className="w-5 h-5 text-purple-600" />
+                    <Calendar className="w-5 h-5 text-sky-600" />
                     <span className="font-semibold">Fecha del sorteo</span>
                   </div>
                   <span className="font-bold">
@@ -252,7 +252,7 @@ const RaffleDetailPage = ({ user, onLogout }) => {
 
                 <div className="flex items-center justify-between text-slate-600">
                   <div className="flex items-center space-x-2">
-                    <Ticket className="w-5 h-5 text-purple-600" />
+                    <Ticket className="w-5 h-5 text-sky-600" />
                     <span className="font-semibold">Tickets disponibles</span>
                   </div>
                   <span className="font-bold">{availableTickets} / {raffle.ticket_range}</span>
@@ -263,7 +263,7 @@ const RaffleDetailPage = ({ user, onLogout }) => {
               <div className="mb-6">
                 <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
                   <div
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 h-full transition-all duration-500"
+                    className="bg-gradient-to-r from-sky-500 to-blue-600 h-full transition-all duration-500"
                     style={{ width: `${progressPercentage}%` }}
                   ></div>
                 </div>
@@ -274,15 +274,15 @@ const RaffleDetailPage = ({ user, onLogout }) => {
 
               {/* My Tickets */}
               {myTickets.length > 0 && (
-                <div className="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
-                  <p className="font-semibold text-purple-900 mb-2">
+                <div className="mb-6 p-4 bg-sky-50 rounded-lg border border-sky-200">
+                  <p className="font-semibold text-sky-900 mb-2">
                     {t('raffle.yourTickets')}: {myTickets.length}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {myTickets.map((ticket) => (
                       <span
                         key={ticket.id}
-                        className="px-3 py-1 bg-purple-600 text-white rounded-lg text-sm font-bold"
+                        className="px-3 py-1 bg-sky-600 text-white rounded-lg text-sm font-bold"
                       >
                         #{ticket.ticket_number}
                       </span>
@@ -306,13 +306,13 @@ const RaffleDetailPage = ({ user, onLogout }) => {
                         max={Math.min(availableTickets, 10)}
                         value={quantity}
                         onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                        className="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-center text-xl font-bold"
+                        className="w-full px-4 py-3 border border-sky-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent text-center text-xl font-bold"
                       />
                     </div>
 
-                    <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg border border-purple-200">
+                    <div className="flex items-center justify-between p-4 bg-sky-50 rounded-lg border border-sky-200">
                       <span className="text-slate-700 font-semibold">Total a pagar</span>
-                      <span className="text-3xl font-bold text-purple-600">
+                      <span className="text-3xl font-bold text-sky-600">
                         ${(quantity * raffle.ticket_price).toFixed(2)}
                       </span>
                     </div>
@@ -321,7 +321,7 @@ const RaffleDetailPage = ({ user, onLogout }) => {
                       onClick={handlePurchase}
                       data-testid="purchase-btn"
                       disabled={quantity < 1}
-                      className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-bold text-lg hover:from-purple-700 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-lg"
+                      className="w-full py-4 bg-sky-600 text-white rounded-lg font-bold text-lg hover:bg-sky-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-lg"
                     >
                       <ShoppingCart className="w-6 h-6" />
                       <span>{t('raffle.buyTickets')}</span>
@@ -339,13 +339,13 @@ const RaffleDetailPage = ({ user, onLogout }) => {
                     <div className="flex flex-col sm:flex-row gap-3 justify-center">
                       <Link
                         to="/login"
-                        className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg"
+                        className="px-6 py-3 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition-all shadow-lg"
                       >
                         Iniciar Sesión
                       </Link>
                       <Link
                         to="/register"
-                        className="px-6 py-3 bg-white text-purple-600 border-2 border-purple-600 rounded-lg font-semibold hover:bg-purple-50 transition-all"
+                        className="px-6 py-3 bg-white text-sky-600 border-2 border-sky-600 rounded-lg font-semibold hover:bg-sky-50 transition-all"
                       >
                         Registrarse
                       </Link>
@@ -360,8 +360,8 @@ const RaffleDetailPage = ({ user, onLogout }) => {
                 </div>
               )}
 
-              {/* Share Section - Moved to bottom with smaller icons */}
-              <div className="mt-6 pt-6 border-t border-purple-100">
+              {/* Share Section - At bottom with smaller icons */}
+              <div className="mt-6 pt-6 border-t border-sky-100">
                 <p className="text-sm font-medium text-slate-600 mb-3 text-center">
                   Compartir
                 </p>
