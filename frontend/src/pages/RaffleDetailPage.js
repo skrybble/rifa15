@@ -26,7 +26,7 @@ const RaffleDetailPage = ({ user, onLogout }) => {
       const raffleRes = await axios.get(`${API}/raffles/${raffleId}`);
       setRaffle(raffleRes.data);
 
-      const creatorRes = await axios.get(`${API}/users/${raffleRes.data.creator_id}`);
+      const creatorRes = await axios.get(`${API}/creators/${raffleRes.data.creator_id}/profile`);
       setCreator(creatorRes.data);
 
       const ticketsRes = await axios.get(`${API}/tickets/raffle/${raffleId}`);
