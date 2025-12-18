@@ -948,6 +948,22 @@ async def upload_cover_image(file: UploadFile = File(...), current_user: User = 
     
     return {"image_url": image_url, "message": "Imagen de portada actualizada exitosamente"}
 
+# Public creator profile endpoint (no auth required)
+@api_router.get("/creators/{creator_id}/profile")
+async def get_creator_profile_public(creator_id: str):
+    """Get public creator profile - no authentication required"""
+    creator = await db.users.find_one(
+        {"id": creator_id, "role": {"$in": ["creator", "admin", "super_admin"]}},
+        {"_id": 0, "password": 0, "blocked_users": 0, "payment_methods": 0}
+    )
+    if not creator:
+        raise HTTPException(status_code=404, detail="Creador no encontrado")
+    
+    if not creator.get("is_active", True):
+        raise HTTPException(status_code=403, detail="Este perfil no está disponible")
+    
+    return parse_from_mongo(creator)
+
 # Dynamic user routes - MUST be after all static /users/ routes
 @api_router.get("/users/{user_id}", response_model=User)
 async def get_user(user_id: str, current_user: User = Depends(get_current_user)):
