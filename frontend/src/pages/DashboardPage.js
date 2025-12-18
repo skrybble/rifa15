@@ -384,6 +384,16 @@ const DashboardPage = ({ user, onLogout }) => {
     }
   };
 
+  const handleToggleFeatured = async (creatorId, currentStatus) => {
+    try {
+      const res = await axios.post(`${API}/admin/creators/${creatorId}/toggle-featured`);
+      alert(res.data.message);
+      loadCreators();
+    } catch (error) {
+      alert('Error al cambiar estado destacado');
+    }
+  };
+
   const handleSendMessage = async () => {
     if (!selectedUser || !messageContent) {
       alert('Escribe un mensaje');
