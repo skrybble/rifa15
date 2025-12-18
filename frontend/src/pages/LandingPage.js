@@ -245,13 +245,18 @@ const LandingPage = ({ user }) => {
               </Link>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {feed.map((item, index) => (
                 <div 
                   key={`${item.type}-${item.id}`}
                   ref={index === feed.length - 1 ? lastItemCallback : null}
+                  className="relative"
                 >
                   <FeedCard item={item} user={user} />
+                  {/* Separador visual entre posts */}
+                  {index < feed.length - 1 && (
+                    <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-transparent via-slate-200 to-transparent rounded-full"></div>
+                  )}
                 </div>
               ))}
               

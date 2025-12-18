@@ -122,7 +122,7 @@ const FeedCard = ({ item, user, onLikeUpdate }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-4">
+    <div className="bg-white rounded-2xl shadow-lg border border-slate-200/80 overflow-hidden ring-1 ring-slate-100">
       {/* Header */}
       <div className="flex items-center justify-between p-4">
         <Link to={`/creator/${creator.id}`} className="flex items-center space-x-3">
