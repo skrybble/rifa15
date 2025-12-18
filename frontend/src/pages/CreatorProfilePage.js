@@ -134,15 +134,15 @@ const CreatorProfilePage = ({ user }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600"></div>
+      <div className="flex items-center justify-center min-h-screen bg-slate-100">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-sky-600"></div>
       </div>
     );
   }
 
   if (!creator) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+      <div className="flex items-center justify-center min-h-screen bg-slate-100">
         <p className="text-slate-600">{t('creator.notFound')}</p>
       </div>
     );
@@ -160,16 +160,16 @@ const CreatorProfilePage = ({ user }) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-100">
       {/* Header */}
       <header className="sticky top-0 bg-white border-b border-slate-200 z-40">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
           <button onClick={() => navigate(-1)} className="p-2 -ml-2 hover:bg-slate-100 rounded-full">
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5 text-slate-700" />
           </button>
-          <span className="font-semibold">{creator.full_name}</span>
+          <span className="font-semibold text-slate-900">{creator.full_name}</span>
           <button className="p-2 -mr-2 hover:bg-slate-100 rounded-full">
-            <MoreHorizontal className="w-5 h-5" />
+            <MoreHorizontal className="w-5 h-5 text-slate-700" />
           </button>
         </div>
       </header>
@@ -178,36 +178,38 @@ const CreatorProfilePage = ({ user }) => {
         {/* Profile Header */}
         <div className="bg-white">
           {/* Cover Image */}
-          {creator.cover_image && (
-            <div className="h-32 bg-gradient-to-r from-purple-500 to-pink-500">
+          {creator.cover_image ? (
+            <div className="h-32 bg-gradient-to-r from-sky-400 to-blue-600">
               <img 
                 src={creator.cover_image.startsWith('/') ? `${API.replace('/api', '')}${creator.cover_image}` : creator.cover_image}
                 alt=""
                 className="w-full h-full object-cover"
               />
             </div>
+          ) : (
+            <div className="h-24 bg-gradient-to-r from-sky-400 to-blue-500"></div>
           )}
           
           <div className="px-4 pb-4">
             {/* Profile Picture & Stats */}
-            <div className="flex items-end -mt-12 mb-4">
+            <div className="flex items-end -mt-10 mb-4">
               <div className="relative">
                 {stories.length > 0 ? (
-                  <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-purple-500 via-pink-500 to-orange-500">
+                  <div className="w-20 h-20 rounded-full p-0.5 bg-gradient-to-tr from-sky-400 via-blue-500 to-cyan-400">
                     {creator.profile_image ? (
                       <img 
                         src={creator.profile_image.startsWith('/') ? `${API.replace('/api', '')}${creator.profile_image}` : creator.profile_image}
                         alt={creator.full_name}
-                        className="w-full h-full rounded-full object-cover border-4 border-white"
+                        className="w-full h-full rounded-full object-cover border-3 border-white"
                       />
                     ) : (
-                      <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white text-3xl font-bold border-4 border-white">
+                      <div className="w-full h-full rounded-full bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-white text-2xl font-bold border-3 border-white">
                         {creator.full_name.charAt(0)}
                       </div>
                     )}
                   </div>
                 ) : (
-                  <div className="w-24 h-24 rounded-full border-4 border-white bg-white shadow-lg overflow-hidden">
+                  <div className="w-20 h-20 rounded-full border-4 border-white bg-white shadow-lg overflow-hidden">
                     {creator.profile_image ? (
                       <img 
                         src={creator.profile_image.startsWith('/') ? `${API.replace('/api', '')}${creator.profile_image}` : creator.profile_image}
@@ -215,47 +217,47 @@ const CreatorProfilePage = ({ user }) => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white text-3xl font-bold">
+                      <div className="w-full h-full bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-white text-2xl font-bold">
                         {creator.full_name.charAt(0)}
                       </div>
                     )}
                   </div>
                 )}
                 {creator.is_featured && (
-                  <div className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-1 border-2 border-white">
-                    <BadgeCheck className="w-4 h-4 text-white" />
+                  <div className="absolute bottom-0 right-0 bg-sky-500 rounded-full p-1 border-2 border-white">
+                    <BadgeCheck className="w-3 h-3 text-white" />
                   </div>
                 )}
               </div>
               
               <div className="flex-1 flex justify-around ml-4 text-center">
                 <div>
-                  <p className="text-xl font-bold">{posts.length}</p>
+                  <p className="text-lg font-bold text-slate-900">{posts.length}</p>
                   <p className="text-xs text-slate-500">Posts</p>
                 </div>
                 <div>
-                  <p className="text-xl font-bold">{creator.followers?.length || 0}</p>
+                  <p className="text-lg font-bold text-slate-900">{creator.followers?.length || 0}</p>
                   <p className="text-xs text-slate-500">{t('profile.followers')}</p>
                 </div>
                 <div>
-                  <p className="text-xl font-bold">{creator.following?.length || 0}</p>
+                  <p className="text-lg font-bold text-slate-900">{creator.following?.length || 0}</p>
                   <p className="text-xs text-slate-500">{t('profile.following')}</p>
                 </div>
               </div>
             </div>
 
             {/* Name & Bio */}
-            <div className="mb-4">
-              <div className="flex items-center space-x-2">
-                <h1 className="text-lg font-bold">{creator.full_name}</h1>
-                {creator.is_featured && <BadgeCheck className="w-5 h-5 text-blue-500" />}
+            <div className="mb-3">
+              <div className="flex items-center space-x-1.5">
+                <h1 className="text-base font-bold text-slate-900">{creator.full_name}</h1>
+                {creator.is_featured && <BadgeCheck className="w-4 h-4 text-sky-500" />}
               </div>
               {creator.description && (
-                <p className="text-sm text-slate-600 mt-1">{creator.description}</p>
+                <p className="text-sm text-slate-600 mt-1 leading-relaxed">{creator.description}</p>
               )}
-              <div className="flex items-center space-x-1 mt-2">
-                <Star className="w-4 h-4 text-amber-500" />
-                <span className="font-semibold">{creator.rating?.toFixed(1) || '0.0'}</span>
+              <div className="flex items-center space-x-1 mt-1.5">
+                <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                <span className="font-semibold text-slate-900">{creator.rating?.toFixed(1) || '0.0'}</span>
                 <span className="text-slate-500 text-sm">({creator.rating_count || 0} {t('creator.ratings')})</span>
               </div>
             </div>
@@ -264,24 +266,24 @@ const CreatorProfilePage = ({ user }) => {
             <div className="flex space-x-2">
               <button
                 onClick={handleFollow}
-                className={`flex-1 py-2 rounded-lg font-semibold text-sm ${
+                className={`flex-1 py-2.5 rounded-lg font-semibold text-sm transition-colors ${
                   isFollowing 
                     ? 'bg-slate-100 text-slate-700 hover:bg-slate-200' 
-                    : 'bg-purple-600 text-white hover:bg-purple-700'
+                    : 'bg-sky-600 text-white hover:bg-sky-700'
                 }`}
               >
                 {isFollowing ? t('profile.following') : t('profile.follow')}
               </button>
               <button 
                 onClick={() => navigate(`/messages/new/${creatorId}`)}
-                className="flex-1 py-2 bg-slate-100 text-slate-700 rounded-lg font-semibold text-sm hover:bg-slate-200"
+                className="flex-1 py-2.5 bg-slate-100 text-slate-700 rounded-lg font-semibold text-sm hover:bg-slate-200 transition-colors"
               >
                 {t('messages.newMessage')}
               </button>
               {canRate && (
                 <button 
                   onClick={() => setShowRatingModal(true)}
-                  className="px-4 py-2 bg-amber-100 text-amber-700 rounded-lg font-semibold text-sm hover:bg-amber-200"
+                  className="px-4 py-2.5 bg-amber-100 text-amber-700 rounded-lg font-semibold text-sm hover:bg-amber-200 transition-colors"
                 >
                   <Star className="w-4 h-4" />
                 </button>
@@ -294,35 +296,39 @@ const CreatorProfilePage = ({ user }) => {
         {raffles.length > 0 && (
           <div className="bg-white mt-2 p-4">
             <h2 className="font-bold text-sm text-slate-900 mb-3 flex items-center">
-              <Ticket className="w-4 h-4 mr-2 text-purple-600" />
+              <Ticket className="w-4 h-4 mr-2 text-sky-600" />
               {t('creator.activeRaffles')} ({raffles.length})
             </h2>
-            <div className="flex space-x-3 overflow-x-auto pb-2 -mx-4 px-4">
+            <div className="flex space-x-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
               {raffles.map(raffle => (
                 <Link 
                   key={raffle.id}
                   to={`/raffle/${raffle.id}`}
-                  className="flex-shrink-0 w-40 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl overflow-hidden border border-purple-100 hover:shadow-md transition-shadow"
+                  className="flex-shrink-0 w-44 bg-white rounded-xl overflow-hidden border border-slate-200 hover:shadow-lg transition-shadow"
                 >
-                  {raffle.images && raffle.images[0] && (
+                  {raffle.images && raffle.images[0] ? (
                     <img 
                       src={raffle.images[0].startsWith('/') ? `${API.replace('/api', '')}${raffle.images[0]}` : raffle.images[0]}
                       alt={raffle.title}
                       className="w-full h-24 object-cover"
                     />
+                  ) : (
+                    <div className="w-full h-24 bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center">
+                      <Ticket className="w-8 h-8 text-white/70" />
+                    </div>
                   )}
-                  <div className="p-2">
-                    <p className="font-semibold text-xs text-slate-900 truncate">{raffle.title}</p>
-                    <div className="flex items-center justify-between mt-1">
-                      <span className="text-purple-600 font-bold text-sm">${raffle.ticket_price}</span>
+                  <div className="p-2.5">
+                    <p className="font-semibold text-sm text-slate-900 truncate">{raffle.title}</p>
+                    <div className="flex items-center justify-between mt-1.5">
+                      <span className="text-sky-600 font-bold">${raffle.ticket_price}</span>
                       <span className="text-xs text-orange-600 flex items-center">
                         <Clock className="w-3 h-3 mr-0.5" />
                         {formatTimeRemaining(raffle.raffle_date)}
                       </span>
                     </div>
-                    <div className="mt-1 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                    <div className="mt-2 h-1.5 bg-slate-100 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-purple-500 rounded-full"
+                        className="h-full bg-gradient-to-r from-sky-500 to-blue-500 rounded-full"
                         style={{ width: `${(raffle.tickets_sold / raffle.ticket_range) * 100}%` }}
                       />
                     </div>
@@ -339,16 +345,16 @@ const CreatorProfilePage = ({ user }) => {
           <div className="flex">
             <button
               onClick={() => setActiveTab('posts')}
-              className={`flex-1 py-3 text-sm font-medium flex items-center justify-center space-x-1 ${
-                activeTab === 'posts' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-slate-500'
+              className={`flex-1 py-3 text-sm font-medium flex items-center justify-center transition-colors ${
+                activeTab === 'posts' ? 'text-sky-600 border-b-2 border-sky-600' : 'text-slate-400'
               }`}
             >
               <Grid3X3 className="w-5 h-5" />
             </button>
             <button
               onClick={() => setActiveTab('raffles')}
-              className={`flex-1 py-3 text-sm font-medium flex items-center justify-center space-x-1 ${
-                activeTab === 'raffles' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-slate-500'
+              className={`flex-1 py-3 text-sm font-medium flex items-center justify-center transition-colors ${
+                activeTab === 'raffles' ? 'text-sky-600 border-b-2 border-sky-600' : 'text-slate-400'
               }`}
             >
               <Ticket className="w-5 h-5" />
@@ -380,7 +386,7 @@ const CreatorProfilePage = ({ user }) => {
                   ))}
                   {loadingMore && (
                     <div className="flex justify-center py-4">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sky-600"></div>
                     </div>
                   )}
                 </div>
@@ -403,8 +409,8 @@ const CreatorProfilePage = ({ user }) => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
-                      <Ticket className="w-8 h-8 text-purple-300" />
+                    <div className="w-full h-full bg-gradient-to-br from-sky-100 to-blue-100 flex items-center justify-center">
+                      <Ticket className="w-8 h-8 text-sky-300" />
                     </div>
                   )}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -427,7 +433,7 @@ const CreatorProfilePage = ({ user }) => {
       {showRatingModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6">
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">{t('creator.rateCreator')}</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-4">{t('creator.rateCreator')}</h2>
             
             <div className="mb-4">
               <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -455,8 +461,8 @@ const CreatorProfilePage = ({ user }) => {
               <textarea
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                rows={4}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                rows={3}
+                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none"
                 placeholder="..."
               />
             </div>
@@ -464,13 +470,13 @@ const CreatorProfilePage = ({ user }) => {
             <div className="flex space-x-3">
               <button
                 onClick={() => setShowRatingModal(false)}
-                className="flex-1 px-4 py-3 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200 transition-all"
+                className="flex-1 px-4 py-3 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200 transition-colors"
               >
                 {t('common.cancel')}
               </button>
               <button
                 onClick={handleRating}
-                className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-all"
+                className="flex-1 px-4 py-3 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition-colors"
               >
                 {t('creator.sendRating')}
               </button>
