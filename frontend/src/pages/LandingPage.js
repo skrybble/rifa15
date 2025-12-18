@@ -157,7 +157,7 @@ const LandingPage = ({ user }) => {
       </header>
 
       {/* Main Content */}
-      <main className="pt-16 pb-20 bg-slate-100">
+      <main className="pt-16 pb-20 bg-gradient-to-b from-slate-200 to-slate-300">
         <div className="max-w-lg mx-auto px-4">
           
           {/* Featured Creators - Stories Style */}
