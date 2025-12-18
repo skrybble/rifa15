@@ -157,7 +157,7 @@ const LandingPage = ({ user }) => {
       </header>
 
       {/* Main Content */}
-      <main className="pt-16 pb-20">
+      <main className="pt-16 pb-20 bg-slate-100">
         <div className="max-w-lg mx-auto px-4">
           
           {/* Featured Creators - Stories Style */}
@@ -245,18 +245,13 @@ const LandingPage = ({ user }) => {
               </Link>
             </div>
           ) : (
-            <div className="space-y-5">
+            <div className="space-y-6">
               {feed.map((item, index) => (
                 <div 
                   key={`${item.type}-${item.id}`}
                   ref={index === feed.length - 1 ? lastItemCallback : null}
-                  className="relative pb-5"
                 >
                   <FeedCard item={item} user={user} />
-                  {/* Separador visual entre posts */}
-                  {index < feed.length - 1 && (
-                    <div className="absolute bottom-0 left-4 right-4 h-px bg-gradient-to-r from-purple-100 via-slate-200 to-pink-100"></div>
-                  )}
                 </div>
               ))}
               
