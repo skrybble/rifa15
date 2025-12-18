@@ -138,6 +138,8 @@ class User(BaseModel):
     # Review alerts
     negative_reviews_count: int = 0
     consecutive_negative_reviews: int = 0
+    # Featured creator
+    is_featured: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserCreate(BaseModel):
