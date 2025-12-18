@@ -690,6 +690,14 @@ const DashboardPage = ({ user, onLogout }) => {
                       <td className="p-3 text-center">{c.followers_count || 0}</td>
                       <td className="p-3 text-center">{c.total_raffles || 0}</td>
                       <td className="p-3 text-center">
+                        <button 
+                          onClick={() => handleToggleFeatured(c.id, c.is_featured)}
+                          className={`px-2 py-1 rounded text-xs font-medium ${c.is_featured ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                        >
+                          {c.is_featured ? '⭐ Destacado' : 'Destacar'}
+                        </button>
+                      </td>
+                      <td className="p-3 text-center">
                         <span className={`px-2 py-1 rounded text-xs ${c.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                           {c.is_active ? t('common.active') : t('admin.suspended')}
                         </span>
