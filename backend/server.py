@@ -2177,6 +2177,347 @@ async def get_paddle_status():
     }
 
 
+# ============================================
+# SOCIAL FEED SYSTEM
+# ============================================
+
+@api_router.get("/feed")
+async def get_feed(page: int = 1, per_page: int = 10):
+    """Get social feed with posts and raffles mixed - Featured creators first"""
+    skip = (page - 1) * per_page
+    
+    # Get featured creators first
+    featured_creators = await db.users.find(
+        {"role": "creator", "is_featured": True, "is_active": True},
+        {"_id": 0, "id": 1}
+    ).to_list(None)
+    featured_ids = [c["id"] for c in featured_creators]
+    
+    # Get posts from featured creators
+    featured_posts = await db.posts.find(
+        {"creator_id": {"$in": featured_ids}, "$or": [{"is_story": False}, {"expires_at": {"$gt": datetime.now(timezone.utc)}}]},
+        {"_id": 0}
+    ).sort("created_at", -1).limit(per_page // 2).to_list(per_page // 2)
+    
+    # Get active raffles from featured creators
+    featured_raffles = await db.raffles.find(
+        {"creator_id": {"$in": featured_ids}, "status": "active"},
+        {"_id": 0}
+    ).sort("created_at", -1).limit(per_page // 2).to_list(per_page // 2)
+    
+    # Get posts from other creators
+    other_posts = await db.posts.find(
+        {"creator_id": {"$nin": featured_ids}, "$or": [{"is_story": False}, {"expires_at": {"$gt": datetime.now(timezone.utc)}}]},
+        {"_id": 0}
+    ).sort("created_at", -1).skip(skip).limit(per_page).to_list(per_page)
+    
+    # Get raffles from other creators
+    other_raffles = await db.raffles.find(
+        {"creator_id": {"$nin": featured_ids}, "status": "active"},
+        {"_id": 0}
+    ).sort("created_at", -1).skip(skip).limit(per_page).to_list(per_page)
+    
+    # Combine and enrich with creator info
+    feed_items = []
+    
+    # Process featured content first
+    for post in featured_posts:
+        post = parse_from_mongo(post)
+        creator = await db.users.find_one({"id": post["creator_id"]}, {"_id": 0, "password": 0})
+        if creator:
+            post["creator"] = parse_from_mongo(creator)
+            post["type"] = "post"
+            post["is_featured_creator"] = True
+            feed_items.append(post)
+    
+    for raffle in featured_raffles:
+        raffle = parse_from_mongo(raffle)
+        creator = await db.users.find_one({"id": raffle["creator_id"]}, {"_id": 0, "password": 0})
+        if creator:
+            raffle["creator"] = parse_from_mongo(creator)
+            raffle["type"] = "raffle"
+            raffle["is_featured_creator"] = True
+            feed_items.append(raffle)
+    
+    # Then add other content
+    for post in other_posts:
+        post = parse_from_mongo(post)
+        creator = await db.users.find_one({"id": post["creator_id"]}, {"_id": 0, "password": 0})
+        if creator:
+            post["creator"] = parse_from_mongo(creator)
+            post["type"] = "post"
+            post["is_featured_creator"] = False
+            feed_items.append(post)
+    
+    for raffle in other_raffles:
+        raffle = parse_from_mongo(raffle)
+        creator = await db.users.find_one({"id": raffle["creator_id"]}, {"_id": 0, "password": 0})
+        if creator:
+            raffle["creator"] = parse_from_mongo(creator)
+            raffle["type"] = "raffle"
+            raffle["is_featured_creator"] = False
+            feed_items.append(raffle)
+    
+    # Sort by featured first, then by date
+    feed_items.sort(key=lambda x: (not x.get("is_featured_creator", False), x.get("created_at", "")), reverse=False)
+    feed_items.sort(key=lambda x: x.get("is_featured_creator", False), reverse=True)
+    
+    return {
+        "items": feed_items[:per_page * 2],
+        "page": page,
+        "has_more": len(feed_items) >= per_page
+    }
+
+@api_router.post("/posts")
+async def create_post(content: str = Form(...), is_story: bool = Form(False), images: List[UploadFile] = File(None), current_user: User = Depends(get_current_user)):
+    """Create a new post or story"""
+    if current_user.role not in [UserRole.CREATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo creadores pueden publicar")
+    
+    image_urls = []
+    if images:
+        for image in images:
+            if image.filename:
+                ext = image.filename.split(".")[-1]
+                filename = f"post_{current_user.id}_{uuid.uuid4()}.{ext}"
+                file_path = UPLOADS_DIR / filename
+                with open(file_path, "wb") as f:
+                    f.write(await image.read())
+                image_urls.append(f"/uploads/{filename}")
+    
+    post = Post(
+        creator_id=current_user.id,
+        content=content,
+        images=image_urls,
+        is_story=is_story,
+        expires_at=datetime.now(timezone.utc) + timedelta(hours=24) if is_story else None
+    )
+    
+    await db.posts.insert_one(post.model_dump())
+    
+    return parse_from_mongo(post.model_dump())
+
+@api_router.get("/posts/{post_id}")
+async def get_post(post_id: str):
+    """Get a single post"""
+    post = await db.posts.find_one({"id": post_id}, {"_id": 0})
+    if not post:
+        raise HTTPException(status_code=404, detail="Post no encontrado")
+    
+    post = parse_from_mongo(post)
+    creator = await db.users.find_one({"id": post["creator_id"]}, {"_id": 0, "password": 0})
+    if creator:
+        post["creator"] = parse_from_mongo(creator)
+    
+    return post
+
+@api_router.delete("/posts/{post_id}")
+async def delete_post(post_id: str, current_user: User = Depends(get_current_user)):
+    """Delete a post"""
+    post = await db.posts.find_one({"id": post_id})
+    if not post:
+        raise HTTPException(status_code=404, detail="Post no encontrado")
+    
+    if post["creator_id"] != current_user.id and current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="No autorizado")
+    
+    await db.posts.delete_one({"id": post_id})
+    await db.likes.delete_many({"target_id": post_id})
+    await db.comments.delete_many({"target_id": post_id})
+    
+    return {"message": "Post eliminado"}
+
+@api_router.get("/creators/{creator_id}/posts")
+async def get_creator_posts(creator_id: str, page: int = 1, per_page: int = 20):
+    """Get all posts from a creator"""
+    skip = (page - 1) * per_page
+    
+    posts = await db.posts.find(
+        {"creator_id": creator_id, "$or": [{"is_story": False}, {"expires_at": {"$gt": datetime.now(timezone.utc)}}]},
+        {"_id": 0}
+    ).sort("created_at", -1).skip(skip).limit(per_page).to_list(per_page)
+    
+    total = await db.posts.count_documents({"creator_id": creator_id})
+    
+    creator = await db.users.find_one({"id": creator_id}, {"_id": 0, "password": 0})
+    
+    enriched_posts = []
+    for post in posts:
+        post = parse_from_mongo(post)
+        if creator:
+            post["creator"] = parse_from_mongo(creator)
+        enriched_posts.append(post)
+    
+    return {
+        "posts": enriched_posts,
+        "total": total,
+        "page": page,
+        "has_more": skip + len(posts) < total
+    }
+
+@api_router.get("/creators/{creator_id}/stories")
+async def get_creator_stories(creator_id: str):
+    """Get active stories from a creator (last 24h)"""
+    stories = await db.posts.find(
+        {"creator_id": creator_id, "is_story": True, "expires_at": {"$gt": datetime.now(timezone.utc)}},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(None)
+    
+    return [parse_from_mongo(s) for s in stories]
+
+# Likes System
+@api_router.post("/like/{target_type}/{target_id}")
+async def toggle_like(target_type: str, target_id: str, current_user: User = Depends(get_current_user)):
+    """Toggle like on a post or raffle"""
+    if target_type not in ["post", "raffle"]:
+        raise HTTPException(status_code=400, detail="Tipo inválido")
+    
+    # Check if already liked
+    existing = await db.likes.find_one({"user_id": current_user.id, "target_id": target_id, "target_type": target_type})
+    
+    if existing:
+        # Unlike
+        await db.likes.delete_one({"id": existing["id"]})
+        # Update count
+        collection = db.posts if target_type == "post" else db.raffles
+        await collection.update_one({"id": target_id}, {"$inc": {"likes_count": -1}})
+        return {"liked": False, "message": "Like eliminado"}
+    else:
+        # Like
+        like = Like(user_id=current_user.id, target_id=target_id, target_type=target_type)
+        await db.likes.insert_one(like.model_dump())
+        # Update count
+        collection = db.posts if target_type == "post" else db.raffles
+        await collection.update_one({"id": target_id}, {"$inc": {"likes_count": 1}})
+        return {"liked": True, "message": "Like agregado"}
+
+@api_router.get("/like/{target_type}/{target_id}/status")
+async def get_like_status(target_type: str, target_id: str, current_user: User = Depends(get_current_user)):
+    """Check if user has liked a post/raffle"""
+    existing = await db.likes.find_one({"user_id": current_user.id, "target_id": target_id, "target_type": target_type})
+    return {"liked": existing is not None}
+
+# Comments System
+@api_router.post("/comments/{target_type}/{target_id}")
+async def create_comment(target_type: str, target_id: str, comment: CommentCreate, current_user: User = Depends(get_current_user)):
+    """Add a comment to a post or raffle"""
+    if target_type not in ["post", "raffle"]:
+        raise HTTPException(status_code=400, detail="Tipo inválido")
+    
+    new_comment = Comment(
+        user_id=current_user.id,
+        target_id=target_id,
+        target_type=target_type,
+        content=comment.content,
+        parent_id=comment.parent_id
+    )
+    
+    await db.comments.insert_one(new_comment.model_dump())
+    
+    # Update count
+    collection = db.posts if target_type == "post" else db.raffles
+    await collection.update_one({"id": target_id}, {"$inc": {"comments_count": 1}})
+    
+    # Add user info
+    result = new_comment.model_dump()
+    result["user"] = {
+        "id": current_user.id,
+        "full_name": current_user.full_name,
+        "profile_image": current_user.profile_image
+    }
+    
+    return parse_from_mongo(result)
+
+@api_router.get("/comments/{target_type}/{target_id}")
+async def get_comments(target_type: str, target_id: str, page: int = 1, per_page: int = 20):
+    """Get comments for a post or raffle"""
+    skip = (page - 1) * per_page
+    
+    comments = await db.comments.find(
+        {"target_id": target_id, "target_type": target_type, "parent_id": None},
+        {"_id": 0}
+    ).sort("created_at", -1).skip(skip).limit(per_page).to_list(per_page)
+    
+    # Enrich with user info and replies
+    enriched = []
+    for comment in comments:
+        comment = parse_from_mongo(comment)
+        user = await db.users.find_one({"id": comment["user_id"]}, {"_id": 0, "id": 1, "full_name": 1, "profile_image": 1})
+        if user:
+            comment["user"] = parse_from_mongo(user)
+        
+        # Get replies
+        replies = await db.comments.find(
+            {"parent_id": comment["id"]},
+            {"_id": 0}
+        ).sort("created_at", 1).limit(5).to_list(5)
+        
+        enriched_replies = []
+        for reply in replies:
+            reply = parse_from_mongo(reply)
+            reply_user = await db.users.find_one({"id": reply["user_id"]}, {"_id": 0, "id": 1, "full_name": 1, "profile_image": 1})
+            if reply_user:
+                reply["user"] = parse_from_mongo(reply_user)
+            enriched_replies.append(reply)
+        
+        comment["replies"] = enriched_replies
+        enriched.append(comment)
+    
+    total = await db.comments.count_documents({"target_id": target_id, "target_type": target_type, "parent_id": None})
+    
+    return {
+        "comments": enriched,
+        "total": total,
+        "page": page,
+        "has_more": skip + len(comments) < total
+    }
+
+@api_router.delete("/comments/{comment_id}")
+async def delete_comment(comment_id: str, current_user: User = Depends(get_current_user)):
+    """Delete a comment"""
+    comment = await db.comments.find_one({"id": comment_id})
+    if not comment:
+        raise HTTPException(status_code=404, detail="Comentario no encontrado")
+    
+    if comment["user_id"] != current_user.id and current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="No autorizado")
+    
+    # Update count
+    collection = db.posts if comment["target_type"] == "post" else db.raffles
+    await collection.update_one({"id": comment["target_id"]}, {"$inc": {"comments_count": -1}})
+    
+    # Delete comment and replies
+    await db.comments.delete_many({"$or": [{"id": comment_id}, {"parent_id": comment_id}]})
+    
+    return {"message": "Comentario eliminado"}
+
+# Admin - Toggle featured creator
+@api_router.post("/admin/creators/{creator_id}/toggle-featured")
+async def toggle_featured_creator(creator_id: str, current_user: User = Depends(get_current_user)):
+    """Toggle featured status for a creator"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    creator = await db.users.find_one({"id": creator_id, "role": "creator"})
+    if not creator:
+        raise HTTPException(status_code=404, detail="Creador no encontrado")
+    
+    new_status = not creator.get("is_featured", False)
+    await db.users.update_one({"id": creator_id}, {"$set": {"is_featured": new_status}})
+    
+    return {"is_featured": new_status, "message": f"Creador {'destacado' if new_status else 'quitado de destacados'}"}
+
+@api_router.get("/creators/featured")
+async def get_featured_creators():
+    """Get all featured creators"""
+    creators = await db.users.find(
+        {"role": "creator", "is_featured": True, "is_active": True},
+        {"_id": 0, "password": 0}
+    ).to_list(None)
+    
+    return [parse_from_mongo(c) for c in creators]
+
+
 # Include router
 app.include_router(api_router)
 
