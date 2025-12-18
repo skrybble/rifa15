@@ -220,6 +220,47 @@ class Message(BaseModel):
     subject: str
     content: str
     parent_id: Optional[str] = None
+
+# Social Feed Models
+class Post(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    creator_id: str
+    content: str
+    images: List[str] = Field(default_factory=list)
+    likes_count: int = 0
+    comments_count: int = 0
+    shares_count: int = 0
+    is_story: bool = False  # True = Story (24h), False = Post permanente
+    expires_at: Optional[datetime] = None  # For stories
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PostCreate(BaseModel):
+    content: str
+    is_story: bool = False
+
+class Like(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    target_id: str  # Can be post_id or raffle_id
+    target_type: str  # "post" or "raffle"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Comment(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    target_id: str  # Can be post_id or raffle_id
+    target_type: str  # "post" or "raffle"
+    content: str
+    parent_id: Optional[str] = None  # For replies
+    likes_count: int = 0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CommentCreate(BaseModel):
+    content: str
+    parent_id: Optional[str] = None
     read: bool = False
     archived_by: List[str] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
