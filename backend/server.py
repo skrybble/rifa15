@@ -168,6 +168,8 @@ class Raffle(BaseModel):
     tickets_sold: int = 0
     winning_number: Optional[int] = None
     winner_id: Optional[str] = None
+    likes_count: int = 0
+    comments_count: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class RaffleCreate(BaseModel):
