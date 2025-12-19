@@ -435,6 +435,18 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
                     />
                   </button>
                 </div>
+
+                {/* Language Selector */}
+                <div className="p-4 bg-slate-50 rounded-lg">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <Globe className="w-5 h-5 text-slate-600" />
+                    <div>
+                      <p className="font-medium text-slate-900">{t('profile.language') || 'Idioma'}</p>
+                      <p className="text-sm text-slate-600">{t('profile.selectLanguage') || 'Selecciona tu idioma preferido'}</p>
+                    </div>
+                  </div>
+                  <LanguageSelector variant="mobile" />
+                </div>
               </div>
               
               <button
