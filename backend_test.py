@@ -10,8 +10,8 @@ import sys
 from typing import Dict, Any, List, Optional
 
 # Base URLs
-FRONTEND_URL = "https://ticket-draw-3.preview.emergentagent.com"
-API_BASE_URL = "https://ticket-draw-3.preview.emergentagent.com/api"
+FRONTEND_URL = "https://winspot-2.preview.emergentagent.com"
+API_BASE_URL = "https://winspot-2.preview.emergentagent.com/api"
 
 # Admin credentials for testing
 ADMIN_EMAIL = "admin@rafflywin.com"
