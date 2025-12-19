@@ -109,7 +109,6 @@ const ExplorePage = ({ user, onLogout }) => {
                       <span>{t('nav.dashboard')}</span>
                     </Link>
                   )}
-                  <LanguageSelector />
                 </nav>
 
                 <div className="flex items-center space-x-4">
