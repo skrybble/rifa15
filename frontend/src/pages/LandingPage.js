@@ -231,7 +231,7 @@ const LandingPage = ({ user }) => {
           {/* Feed */}
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-sky-600"></div>
             </div>
           ) : feed.length === 0 ? (
             <div className="text-center py-20">
@@ -239,7 +239,7 @@ const LandingPage = ({ user }) => {
               <p className="text-slate-500">{t('feed.noContent')}</p>
               <Link 
                 to="/explore"
-                className="mt-4 inline-block px-6 py-2 bg-purple-600 text-white rounded-full font-semibold hover:bg-purple-700"
+                className="mt-4 inline-block px-6 py-2 bg-sky-600 text-white rounded-full font-semibold hover:bg-sky-700"
               >
                 {t('nav.explore')}
               </Link>
@@ -257,7 +257,7 @@ const LandingPage = ({ user }) => {
               
               {loadingMore && (
                 <div className="flex items-center justify-center py-4">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sky-600"></div>
                 </div>
               )}
             </div>
@@ -268,7 +268,7 @@ const LandingPage = ({ user }) => {
       {/* Bottom Navigation - Mobile */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 sm:hidden">
         <div className="flex items-center justify-around py-2">
-          <Link to="/" className="flex flex-col items-center p-2 text-purple-600">
+          <Link to="/" className="flex flex-col items-center p-2 text-sky-600">
             <Home className="w-6 h-6" />
           </Link>
           <Link to="/explore" className="flex flex-col items-center p-2 text-slate-500">
@@ -279,7 +279,7 @@ const LandingPage = ({ user }) => {
               onClick={() => { setIsStory(false); setShowPostModal(true); }}
               className="flex flex-col items-center p-2"
             >
-              <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-sky-500 to-blue-600 rounded-lg flex items-center justify-center">
                 <Plus className="w-6 h-6 text-white" />
               </div>
             </button>
@@ -308,7 +308,7 @@ const LandingPage = ({ user }) => {
               <button 
                 onClick={handleCreatePost}
                 disabled={posting || (!newPostContent.trim() && newPostImages.length === 0)}
-                className="px-4 py-1.5 bg-purple-600 text-white rounded-full text-sm font-semibold disabled:opacity-50"
+                className="px-4 py-1.5 bg-sky-600 text-white rounded-full text-sm font-semibold disabled:opacity-50"
               >
                 {posting ? '...' : t('feed.post')}
               </button>
@@ -317,7 +317,7 @@ const LandingPage = ({ user }) => {
             {/* Modal Content */}
             <div className="p-4 max-h-[60vh] overflow-y-auto">
               <div className="flex space-x-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white font-bold flex-shrink-0">
                   {user?.full_name?.charAt(0)}
                 </div>
                 <textarea
@@ -373,7 +373,7 @@ const LandingPage = ({ user }) => {
                   type="checkbox"
                   checked={isStory}
                   onChange={(e) => setIsStory(e.target.checked)}
-                  className="w-4 h-4 text-purple-600 rounded"
+                  className="w-4 h-4 text-sky-600 rounded"
                 />
                 <span className="text-sm text-slate-600">{t('feed.story24h')}</span>
               </label>
