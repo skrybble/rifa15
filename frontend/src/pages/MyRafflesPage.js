@@ -262,6 +262,14 @@ const MyRafflesPage = ({ user, onLogout }) => {
           </div>
         )}
       </div>
+
+      {/* Create Raffle Modal */}
+      <CreateRaffleModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={handleRaffleCreated}
+        user={user}
+      />
     </div>
   );
 };
