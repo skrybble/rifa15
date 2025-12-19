@@ -115,6 +115,10 @@ function App() {
             element={user ? <MyTicketsPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
           />
           <Route
+            path="/my-raffles"
+            element={user && (user.role === 'creator' || user.role === 'admin' || user.role === 'super_admin') ? <MyRafflesPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
+          />
+          <Route
             path="/admin"
             element={<Navigate to="/dashboard" />}
           />
