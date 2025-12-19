@@ -173,13 +173,13 @@ const MyRafflesPage = ({ user, onLogout }) => {
             <Ticket className="w-16 h-16 text-slate-300 mx-auto mb-4" />
             <h3 className="font-bold text-slate-900 mb-2">No tienes rifas</h3>
             <p className="text-slate-500 text-sm mb-4">Crea tu primera rifa y comienza a vender tickets</p>
-            <Link
-              to="/dashboard?tab=create"
+            <button
+              onClick={() => setShowCreateModal(true)}
               className="inline-flex items-center space-x-2 px-6 py-3 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition-colors"
             >
               <Plus className="w-5 h-5" />
               <span>Crear Rifa</span>
-            </Link>
+            </button>
           </div>
         ) : (
           <div className="space-y-3">
