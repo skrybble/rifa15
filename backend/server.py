@@ -654,8 +654,8 @@ async def confirm_raffle_payment(
         "id": str(uuid.uuid4()),
         "raffle_id": raffle_id,
         "creator_id": current_user.id,
-        "payment_id": payment_id,
-        "amount": amount,
+        "payment_id": payment_data.payment_id,
+        "amount": payment_data.amount,
         "type": "creation_fee",
         "status": "completed",
         "created_at": datetime.now(timezone.utc).isoformat()
