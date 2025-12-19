@@ -628,11 +628,14 @@ async def create_raffle_with_fee(
     raffle.pop("_id", None)
     return raffle
 
+class PaymentConfirmation(BaseModel):
+    payment_id: str
+    amount: float
+
 @api_router.post("/raffles/{raffle_id}/confirm-payment")
 async def confirm_raffle_payment(
     raffle_id: str,
-    payment_id: str = Form(...),
-    amount: float = Form(...),
+    payment_data: PaymentConfirmation,
     current_user: User = Depends(get_current_user)
 ):
     """Confirm payment and activate the raffle"""
