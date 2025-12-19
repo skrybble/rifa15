@@ -514,23 +514,21 @@ const DashboardPage = ({ user, onLogout }) => {
 
       {/* Tabs - Only show if super admin */}
       {isSuperAdmin && (
-        <div className="bg-white border-b sticky top-[73px] z-30 overflow-x-auto">
-          <div className="max-w-7xl mx-auto px-4">
+        <div className="bg-white border-b sticky top-[52px] z-30 overflow-x-auto scrollbar-hide">
+          <div className="max-w-2xl mx-auto px-4">
             <div className="flex space-x-1">
               {allTabs.map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
+                  className={`flex items-center space-x-1.5 px-3 py-2.5 text-xs font-medium whitespace-nowrap transition-colors ${
                     activeTab === tab.id 
-                      ? tab.id.startsWith('admin-') 
-                        ? 'text-purple-600 border-b-2 border-purple-600' 
-                        : 'text-sky-600 border-b-2 border-sky-600'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'text-sky-600 border-b-2 border-sky-600' 
+                      : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   <tab.icon className="w-4 h-4" />
-                  <span>{tab.label}</span>
+                  <span className="hidden sm:inline">{tab.label}</span>
                 </button>
               ))}
             </div>
@@ -538,7 +536,7 @@ const DashboardPage = ({ user, onLogout }) => {
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-2xl mx-auto px-4 py-4">
         
         {/* ==================== MI DASHBOARD (Creator View - only for non-super_admin) ==================== */}
         {!isSuperAdmin && (
