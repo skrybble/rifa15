@@ -1083,7 +1083,7 @@ async def run_daily_draw():
 # Dashboard stats
 @api_router.get("/dashboard/creator-stats")
 async def get_creator_stats(current_user: User = Depends(get_current_user)):
-    if current_user.role not in [UserRole.CREATOR, UserRole.ADMIN]:
+    if current_user.role not in [UserRole.CREATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail="Solo creadores")
     
     raffles = await db.raffles.find({"creator_id": current_user.id}, {"_id": 0}).to_list(None)
