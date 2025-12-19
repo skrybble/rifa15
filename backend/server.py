@@ -171,6 +171,9 @@ class Raffle(BaseModel):
     winner_id: Optional[str] = None
     likes_count: int = 0
     comments_count: int = 0
+    creation_fee: Optional[float] = None
+    total_potential_value: Optional[float] = None
+    payment_confirmed_at: Optional[datetime] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class RaffleCreate(BaseModel):
