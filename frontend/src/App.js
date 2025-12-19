@@ -74,7 +74,7 @@ function App() {
     <BrowserRouter>
       <InstallPWA />
       <Routes>
-        <Route path="/" element={<LandingPage user={user} />} />
+        <Route path="/" element={<LandingPage user={user} onLogout={handleLogout} />} />
         <Route
           path="/login"
           element={user ? <Navigate to={user.role === 'super_admin' ? '/dashboard' : '/explore'} /> : <LoginPage onLogin={handleLogin} />}
