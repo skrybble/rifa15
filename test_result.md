@@ -281,3 +281,15 @@ test_plan:
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
+
+  - task: "Language selector moved to user dropdown"
+    implemented: true
+    working: needs_testing
+    file: "/app/frontend/src/pages/LandingPage.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: needs_testing
+        agent: "main"
+        comment: "Moved LanguageSelector from header to user dropdown for logged-in users. For non-logged users, selector remains in header. Also added language selector to ProfileSettingsPage Privacy tab."
