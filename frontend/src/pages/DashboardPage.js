@@ -671,7 +671,7 @@ const DashboardPage = ({ user, onLogout }) => {
                     </Link>
                   ))}
                 </div>
-              )}
+              </div>
           </>
         )}
 
