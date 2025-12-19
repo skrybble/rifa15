@@ -183,7 +183,7 @@ const LandingPage = ({ user }) => {
                     to={`/creator/${creator.id}`}
                     className="flex-shrink-0 flex flex-col items-center"
                   >
-                    <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-purple-500 via-pink-500 to-orange-500">
+                    <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-sky-400 via-blue-500 to-cyan-400">
                       {creator.profile_image ? (
                         <img 
                           src={creator.profile_image.startsWith('/') ? `${API.replace('/api', '')}${creator.profile_image}` : creator.profile_image}
@@ -191,7 +191,7 @@ const LandingPage = ({ user }) => {
                           className="w-full h-full rounded-full object-cover border-2 border-white"
                         />
                       ) : (
-                        <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold text-lg border-2 border-white">
+                        <div className="w-full h-full rounded-full bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-white font-bold text-lg border-2 border-white">
                           {creator.full_name.charAt(0)}
                         </div>
                       )}
