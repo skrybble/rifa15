@@ -242,6 +242,47 @@ const FeedCard = ({ item, user, onLikeUpdate }) => {
               {t('feed.story24h')}
             </div>
           )}
+
+          {/* Linked Raffles */}
+          {item.linked_raffles && item.linked_raffles.length > 0 && (
+            <div className="px-4 py-3 bg-gradient-to-r from-sky-50 to-blue-50 border-t border-sky-100">
+              <p className="text-xs font-semibold text-sky-700 mb-2 flex items-center">
+                <Ticket className="w-3 h-3 mr-1" />
+                Rifas del creador
+              </p>
+              <div className="space-y-2">
+                {item.linked_raffles.map(raffle => (
+                  <Link 
+                    key={raffle.id}
+                    to={`/raffle/${raffle.id}`}
+                    className="flex items-center space-x-3 bg-white rounded-lg p-2 hover:shadow-md transition-shadow border border-sky-100"
+                  >
+                    {raffle.images && raffle.images[0] ? (
+                      <img 
+                        src={raffle.images[0].startsWith('/') ? `${API.replace('/api', '')}${raffle.images[0]}` : raffle.images[0]}
+                        alt={raffle.title}
+                        className="w-12 h-12 rounded-lg object-cover"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center">
+                        <Ticket className="w-5 h-5 text-white" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-slate-900 text-sm truncate">{raffle.title}</p>
+                      <div className="flex items-center space-x-2 text-xs text-slate-500">
+                        <span>{raffle.tickets_sold}/{raffle.ticket_range} vendidos</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sky-600 font-bold">${raffle.ticket_price}</p>
+                      <p className="text-xs text-sky-500">Ver →</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
