@@ -97,12 +97,12 @@ const MyRafflesPage = ({ user, onLogout }) => {
             <Gift className="w-5 h-5 text-sky-600" />
             <span className="font-bold text-slate-900">Mis Rifas</span>
           </div>
-          <Link 
-            to="/dashboard?tab=create"
+          <button 
+            onClick={() => setShowCreateModal(true)}
             className="p-2 -mr-2 bg-sky-600 hover:bg-sky-700 rounded-full transition-colors"
           >
             <Plus className="w-5 h-5 text-white" />
-          </Link>
+          </button>
         </div>
       </header>
 
