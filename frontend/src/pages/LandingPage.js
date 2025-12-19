@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { API } from '../App';
-import { Ticket, Search, Plus, Home, Compass, Bell, User, BadgeCheck, Image, X } from 'lucide-react';
+import { Ticket, Search, Plus, Home, Compass, Bell, User, BadgeCheck, Image, X, LogOut, Settings } from 'lucide-react';
 import LanguageSelector from '../components/LanguageSelector';
 import FeedCard from '../components/FeedCard';
 
