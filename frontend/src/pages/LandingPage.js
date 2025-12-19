@@ -22,6 +22,8 @@ const LandingPage = ({ user, onLogout }) => {
   const [newPostImages, setNewPostImages] = useState([]);
   const [isStory, setIsStory] = useState(false);
   const [posting, setPosting] = useState(false);
+  const [myActiveRaffles, setMyActiveRaffles] = useState([]);
+  const [linkedRaffles, setLinkedRaffles] = useState([]);
   const observerRef = useRef();
   const lastItemRef = useRef();
 
