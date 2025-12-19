@@ -462,7 +462,7 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
 
         {/* Footer */}
         {step !== 3 && (
-          <div className="p-4 border-t border-slate-200 bg-slate-50">
+          <div className="p-4 border-t border-slate-200 bg-slate-50 pb-20 sm:pb-4">
             {step === 1 && (
               <button
                 onClick={handleNextStep}
