@@ -73,7 +73,7 @@ function App() {
   }
 
   // Pages that should show bottom navigation
-  const pagesWithBottomNav = ['/', '/explore', '/my-tickets', '/dashboard', '/creator', '/raffle', '/messages', '/profile-settings'];
+  const pagesWithBottomNav = ['/', '/explore', '/my-tickets', '/my-raffles', '/dashboard', '/creator', '/raffle', '/messages', '/profile-settings'];
 
   const AppContent = () => {
     const location = useLocation();
