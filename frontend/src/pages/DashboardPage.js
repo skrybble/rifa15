@@ -588,41 +588,90 @@ const DashboardPage = ({ user, onLogout }) => {
                     </div>
                   </div>
                 </div>
-                <div className="bg-white rounded-xl p-6 shadow-lg">
-                  <Users className="w-8 h-8 text-purple-600 mb-2" />
-                  <p className="text-3xl font-bold text-slate-900">{stats.total_tickets_sold}</p>
-                  <p className="text-slate-600">{t('dashboard.ticketsSold')}</p>
+                <div className="bg-white rounded-xl p-4 shadow-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                      <Users className="w-5 h-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-slate-900">{stats.total_tickets_sold}</p>
+                      <p className="text-xs text-slate-500">Tickets</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-white rounded-xl p-6 shadow-lg">
-                  <DollarSign className="w-8 h-8 text-amber-600 mb-2" />
-                  <p className="text-3xl font-bold text-slate-900">${stats.net_earnings?.toFixed(2) || '0.00'}</p>
-                  <p className="text-slate-600">{t('dashboard.netEarnings')}</p>
+                <div className="bg-white rounded-xl p-4 shadow-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                      <DollarSign className="w-5 h-5 text-amber-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-slate-900">${stats.net_earnings?.toFixed(0) || '0'}</p>
+                      <p className="text-xs text-slate-500">Ingresos</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
 
-            <h3 className="text-xl font-bold text-slate-900 mb-4">{t('raffle.myRaffles')}</h3>
-            {raffles.length === 0 ? (
-              <div className="bg-white rounded-xl p-8 text-center shadow">
-                <Ticket className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                <p className="text-slate-600">{t('raffle.noTicketsYet')}</p>
+            {/* Quick Actions */}
+            <div className="bg-white rounded-xl p-4 shadow-lg mb-4">
+              <h3 className="text-sm font-bold text-slate-700 mb-3">Acciones rápidas</h3>
+              <div className="grid grid-cols-2 gap-2">
+                <Link to="/my-raffles" className="flex items-center space-x-2 p-3 bg-sky-50 rounded-lg text-sky-700 hover:bg-sky-100 transition-colors">
+                  <Ticket className="w-5 h-5" />
+                  <span className="text-sm font-medium">Mis Rifas</span>
+                </Link>
+                <Link to="/messages" className="flex items-center space-x-2 p-3 bg-slate-50 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
+                  <Mail className="w-5 h-5" />
+                  <span className="text-sm font-medium">Mensajes</span>
+                </Link>
+                <Link to="/profile-settings" className="flex items-center space-x-2 p-3 bg-slate-50 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
+                  <Settings className="w-5 h-5" />
+                  <span className="text-sm font-medium">Configuración</span>
+                </Link>
+                <button onClick={onLogout} className="flex items-center space-x-2 p-3 bg-red-50 rounded-lg text-red-600 hover:bg-red-100 transition-colors">
+                  <ArrowLeft className="w-5 h-5" />
+                  <span className="text-sm font-medium">Cerrar sesión</span>
+                </button>
               </div>
-            ) : (
-              <div className="grid md:grid-cols-2 gap-4">
-                {raffles.map(raffle => (
-                  <div key={raffle.id} className="bg-white rounded-xl p-6 shadow-lg">
-                    <h4 className="font-bold text-lg mb-2">{raffle.title}</h4>
-                    <div className="flex justify-between text-sm text-slate-600 mb-4">
-                      <span>{raffle.tickets_sold}/{raffle.ticket_range} tickets</span>
-                      <span className={`px-2 py-1 rounded text-xs ${raffle.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-700'}`}>
-                        {raffle.status}
+            </div>
+
+            {/* Recent Raffles Preview */}
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                <h3 className="font-bold text-slate-900">Mis Rifas Recientes</h3>
+                <Link to="/my-raffles" className="text-sky-600 text-sm font-medium">Ver todas →</Link>
+              </div>
+              {raffles.length === 0 ? (
+                <div className="p-8 text-center">
+                  <Ticket className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+                  <p className="text-slate-500 text-sm">No tienes rifas aún</p>
+                  <Link to="/my-raffles" className="inline-block mt-3 px-4 py-2 bg-sky-600 text-white rounded-lg text-sm font-medium">
+                    Crear primera rifa
+                  </Link>
+                </div>
+              ) : (
+                <div className="divide-y divide-slate-100">
+                  {raffles.slice(0, 3).map(raffle => (
+                    <Link key={raffle.id} to={`/raffle/${raffle.id}`} className="flex items-center p-3 hover:bg-slate-50 transition-colors">
+                      <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-white mr-3 flex-shrink-0">
+                        <Ticket className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-slate-900 text-sm truncate">{raffle.title}</p>
+                        <p className="text-xs text-slate-500">{raffle.tickets_sold}/{raffle.ticket_range} vendidos</p>
+                      </div>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        raffle.status === 'active' ? 'bg-green-100 text-green-700' : 
+                        raffle.status === 'pending_payment' ? 'bg-amber-100 text-amber-700' :
+                        'bg-slate-100 text-slate-600'
+                      }`}>
+                        {raffle.status === 'active' ? 'Activa' : raffle.status === 'pending_payment' ? 'Pendiente' : raffle.status}
                       </span>
-                    </div>
-                    <Link to={`/raffle/${raffle.id}`} className="text-sky-600 hover:text-sky-700 font-medium text-sm">{t('raffle.viewDetails')} →</Link>
-                  </div>
-                ))}
-              </div>
-            )}
+                    </Link>
+                  ))}
+                </div>
+              )}
           </>
         )}
 
