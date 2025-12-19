@@ -135,15 +135,15 @@ const MyRafflesPage = ({ user, onLogout }) => {
         )}
 
         {/* Create New Raffle Button */}
-        <Link
-          to="/dashboard?tab=create"
+        <button
+          onClick={() => setShowCreateModal(true)}
           className="block w-full mb-4 p-4 bg-gradient-to-r from-sky-500 to-blue-600 rounded-xl shadow-lg text-white hover:from-sky-600 hover:to-blue-700 transition-all"
         >
           <div className="flex items-center justify-center space-x-3">
             <Plus className="w-6 h-6" />
             <span className="font-bold text-lg">Crear Nueva Rifa</span>
           </div>
-        </Link>
+        </button>
 
         {/* Filter Tabs */}
         <div className="flex space-x-2 mb-4 overflow-x-auto pb-2">
