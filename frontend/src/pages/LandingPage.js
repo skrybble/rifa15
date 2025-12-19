@@ -338,8 +338,8 @@ const LandingPage = ({ user, onLogout }) => {
 
       {/* Create Post Modal */}
       {showPostModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center">
-          <div className="bg-white w-full sm:max-w-lg sm:rounded-xl rounded-t-3xl max-h-[90vh] overflow-hidden">
+        <div className="fixed inset-0 bg-black/50 z-[60] flex items-end sm:items-center justify-center">
+          <div className="bg-white w-full sm:max-w-lg sm:rounded-xl rounded-t-3xl max-h-[85vh] overflow-hidden mb-16 sm:mb-0">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-4 border-b">
               <button onClick={() => setShowPostModal(false)} className="text-slate-500">
