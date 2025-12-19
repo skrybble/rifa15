@@ -71,61 +71,78 @@ function App() {
     );
   }
 
+  // Pages that should show bottom navigation
+  const pagesWithBottomNav = ['/', '/explore', '/my-tickets', '/dashboard', '/creator', '/raffle', '/messages', '/profile-settings'];
+
+  const AppContent = () => {
+    const location = useLocation();
+    const showBottomNav = pagesWithBottomNav.some(p => 
+      p === '/' ? location.pathname === '/' : location.pathname.startsWith(p)
+    );
+
+    return (
+      <>
+        <Routes>
+          <Route path="/" element={<LandingPage user={user} onLogout={handleLogout} />} />
+          <Route
+            path="/login"
+            element={user ? <Navigate to={user.role === 'super_admin' ? '/dashboard' : '/explore'} /> : <LoginPage onLogin={handleLogin} />}
+          />
+          <Route
+            path="/register"
+            element={user ? <Navigate to={user.role === 'super_admin' ? '/dashboard' : '/explore'} /> : <RegisterPage onLogin={handleLogin} />}
+          />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route
+            path="/explore"
+            element={<ExplorePage user={user} onLogout={handleLogout} />}
+          />
+          <Route
+            path="/creator/:creatorId"
+            element={<CreatorProfilePage user={user} onLogout={handleLogout} />}
+          />
+          <Route
+            path="/raffle/:raffleId"
+            element={<RaffleDetailPage user={user} onLogout={handleLogout} />}
+          />
+          <Route
+            path="/dashboard"
+            element={user && (user.role === 'creator' || user.role === 'admin' || user.role === 'super_admin') ? <DashboardPage user={user} onLogout={handleLogout} /> : <Navigate to="/explore" />}
+          />
+          <Route
+            path="/my-tickets"
+            element={user ? <MyTicketsPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/admin"
+            element={<Navigate to="/dashboard" />}
+          />
+          <Route
+            path="/raffle/:raffleId/manage"
+            element={user && (user.role === 'creator' || user.role === 'admin' || user.role === 'super_admin') ? <RaffleManagementPage user={user} /> : <Navigate to="/explore" />}
+          />
+          <Route
+            path="/messages"
+            element={user ? <MessagesPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/profile-settings"
+            element={user ? <ProfileSettingsPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/checkout"
+            element={user ? <CheckoutPage user={user} /> : <Navigate to="/login" />}
+          />
+        </Routes>
+        {showBottomNav && <BottomNav user={user} />}
+      </>
+    );
+  };
+
   return (
     <BrowserRouter>
       <InstallPWA />
-      <Routes>
-        <Route path="/" element={<LandingPage user={user} onLogout={handleLogout} />} />
-        <Route
-          path="/login"
-          element={user ? <Navigate to={user.role === 'super_admin' ? '/dashboard' : '/explore'} /> : <LoginPage onLogin={handleLogin} />}
-        />
-        <Route
-          path="/register"
-          element={user ? <Navigate to={user.role === 'super_admin' ? '/dashboard' : '/explore'} /> : <RegisterPage onLogin={handleLogin} />}
-        />
-        <Route path="/terms" element={<TermsPage />} />
-        <Route
-          path="/explore"
-          element={<ExplorePage user={user} onLogout={handleLogout} />}
-        />
-        <Route
-          path="/creator/:creatorId"
-          element={<CreatorProfilePage user={user} onLogout={handleLogout} />}
-        />
-        <Route
-          path="/raffle/:raffleId"
-          element={<RaffleDetailPage user={user} onLogout={handleLogout} />}
-        />
-        <Route
-          path="/dashboard"
-          element={user && (user.role === 'creator' || user.role === 'admin' || user.role === 'super_admin') ? <DashboardPage user={user} onLogout={handleLogout} /> : <Navigate to="/explore" />}
-        />
-        <Route
-          path="/my-tickets"
-          element={user ? <MyTicketsPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/admin"
-          element={<Navigate to="/dashboard" />}
-        />
-        <Route
-          path="/raffle/:raffleId/manage"
-          element={user && (user.role === 'creator' || user.role === 'admin' || user.role === 'super_admin') ? <RaffleManagementPage user={user} /> : <Navigate to="/explore" />}
-        />
-        <Route
-          path="/messages"
-          element={user ? <MessagesPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/profile-settings"
-          element={user ? <ProfileSettingsPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/checkout"
-          element={user ? <CheckoutPage user={user} /> : <Navigate to="/login" />}
-        />
-      </Routes>
+      <AppContent />
     </BrowserRouter>
   );
 }
