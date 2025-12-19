@@ -51,6 +51,8 @@ const MyRafflesPage = ({ user, onLogout }) => {
     switch (status) {
       case 'active':
         return <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium flex items-center"><CheckCircle className="w-3 h-3 mr-1" />Activa</span>;
+      case 'pending_payment':
+        return <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium flex items-center"><AlertCircle className="w-3 h-3 mr-1" />Pendiente</span>;
       case 'completed':
         return <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium flex items-center"><CheckCircle className="w-3 h-3 mr-1" />Completada</span>;
       case 'cancelled':
@@ -58,6 +60,10 @@ const MyRafflesPage = ({ user, onLogout }) => {
       default:
         return <span className="px-2 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-medium">{status}</span>;
     }
+  };
+
+  const handleRaffleCreated = () => {
+    loadData();
   };
 
   const formatTimeRemaining = (dateStr) => {
