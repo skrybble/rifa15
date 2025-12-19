@@ -30,7 +30,19 @@ const LandingPage = ({ user, onLogout }) => {
   useEffect(() => {
     loadFeed();
     loadFeaturedCreators();
-  }, []);
+    if (user && (user.role === 'creator' || user.role === 'admin' || user.role === 'super_admin')) {
+      loadMyActiveRaffles();
+    }
+  }, [user]);
+
+  const loadMyActiveRaffles = async () => {
+    try {
+      const res = await axios.get(`${API}/raffles?creator_id=${user.id}&status=active`);
+      setMyActiveRaffles(Array.isArray(res.data) ? res.data : res.data.raffles || []);
+    } catch (error) {
+      console.error('Error loading my raffles:', error);
+    }
+  };
 
   const loadFeed = async (pageNum = 1, append = false) => {
     if (pageNum === 1) setLoading(true);
