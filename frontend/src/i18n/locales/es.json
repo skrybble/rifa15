@@ -337,7 +337,9 @@
     "blockUserTitle": "Bloquear Usuario",
     "enterUsername": "Nombre o email del usuario",
     "block": "Bloquear",
-    "unblock": "Desbloquear"
+    "unblock": "Desbloquear",
+    "language": "Idioma",
+    "selectLanguage": "Selecciona tu idioma preferido"
   },
   "messages": {
     "title": "Mensajes",
