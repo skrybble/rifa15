@@ -393,6 +393,52 @@ const LandingPage = ({ user, onLogout }) => {
                   ))}
                 </div>
               )}
+
+              {/* Link Raffles Section */}
+              {myActiveRaffles.length > 0 && (
+                <div className="mt-4 border-t pt-4">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <LinkIcon className="w-4 h-4 text-sky-600" />
+                    <span className="text-sm font-semibold text-slate-700">Vincular rifas activas</span>
+                    <span className="text-xs text-slate-500">(máx. 3)</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {myActiveRaffles.map(raffle => {
+                      const isLinked = linkedRaffles.find(r => r.id === raffle.id);
+                      return (
+                        <button
+                          key={raffle.id}
+                          onClick={() => toggleLinkedRaffle(raffle)}
+                          className={`flex items-center space-x-2 px-3 py-2 rounded-lg border transition-all ${
+                            isLinked 
+                              ? 'bg-sky-100 border-sky-500 text-sky-700' 
+                              : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-sky-300'
+                          }`}
+                        >
+                          <Gift className="w-4 h-4" />
+                          <span className="text-sm font-medium truncate max-w-[120px]">{raffle.title}</span>
+                          {isLinked && <X className="w-3 h-3" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  
+                  {/* Preview of linked raffles */}
+                  {linkedRaffles.length > 0 && (
+                    <div className="mt-3 p-3 bg-sky-50 rounded-lg">
+                      <p className="text-xs text-sky-600 font-medium mb-2">Rifas que se mostrarán:</p>
+                      <div className="space-y-2">
+                        {linkedRaffles.map(raffle => (
+                          <div key={raffle.id} className="flex items-center justify-between text-sm">
+                            <span className="text-slate-700">{raffle.title}</span>
+                            <span className="text-sky-600 font-bold">${raffle.ticket_price}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             
             {/* Modal Footer */}
