@@ -9,7 +9,7 @@ import {
   AlertTriangle, BarChart3, Play, Shield, Home, Globe, Eye, ExternalLink,
   MessageSquare, Image, Star, ThumbsUp, ThumbsDown, UserCheck, Clock, Filter
 } from 'lucide-react';
-import LanguageSelector from '../components/LanguageSelector';
+// Language selector moved to user dropdown in main pages
 import UserDetailModal from '../components/UserDetailModal';
 
 const DashboardPage = ({ user, onLogout }) => {
