@@ -270,52 +270,35 @@ const ExplorePage = ({ user, onLogout }) => {
           </p>
         </div>
 
-        {/* Featured Creators */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('home.featuredCreators')}</h2>
+        {/* Featured Creators - Stories Style */}
+        <section className="mb-8">
+          <h2 className="text-lg font-bold text-slate-900 mb-3">{t('home.featuredCreators')}</h2>
           {loading ? (
-            <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600"></div>
+            <div className="flex justify-center py-6">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-600"></div>
             </div>
           ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {creators.slice(0, 8).map((creator) => (
-                <div
+            <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
+              {creators.slice(0, 10).map((creator) => (
+                <Link
                   key={creator.id}
+                  to={`/creator/${creator.id}`}
                   data-testid={`creator-card-${creator.id}`}
-                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all"
+                  className="flex-shrink-0 flex flex-col items-center"
                 >
-                  <Link to={`/creator/${creator.id}`} className="block">
-                    <div className="flex flex-col items-center text-center">
-                      <div className="w-20 h-20 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-7">
-                        {creator.full_name.charAt(0)}
-                      </div>
-                      <h3 className="font-bold text-slate-900 mb-1">{creator.full_name}</h3>
-                      <div className="flex items-center space-x-1 text-sm text-amber-600 mb-2">
-                        <span>★</span>
-                        <span className="font-semibold">{creator.rating.toFixed(1)}</span>
-                        <span className="text-slate-400">({creator.rating_count})</span>
-                      </div>
-                      <div className="flex items-center space-x-1 text-sm text-slate-500 mb-3">
-                        <Heart className="w-4 h-4" />
-                        <span>{creator.followers?.length || 0} {t('profile.followers').toLowerCase()}</span>
-                      </div>
+                  <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-sky-400 via-blue-500 to-cyan-400">
+                    <div className="w-full h-full bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-white text-lg font-bold border-2 border-white">
+                      {creator.full_name.charAt(0)}
                     </div>
-                  </Link>
-                  {user && user.id !== creator.id && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate('/messages', { state: { startConversationWith: creator.id } });
-                      }}
-                      className="w-full mt-3 px-4 py-2 bg-sky-100 text-sky-700 rounded-lg hover:bg-sky-200 transition-colors flex items-center justify-center space-x-2"
-                      title="Enviar mensaje"
-                    >
-                      <Mail className="w-4 h-4" />
-                      <span className="text-sm font-medium">{t('nav.messages')}</span>
-                    </button>
-                  )}
-                </div>
+                  </div>
+                  <span className="text-xs text-slate-700 mt-1.5 truncate w-16 text-center font-medium">
+                    {creator.full_name.split(' ')[0]}
+                  </span>
+                  <div className="flex items-center space-x-0.5 text-[10px] text-amber-600">
+                    <span>★</span>
+                    <span>{creator.rating.toFixed(1)}</span>
+                  </div>
+                </Link>
               ))}
             </div>
           )}
