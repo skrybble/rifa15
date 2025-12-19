@@ -541,19 +541,52 @@ const DashboardPage = ({ user, onLogout }) => {
         {/* ==================== MI DASHBOARD (Creator View - only for non-super_admin) ==================== */}
         {!isSuperAdmin && (
           <>
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-6">{t('dashboard.creatorDashboard')}</h2>
-            
-            {stats && (
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div className="bg-white rounded-xl p-6 shadow-lg">
-                  <Ticket className="w-8 h-8 text-sky-600 mb-2" />
-                  <p className="text-3xl font-bold text-slate-900">{stats.total_raffles}</p>
-                  <p className="text-slate-600">{t('dashboard.totalRaffles')}</p>
+            {/* Profile Card */}
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-4">
+              <div className="h-20 bg-gradient-to-r from-sky-400 to-blue-600"></div>
+              <div className="px-4 pb-4">
+                <div className="flex items-end -mt-10 mb-3">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 border-4 border-white shadow-lg flex items-center justify-center text-white text-2xl font-bold">
+                    {user?.full_name?.charAt(0) || 'U'}
+                  </div>
+                  <div className="ml-3 mb-1">
+                    <h2 className="text-lg font-bold text-slate-900">{user?.full_name}</h2>
+                    <p className="text-sm text-slate-500">{user?.email}</p>
+                  </div>
                 </div>
-                <div className="bg-white rounded-xl p-6 shadow-lg">
-                  <TrendingUp className="w-8 h-8 text-green-600 mb-2" />
-                  <p className="text-3xl font-bold text-slate-900">{stats.active_raffles}</p>
-                  <p className="text-slate-600">{t('dashboard.activeRaffles')}</p>
+                <div className="flex items-center space-x-2 text-sm">
+                  <span className="px-2 py-1 bg-sky-100 text-sky-700 rounded-full font-medium capitalize">{user?.role}</span>
+                  {user?.is_featured && (
+                    <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded-full font-medium">⭐ Destacado</span>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            {/* Stats Grid */}
+            {stats && (
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="bg-white rounded-xl p-4 shadow-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center">
+                      <Ticket className="w-5 h-5 text-sky-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-slate-900">{stats.total_raffles}</p>
+                      <p className="text-xs text-slate-500">Total Rifas</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white rounded-xl p-4 shadow-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-slate-900">{stats.active_raffles}</p>
+                      <p className="text-xs text-slate-500">Activas</p>
+                    </div>
+                  </div>
                 </div>
                 <div className="bg-white rounded-xl p-6 shadow-lg">
                   <Users className="w-8 h-8 text-purple-600 mb-2" />
