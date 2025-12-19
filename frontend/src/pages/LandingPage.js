@@ -251,6 +251,10 @@ const LandingPage = ({ user, onLogout }) => {
                           <Settings className="w-4 h-4" />
                           <span className="text-sm">Configuración</span>
                         </Link>
+                        
+                        {/* Language Selector inside dropdown */}
+                        <LanguageSelector variant="mobile" />
+                        
                         <div className="border-t border-slate-100 mt-2 pt-2">
                           <button 
                             onClick={() => { onLogout(); setShowUserMenu(false); }}
