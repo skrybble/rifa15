@@ -173,6 +173,17 @@ const LandingPage = ({ user, onLogout }) => {
                   <Link to="/notifications" className="p-2 hover:bg-slate-100 rounded-full relative">
                     <Bell className="w-5 h-5 text-slate-600" />
                   </Link>
+                  {/* Quick access for creators - Desktop */}
+                  {(user.role === 'creator' || user.role === 'admin' || user.role === 'super_admin') && (
+                    <Link 
+                      to="/my-raffles"
+                      className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 bg-sky-100 text-sky-700 rounded-full text-sm font-medium hover:bg-sky-200 transition-colors"
+                    >
+                      <Gift className="w-4 h-4" />
+                      <span>Mis Rifas</span>
+                    </Link>
+                  )}
+                  
                   {/* User Menu */}
                   <div className="relative">
                     <button 
@@ -182,34 +193,72 @@ const LandingPage = ({ user, onLogout }) => {
                       {user.full_name?.charAt(0)}
                     </button>
                     {showUserMenu && (
-                      <div className="absolute right-0 top-10 w-48 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50">
-                        <div className="px-4 py-2 border-b border-slate-100">
+                      <div className="absolute right-0 top-10 w-56 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50">
+                        <div className="px-4 py-3 border-b border-slate-100">
                           <p className="font-semibold text-slate-900 text-sm truncate">{user.full_name}</p>
                           <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                          <span className="inline-block mt-1 px-2 py-0.5 bg-sky-100 text-sky-700 text-xs font-medium rounded-full capitalize">{user.role}</span>
                         </div>
+                        
+                        {/* Creator/Admin quick links */}
+                        {(user.role === 'creator' || user.role === 'admin' || user.role === 'super_admin') && (
+                          <div className="py-2 border-b border-slate-100">
+                            <Link 
+                              to="/my-raffles" 
+                              className="flex items-center space-x-2 px-4 py-2 hover:bg-sky-50 text-sky-700"
+                              onClick={() => setShowUserMenu(false)}
+                            >
+                              <Gift className="w-4 h-4" />
+                              <span className="text-sm font-medium">Mis Rifas</span>
+                            </Link>
+                            <Link 
+                              to="/dashboard" 
+                              className="flex items-center space-x-2 px-4 py-2 hover:bg-slate-50 text-slate-700"
+                              onClick={() => setShowUserMenu(false)}
+                            >
+                              <User className="w-4 h-4" />
+                              <span className="text-sm">Mi Perfil</span>
+                            </Link>
+                          </div>
+                        )}
+                        
+                        {/* Regular user links */}
+                        {user.role === 'user' && (
+                          <Link 
+                            to="/my-tickets" 
+                            className="flex items-center space-x-2 px-4 py-2 hover:bg-slate-50 text-slate-700"
+                            onClick={() => setShowUserMenu(false)}
+                          >
+                            <Ticket className="w-4 h-4" />
+                            <span className="text-sm">Mis Tickets</span>
+                          </Link>
+                        )}
+                        
                         <Link 
-                          to="/dashboard" 
+                          to="/messages" 
                           className="flex items-center space-x-2 px-4 py-2 hover:bg-slate-50 text-slate-700"
                           onClick={() => setShowUserMenu(false)}
                         >
-                          <User className="w-4 h-4" />
-                          <span className="text-sm">Dashboard</span>
+                          <Bell className="w-4 h-4" />
+                          <span className="text-sm">Mensajes</span>
                         </Link>
                         <Link 
-                          to="/profile/settings" 
+                          to="/profile-settings" 
                           className="flex items-center space-x-2 px-4 py-2 hover:bg-slate-50 text-slate-700"
                           onClick={() => setShowUserMenu(false)}
                         >
                           <Settings className="w-4 h-4" />
-                          <span className="text-sm">{t('profile.settings')}</span>
+                          <span className="text-sm">Configuración</span>
                         </Link>
-                        <button 
-                          onClick={() => { onLogout(); setShowUserMenu(false); }}
-                          className="flex items-center space-x-2 px-4 py-2 hover:bg-red-50 text-red-600 w-full"
-                        >
-                          <LogOut className="w-4 h-4" />
-                          <span className="text-sm">{t('auth.logout')}</span>
-                        </button>
+                        <div className="border-t border-slate-100 mt-2 pt-2">
+                          <button 
+                            onClick={() => { onLogout(); setShowUserMenu(false); }}
+                            className="flex items-center space-x-2 px-4 py-2 hover:bg-red-50 text-red-600 w-full"
+                          >
+                            <LogOut className="w-4 h-4" />
+                            <span className="text-sm">Cerrar sesión</span>
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
