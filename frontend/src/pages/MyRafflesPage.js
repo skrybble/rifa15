@@ -6,8 +6,9 @@ import { API } from '../App';
 import { 
   Ticket, Plus, Calendar, DollarSign, Users, TrendingUp, 
   Eye, Edit, Trash2, Clock, CheckCircle, XCircle, ArrowLeft,
-  BarChart3, Gift
+  BarChart3, Gift, AlertCircle
 } from 'lucide-react';
+import CreateRaffleModal from '../components/CreateRaffleModal';
 
 const MyRafflesPage = ({ user, onLogout }) => {
   const { t } = useTranslation();
