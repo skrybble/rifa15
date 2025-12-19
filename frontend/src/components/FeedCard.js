@@ -122,7 +122,7 @@ const FeedCard = ({ item, user, onLikeUpdate }) => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-white to-purple-50/50 rounded-2xl shadow-xl border-2 border-purple-200/60 overflow-hidden hover:shadow-2xl transition-shadow duration-200">
+    <div className="bg-white rounded-2xl shadow-xl border-2 border-slate-200 overflow-hidden hover:shadow-2xl transition-shadow duration-200">
       {/* Header */}
       <div className="flex items-center justify-between p-4">
         <Link to={`/creator/${creator.id}`} className="flex items-center space-x-3">
@@ -131,15 +131,15 @@ const FeedCard = ({ item, user, onLikeUpdate }) => {
               <img 
                 src={creator.profile_image.startsWith('/') ? `${API.replace('/api', '')}${creator.profile_image}` : creator.profile_image}
                 alt={creator.full_name}
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-purple-500 ring-offset-2"
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-sky-500 ring-offset-2"
               />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white font-bold">
                 {creator.full_name?.charAt(0) || '?'}
               </div>
             )}
             {item.is_featured_creator && (
-              <div className="absolute -bottom-1 -right-1 bg-blue-500 rounded-full p-0.5">
+              <div className="absolute -bottom-1 -right-1 bg-sky-500 rounded-full p-0.5">
                 <BadgeCheck className="w-3 h-3 text-white" />
               </div>
             )}
@@ -148,7 +148,7 @@ const FeedCard = ({ item, user, onLikeUpdate }) => {
             <div className="flex items-center space-x-1">
               <span className="font-semibold text-slate-900 text-sm">{creator.full_name}</span>
               {item.is_featured_creator && (
-                <BadgeCheck className="w-4 h-4 text-blue-500" />
+                <BadgeCheck className="w-4 h-4 text-sky-500" />
               )}
             </div>
             <span className="text-xs text-slate-500">{formatTimeAgo(item.created_at)}</span>
@@ -175,13 +175,13 @@ const FeedCard = ({ item, user, onLikeUpdate }) => {
           )}
           
           {/* Raffle Info Overlay */}
-          <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 border-t border-purple-100">
+          <div className="p-4 bg-gradient-to-r from-sky-50 to-blue-50 border-t border-sky-100">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center space-x-2">
-                <Ticket className="w-5 h-5 text-purple-600" />
-                <span className="font-bold text-purple-900">{item.title}</span>
+                <Ticket className="w-5 h-5 text-sky-600" />
+                <span className="font-bold text-slate-900">{item.title}</span>
               </div>
-              <span className="text-lg font-bold text-purple-600">${item.ticket_price}</span>
+              <span className="text-lg font-bold text-sky-600">${item.ticket_price}</span>
             </div>
             <p className="text-sm text-slate-600 line-clamp-2 mb-3">{item.description}</p>
             
@@ -199,7 +199,7 @@ const FeedCard = ({ item, user, onLikeUpdate }) => {
               {user ? (
                 <Link 
                   to={`/raffle/${item.id}`}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-full text-sm font-semibold hover:bg-purple-700 transition-colors"
+                  className="px-4 py-2 bg-sky-600 text-white rounded-full text-sm font-semibold hover:bg-sky-700 transition-colors"
                 >
                   {t('feed.buyTickets')}
                 </Link>
@@ -238,7 +238,7 @@ const FeedCard = ({ item, user, onLikeUpdate }) => {
           
           {/* Story indicator */}
           {item.is_story && (
-            <div className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-medium">
+            <div className="px-4 py-2 bg-gradient-to-r from-sky-500 to-blue-600 text-white text-xs font-medium">
               {t('feed.story24h')}
             </div>
           )}
@@ -265,7 +265,7 @@ const FeedCard = ({ item, user, onLikeUpdate }) => {
             </button>
             <button 
               onClick={toggleComments}
-              className="flex items-center space-x-1 text-slate-600 hover:text-blue-500 transition-colors"
+              className="flex items-center space-x-1 text-slate-600 hover:text-sky-500 transition-colors"
             >
               <MessageCircle className="w-6 h-6" />
             </button>
@@ -296,12 +296,12 @@ const FeedCard = ({ item, user, onLikeUpdate }) => {
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder={t('feed.writeComment')}
-                className="flex-1 px-3 py-2 bg-slate-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="flex-1 px-3 py-2 bg-slate-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
               />
               <button 
                 type="submit"
                 disabled={!newComment.trim()}
-                className="text-purple-600 font-semibold text-sm disabled:opacity-50"
+                className="text-sky-600 font-semibold text-sm disabled:opacity-50"
               >
                 {t('common.send')}
               </button>
@@ -313,7 +313,7 @@ const FeedCard = ({ item, user, onLikeUpdate }) => {
           {/* Comments list */}
           {loadingComments ? (
             <div className="text-center py-2">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-sky-600 mx-auto"></div>
             </div>
           ) : (
             <div className="space-y-3">
