@@ -137,9 +137,12 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
       // In production, this would redirect to Paddle checkout
       
       // Simulate payment (remove this when Paddle is integrated)
+      // TODO: Replace with Paddle checkout when credentials are available
       await axios.post(`${API}/raffles/${response.data.id}/confirm-payment`, {
         payment_id: 'SIMULATED_' + Date.now(),
         amount: fee
+      }, {
+        headers: { 'Content-Type': 'application/json' }
       });
 
       setStep(3);
