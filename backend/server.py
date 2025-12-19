@@ -100,6 +100,7 @@ class UserRole(str, Enum):
     SUPER_ADMIN = "super_admin"
 
 class RaffleStatus(str, Enum):
+    PENDING_PAYMENT = "pending_payment"
     ACTIVE = "active"
     COMPLETED = "completed"
     CANCELLED = "cancelled"
