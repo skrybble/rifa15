@@ -350,7 +350,7 @@ const LandingPage = ({ user, onLogout }) => {
               </h2>
               <button 
                 onClick={handleCreatePost}
-                disabled={posting || (!newPostContent.trim() && newPostImages.length === 0)}
+                disabled={posting || (!newPostContent.trim() && newPostImages.length === 0 && linkedRaffles.length === 0)}
                 className="px-4 py-1.5 bg-sky-600 text-white rounded-full text-sm font-semibold disabled:opacity-50"
               >
                 {posting ? '...' : t('feed.post')}
