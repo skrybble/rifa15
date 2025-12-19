@@ -513,6 +513,179 @@ async def create_raffle(
     
     return raffle
 
+def calculate_creation_fee(ticket_price: float, ticket_range: int) -> dict:
+    """Calculate the creation fee based on total potential value"""
+    total_value = ticket_price * ticket_range
+    
+    if total_value <= 0:
+        return {"fee": 0, "total_value": 0, "tier": None, "valid": False}
+    if total_value <= 500:
+        return {"fee": 1, "total_value": total_value, "tier": "$500", "valid": True}
+    if total_value <= 1000:
+        return {"fee": 2, "total_value": total_value, "tier": "$1,000", "valid": True}
+    if total_value <= 5000:
+        return {"fee": 5, "total_value": total_value, "tier": "$5,000", "valid": True}
+    if total_value <= 10000:
+        return {"fee": 10, "total_value": total_value, "tier": "$10,000", "valid": True}
+    return {"fee": -1, "total_value": total_value, "tier": "exceeded", "valid": False}
+
+@api_router.post("/raffles/create-with-fee")
+async def create_raffle_with_fee(
+    title: str = Form(...),
+    description: str = Form(...),
+    ticket_range: int = Form(...),
+    ticket_price: float = Form(...),
+    raffle_date: str = Form(...),
+    categories: str = Form("[]"),
+    creation_fee: float = Form(...),
+    total_potential_value: float = Form(...),
+    images: List[UploadFile] = File([]),
+    current_user: User = Depends(get_current_user)
+):
+    """Create a raffle with fee payment requirement"""
+    if current_user.role not in [UserRole.CREATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo los creadores pueden crear rifas")
+    
+    # Validate fee calculation
+    fee_info = calculate_creation_fee(ticket_price, ticket_range)
+    if not fee_info["valid"]:
+        raise HTTPException(status_code=400, detail="El valor total de la rifa excede el límite de $10,000")
+    
+    if fee_info["fee"] != creation_fee:
+        raise HTTPException(status_code=400, detail="El fee calculado no coincide")
+    
+    # Parse date
+    try:
+        raffle_datetime = datetime.fromisoformat(raffle_date.replace('Z', '+00:00'))
+    except:
+        raffle_datetime = datetime.strptime(raffle_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    
+    # Check if there are already 3 raffles ending on this date for this creator
+    raffle_date_only = raffle_datetime.date()
+    start_of_day = datetime.combine(raffle_date_only, datetime.min.time()).replace(tzinfo=timezone.utc)
+    end_of_day = datetime.combine(raffle_date_only, datetime.max.time()).replace(tzinfo=timezone.utc)
+    
+    raffles_on_same_day = await db.raffles.count_documents({
+        "creator_id": current_user.id,
+        "raffle_date": {
+            "$gte": start_of_day.isoformat(),
+            "$lte": end_of_day.isoformat()
+        }
+    })
+    
+    if raffles_on_same_day >= 3:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Ya tienes 3 rifas programadas para el {raffle_date_only.strftime('%d/%m/%Y')}. Selecciona otra fecha."
+        )
+    
+    # Save images
+    image_paths = []
+    for image in images:
+        if image.filename:
+            file_ext = image.filename.split('.')[-1]
+            filename = f"{uuid.uuid4()}.{file_ext}"
+            filepath = UPLOADS_DIR / filename
+            content = await image.read()
+            with open(filepath, 'wb') as f:
+                f.write(content)
+            image_paths.append(f"/uploads/{filename}")
+    
+    # Parse categories
+    try:
+        categories_list = json.loads(categories) if categories else []
+    except:
+        categories_list = [cat.strip() for cat in categories.split(',') if cat.strip()]
+    
+    raffle_id = str(uuid.uuid4())
+    raffle = {
+        "id": raffle_id,
+        "creator_id": current_user.id,
+        "title": title,
+        "description": description,
+        "images": image_paths,
+        "ticket_range": ticket_range,
+        "ticket_price": ticket_price,
+        "raffle_date": raffle_datetime.isoformat(),
+        "categories": categories_list,
+        "status": "pending_payment",  # Will be activated after payment
+        "creation_fee": creation_fee,
+        "total_potential_value": total_potential_value,
+        "tickets_sold": 0,
+        "sold_tickets": [],
+        "likes_count": 0,
+        "comments_count": 0,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.raffles.insert_one(raffle)
+    
+    # Return raffle without _id
+    raffle.pop("_id", None)
+    return raffle
+
+@api_router.post("/raffles/{raffle_id}/confirm-payment")
+async def confirm_raffle_payment(
+    raffle_id: str,
+    payment_id: str = Form(...),
+    amount: float = Form(...),
+    current_user: User = Depends(get_current_user)
+):
+    """Confirm payment and activate the raffle"""
+    raffle = await db.raffles.find_one({"id": raffle_id}, {"_id": 0})
+    if not raffle:
+        raise HTTPException(status_code=404, detail="Rifa no encontrada")
+    
+    if raffle["creator_id"] != current_user.id and current_user.role != UserRole.SUPER_ADMIN:
+        raise HTTPException(status_code=403, detail="No tienes permiso para esta rifa")
+    
+    if raffle["status"] != "pending_payment":
+        raise HTTPException(status_code=400, detail="Esta rifa ya fue pagada o no requiere pago")
+    
+    # Record payment
+    payment_record = {
+        "id": str(uuid.uuid4()),
+        "raffle_id": raffle_id,
+        "creator_id": current_user.id,
+        "payment_id": payment_id,
+        "amount": amount,
+        "type": "creation_fee",
+        "status": "completed",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.payments.insert_one(payment_record)
+    
+    # Activate raffle
+    await db.raffles.update_one(
+        {"id": raffle_id},
+        {"$set": {"status": "active", "payment_confirmed_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    # Notify followers
+    followers = await db.users.find({"following": current_user.id}, {"_id": 0, "id": 1}).to_list(None)
+    for follower in followers:
+        await create_notification(
+            follower['id'],
+            "Nueva Rifa Disponible",
+            f"{current_user.full_name} ha creado una nueva rifa: {raffle['title']}",
+            "new_raffle"
+        )
+    
+    return {"success": True, "message": "Rifa activada exitosamente"}
+
+@api_router.get("/raffles/fee-tiers")
+async def get_fee_tiers():
+    """Get the fee tier structure"""
+    return {
+        "tiers": [
+            {"max_value": 500, "fee": 1},
+            {"max_value": 1000, "fee": 2},
+            {"max_value": 5000, "fee": 5},
+            {"max_value": 10000, "fee": 10}
+        ],
+        "max_allowed_value": 10000
+    }
+
 @api_router.get("/raffles", response_model=List[Raffle])
 async def get_raffles(status: Optional[str] = None, creator_id: Optional[str] = None):
     query = {}
