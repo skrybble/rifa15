@@ -133,7 +133,7 @@ const LandingPage = ({ user, onLogout }) => {
               </span>
             </Link>
             
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
               <LanguageSelector />
               {user ? (
                 <>
@@ -143,6 +143,46 @@ const LandingPage = ({ user, onLogout }) => {
                   <Link to="/notifications" className="p-2 hover:bg-slate-100 rounded-full relative">
                     <Bell className="w-5 h-5 text-slate-600" />
                   </Link>
+                  {/* User Menu */}
+                  <div className="relative">
+                    <button 
+                      onClick={() => setShowUserMenu(!showUserMenu)}
+                      className="w-8 h-8 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white text-sm font-bold"
+                    >
+                      {user.full_name?.charAt(0)}
+                    </button>
+                    {showUserMenu && (
+                      <div className="absolute right-0 top-10 w-48 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50">
+                        <div className="px-4 py-2 border-b border-slate-100">
+                          <p className="font-semibold text-slate-900 text-sm truncate">{user.full_name}</p>
+                          <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                        </div>
+                        <Link 
+                          to="/dashboard" 
+                          className="flex items-center space-x-2 px-4 py-2 hover:bg-slate-50 text-slate-700"
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          <User className="w-4 h-4" />
+                          <span className="text-sm">Dashboard</span>
+                        </Link>
+                        <Link 
+                          to="/profile/settings" 
+                          className="flex items-center space-x-2 px-4 py-2 hover:bg-slate-50 text-slate-700"
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          <Settings className="w-4 h-4" />
+                          <span className="text-sm">{t('profile.settings')}</span>
+                        </Link>
+                        <button 
+                          onClick={() => { onLogout(); setShowUserMenu(false); }}
+                          className="flex items-center space-x-2 px-4 py-2 hover:bg-red-50 text-red-600 w-full"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span className="text-sm">{t('auth.logout')}</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </>
               ) : (
                 <Link 
