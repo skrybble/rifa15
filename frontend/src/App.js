@@ -12,6 +12,7 @@ import CreatorProfilePage from './pages/CreatorProfilePage';
 import RaffleDetailPage from './pages/RaffleDetailPage';
 import DashboardPage from './pages/DashboardPage';
 import MyTicketsPage from './pages/MyTicketsPage';
+import MyRafflesPage from './pages/MyRafflesPage';
 import RaffleManagementPage from './pages/RaffleManagementPage';
 import MessagesPage from './pages/MessagesPage';
 import ProfileSettingsPage from './pages/ProfileSettingsPage';
