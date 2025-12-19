@@ -503,8 +503,7 @@ const DashboardPage = ({ user, onLogout }) => {
               )}
             </div>
             <div className="flex items-center space-x-1">
-              <LanguageSelector />
-              <Link to="/profile-settings" className="p-2 hover:bg-slate-100 rounded-full">
+              <Link to="/profile-settings" className="p-2 hover:bg-slate-100 rounded-full" title="Configuración">
                 <Settings className="w-5 h-5 text-slate-600" />
               </Link>
             </div>
