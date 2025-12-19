@@ -209,7 +209,7 @@ const LandingPage = ({ user }) => {
           {user && user.role === 'creator' && (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white font-bold">
                   {user.full_name?.charAt(0)}
                 </div>
                 <button 
