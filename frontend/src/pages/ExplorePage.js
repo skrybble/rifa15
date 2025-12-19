@@ -271,8 +271,8 @@ const ExplorePage = ({ user, onLogout }) => {
         </div>
 
         {/* Featured Creators - Stories Style */}
-        <section className="mb-8">
-          <h2 className="text-lg font-bold text-slate-900 mb-3">{t('home.featuredCreators')}</h2>
+        <section className="mb-6 bg-white rounded-xl p-4 shadow-lg">
+          <h2 className="text-base font-bold text-slate-900 mb-3">{t('home.featuredCreators')}</h2>
           {loading ? (
             <div className="flex justify-center py-6">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-600"></div>
