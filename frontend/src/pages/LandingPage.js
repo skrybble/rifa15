@@ -7,12 +7,13 @@ import { Ticket, Search, Plus, Home, Compass, Bell, User, BadgeCheck, Image, X, 
 import LanguageSelector from '../components/LanguageSelector';
 import FeedCard from '../components/FeedCard';
 
-const LandingPage = ({ user }) => {
+const LandingPage = ({ user, onLogout }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [feed, setFeed] = useState([]);
   const [featuredCreators, setFeaturedCreators] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
