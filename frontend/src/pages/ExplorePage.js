@@ -317,13 +317,13 @@ const ExplorePage = ({ user, onLogout }) => {
               <p className="text-lg text-slate-500">{t('home.noRaffles')}</p>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {raffles.map((raffle) => (
                 <Link
                   key={raffle.id}
                   to={`/raffle/${raffle.id}`}
                   data-testid={`raffle-card-${raffle.id}`}
-                  className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+                  className="bg-white rounded-2xl overflow-hidden shadow-xl border-2 border-slate-200 hover:shadow-2xl transition-all hover:-translate-y-1"
                 >
                   {raffle.images && raffle.images.length > 0 ? (
                     <img
