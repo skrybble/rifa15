@@ -52,7 +52,7 @@ const ExplorePage = ({ user, onLogout }) => {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-blue-50 overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-slate-200 to-slate-300 overflow-x-hidden">
       {/* Header */}
       <header className="border-b border-sky-100 bg-white/80 backdrop-blur-md sticky top-0 z-50 w-full">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
