@@ -5,8 +5,9 @@ import axios from 'axios';
 import { API } from '../App';
 import { 
   ArrowLeft, User, Camera, Bell, MessageSquare, Shield, 
-  CreditCard, Save, X, Trash2, Plus, Check 
+  CreditCard, Save, X, Trash2, Plus, Check, Globe 
 } from 'lucide-react';
+import LanguageSelector from '../components/LanguageSelector';
 
 const ProfileSettingsPage = ({ user, onLogout }) => {
   const { t } = useTranslation();
