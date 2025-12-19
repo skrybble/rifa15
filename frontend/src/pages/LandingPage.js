@@ -164,7 +164,8 @@ const LandingPage = ({ user, onLogout }) => {
             </Link>
             
             <div className="flex items-center space-x-2">
-              <LanguageSelector />
+              {/* Language selector for non-logged users */}
+              {!user && <LanguageSelector />}
               {user ? (
                 <>
                   <Link to="/explore" className="p-2 hover:bg-slate-100 rounded-full">
