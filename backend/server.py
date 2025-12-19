@@ -2467,8 +2467,14 @@ async def get_feed(page: int = 1, per_page: int = 10):
     }
 
 @api_router.post("/posts")
-async def create_post(content: str = Form(...), is_story: bool = Form(False), images: List[UploadFile] = File(None), current_user: User = Depends(get_current_user)):
-    """Create a new post or story"""
+async def create_post(
+    content: str = Form(""), 
+    is_story: bool = Form(False), 
+    linked_raffles: str = Form("[]"),
+    images: List[UploadFile] = File(None), 
+    current_user: User = Depends(get_current_user)
+):
+    """Create a new post or story with optional linked raffles"""
     if current_user.role not in [UserRole.CREATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail="Solo creadores pueden publicar")
     
@@ -2483,17 +2489,50 @@ async def create_post(content: str = Form(...), is_story: bool = Form(False), im
                     f.write(await image.read())
                 image_urls.append(f"/uploads/{filename}")
     
-    post = Post(
-        creator_id=current_user.id,
-        content=content,
-        images=image_urls,
-        is_story=is_story,
-        expires_at=datetime.now(timezone.utc) + timedelta(hours=24) if is_story else None
-    )
+    # Parse linked raffles
+    try:
+        linked_raffle_ids = json.loads(linked_raffles) if linked_raffles else []
+    except:
+        linked_raffle_ids = []
     
-    await db.posts.insert_one(post.model_dump())
+    # Validate linked raffles (max 3, must belong to creator and be active)
+    valid_linked_raffles = []
+    if linked_raffle_ids:
+        for raffle_id in linked_raffle_ids[:3]:
+            raffle = await db.raffles.find_one({
+                "id": raffle_id, 
+                "creator_id": current_user.id,
+                "status": "active"
+            }, {"_id": 0})
+            if raffle:
+                valid_linked_raffles.append({
+                    "id": raffle["id"],
+                    "title": raffle["title"],
+                    "ticket_price": raffle["ticket_price"],
+                    "ticket_range": raffle["ticket_range"],
+                    "tickets_sold": raffle["tickets_sold"],
+                    "raffle_date": raffle["raffle_date"],
+                    "images": raffle.get("images", [])
+                })
     
-    return parse_from_mongo(post.model_dump())
+    post_data = {
+        "id": str(uuid.uuid4()),
+        "creator_id": current_user.id,
+        "content": content,
+        "images": image_urls,
+        "linked_raffles": valid_linked_raffles,
+        "is_story": is_story,
+        "likes_count": 0,
+        "comments_count": 0,
+        "expires_at": (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat() if is_story else None,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.posts.insert_one(post_data)
+    
+    # Remove _id before returning
+    post_data.pop("_id", None)
+    return post_data
 
 @api_router.get("/posts/{post_id}")
 async def get_post(post_id: str):
