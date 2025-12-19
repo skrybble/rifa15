@@ -17,6 +17,7 @@ const MyRafflesPage = ({ user, onLogout }) => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
     if (!user || (user.role !== 'creator' && user.role !== 'admin' && user.role !== 'super_admin')) {
