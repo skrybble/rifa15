@@ -126,8 +126,8 @@ const LandingPage = ({ user }) => {
         <div className="max-w-lg mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center space-x-2">
-              <Ticket className="w-7 h-7 text-purple-600" />
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <Ticket className="w-7 h-7 text-sky-600" />
+              <span className="text-xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">
                 RafflyWin
               </span>
             </Link>
@@ -146,7 +146,7 @@ const LandingPage = ({ user }) => {
               ) : (
                 <Link 
                   to="/login"
-                  className="px-4 py-2 bg-purple-600 text-white rounded-full text-sm font-semibold hover:bg-purple-700"
+                  className="px-4 py-2 bg-sky-600 text-white rounded-full text-sm font-semibold hover:bg-sky-700"
                 >
                   {t('auth.login')}
                 </Link>
