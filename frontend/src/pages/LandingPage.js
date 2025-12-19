@@ -102,13 +102,14 @@ const LandingPage = ({ user, onLogout }) => {
   };
 
   const handleCreatePost = async () => {
-    if (!newPostContent.trim() && newPostImages.length === 0) return;
+    if (!newPostContent.trim() && newPostImages.length === 0 && linkedRaffles.length === 0) return;
     
     setPosting(true);
     try {
       const formData = new FormData();
       formData.append('content', newPostContent);
       formData.append('is_story', isStory);
+      formData.append('linked_raffles', JSON.stringify(linkedRaffles.map(r => r.id)));
       newPostImages.forEach(img => {
         formData.append('images', img.file);
       });
@@ -117,13 +118,14 @@ const LandingPage = ({ user, onLogout }) => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
-      // Add to feed
-      const newPost = { ...res.data, type: 'post', creator: user };
+      // Add to feed with linked raffles data
+      const newPost = { ...res.data, type: 'post', creator: user, linked_raffles: linkedRaffles };
       setFeed(prev => [newPost, ...prev]);
       
       // Reset
       setNewPostContent('');
       setNewPostImages([]);
+      setLinkedRaffles([]);
       setIsStory(false);
       setShowPostModal(false);
     } catch (error) {
@@ -132,6 +134,20 @@ const LandingPage = ({ user, onLogout }) => {
     } finally {
       setPosting(false);
     }
+  };
+
+  const toggleLinkedRaffle = (raffle) => {
+    setLinkedRaffles(prev => {
+      const exists = prev.find(r => r.id === raffle.id);
+      if (exists) {
+        return prev.filter(r => r.id !== raffle.id);
+      }
+      if (prev.length >= 3) {
+        alert('Máximo 3 rifas por publicación');
+        return prev;
+      }
+      return [...prev, raffle];
+    });
   };
 
   return (
