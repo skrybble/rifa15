@@ -203,18 +203,18 @@ const LandingPage = ({ user, onLogout }) => {
           
           {/* Featured Creators - Stories Style */}
           {featuredCreators.length > 0 && (
-            <div className="py-4 border-b border-slate-200 mb-4 -mx-4 px-4 bg-white">
-              <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="py-3 border-b border-slate-200 mb-4 -mx-4 px-4 bg-white">
+              <div className="flex space-x-3 overflow-x-auto pb-1 scrollbar-hide">
                 {/* Add Story Button (for creators) */}
                 {user && user.role === 'creator' && (
                   <button 
                     onClick={() => { setIsStory(true); setShowPostModal(true); }}
                     className="flex-shrink-0 flex flex-col items-center"
                   >
-                    <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center border-2 border-dashed border-slate-300">
-                      <Plus className="w-6 h-6 text-slate-500" />
+                    <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center border-2 border-dashed border-slate-300">
+                      <Plus className="w-5 h-5 text-slate-500" />
                     </div>
-                    <span className="text-xs text-slate-600 mt-1">{t('feed.newStory')}</span>
+                    <span className="text-[10px] text-slate-600 mt-1">{t('feed.newStory')}</span>
                   </button>
                 )}
                 
@@ -224,7 +224,7 @@ const LandingPage = ({ user, onLogout }) => {
                     to={`/creator/${creator.id}`}
                     className="flex-shrink-0 flex flex-col items-center"
                   >
-                    <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-sky-400 via-blue-500 to-cyan-400">
+                    <div className="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-sky-400 via-blue-500 to-cyan-400">
                       {creator.profile_image ? (
                         <img 
                           src={creator.profile_image.startsWith('/') ? `${API.replace('/api', '')}${creator.profile_image}` : creator.profile_image}
@@ -232,12 +232,12 @@ const LandingPage = ({ user, onLogout }) => {
                           className="w-full h-full rounded-full object-cover border-2 border-white"
                         />
                       ) : (
-                        <div className="w-full h-full rounded-full bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-white font-bold text-lg border-2 border-white">
+                        <div className="w-full h-full rounded-full bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-white font-bold text-sm border-2 border-white">
                           {creator.full_name.charAt(0)}
                         </div>
                       )}
                     </div>
-                    <span className="text-xs text-slate-700 mt-1 truncate w-16 text-center">
+                    <span className="text-[10px] text-slate-700 mt-1 truncate w-14 text-center">
                       {creator.full_name.split(' ')[0]}
                     </span>
                   </Link>
