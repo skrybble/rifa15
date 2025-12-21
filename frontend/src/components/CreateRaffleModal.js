@@ -152,65 +152,89 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
 
         // Step 4: Initialize Paddle.js and open checkout
         if (window.Paddle) {
-          // Initialize Paddle with client-side token
-          // For sandbox: use sandbox token
-          // For production: use production token
-          const isSandbox = checkoutResponse.data.environment === 'sandbox';
-          
-          window.Paddle.Environment.set(isSandbox ? 'sandbox' : 'production');
-          window.Paddle.Initialize({
-            token: checkoutResponse.data.client_token
-          });
+          try {
+            // Initialize Paddle with client-side token
+            // For sandbox: use sandbox token
+            // For production: use production token
+            const isSandbox = checkoutResponse.data.environment === 'sandbox';
+            
+            window.Paddle.Environment.set(isSandbox ? 'sandbox' : 'production');
+            window.Paddle.Initialize({
+              token: checkoutResponse.data.client_token
+            });
 
-          // Open Paddle checkout overlay
-          window.Paddle.Checkout.open({
-            settings: {
-              displayMode: 'overlay',
-              theme: 'light',
-              locale: 'es',
-              allowLogout: false
-            },
-            items: [{
-              quantity: 1
-            }],
-            customData: {
-              raffle_id: raffleId,
-              fee_payment_id: checkoutResponse.data.fee_payment_id,
-              fee_amount: fee
-            },
-            customer: {
-              email: user?.email
-            },
-            eventCallback: function(event) {
-              console.log('Paddle event:', event);
-              
-              if (event.name === 'checkout.completed') {
-                // Payment successful
-                axios.post(`${API}/raffles/${raffleId}/confirm-payment`, {
-                  payment_id: event.data?.transaction_id || 'paddle_' + Date.now(),
-                  amount: fee
-                }).then(() => {
-                  setStep(3);
-                  setTimeout(() => {
-                    onSuccess && onSuccess({ id: raffleId });
-                    onClose();
-                    resetForm();
-                  }, 2000);
-                }).catch(err => {
-                  console.error('Payment confirmation error:', err);
-                  setError('Error al confirmar el pago');
-                });
-              }
-              
-              if (event.name === 'checkout.closed') {
-                console.log('Checkout closed');
-                setLoading(false);
-                if (event.data?.status !== 'completed') {
-                  setError('Pago cancelado. Tu rifa está guardada y puedes completar el pago más tarde.');
+            // Open Paddle checkout overlay
+            window.Paddle.Checkout.open({
+              settings: {
+                displayMode: 'overlay',
+                theme: 'light',
+                locale: 'es',
+                allowLogout: false
+              },
+              items: [{
+                quantity: 1
+              }],
+              customData: {
+                raffle_id: raffleId,
+                fee_payment_id: checkoutResponse.data.fee_payment_id,
+                fee_amount: fee
+              },
+              customer: {
+                email: user?.email
+              },
+              eventCallback: function(event) {
+                console.log('Paddle event:', event);
+                
+                if (event.name === 'checkout.completed') {
+                  // Payment successful
+                  axios.post(`${API}/raffles/${raffleId}/confirm-payment`, {
+                    payment_id: event.data?.transaction_id || 'paddle_' + Date.now(),
+                    amount: fee
+                  }).then(() => {
+                    setStep(3);
+                    setTimeout(() => {
+                      onSuccess && onSuccess({ id: raffleId });
+                      onClose();
+                      resetForm();
+                    }, 2000);
+                  }).catch(err => {
+                    console.error('Payment confirmation error:', err);
+                    setError('Error al confirmar el pago');
+                  });
+                }
+                
+                if (event.name === 'checkout.closed') {
+                  console.log('Checkout closed');
+                  setLoading(false);
+                  if (event.data?.status !== 'completed') {
+                    setError('Pago cancelado. Tu rifa está guardada y puedes completar el pago más tarde.');
+                  }
+                }
+                
+                if (event.name === 'checkout.error') {
+                  console.error('Paddle checkout error:', event);
+                  // Fallback to simulated payment in sandbox mode
+                  if (isSandbox) {
+                    console.log('Paddle error in sandbox - using simulated payment');
+                    simulatePayment(raffleId, fee);
+                  } else {
+                    setError('Error en el proceso de pago. Por favor intenta de nuevo.');
+                    setLoading(false);
+                  }
                 }
               }
+            });
+          } catch (paddleError) {
+            console.error('Paddle initialization error:', paddleError);
+            // In sandbox mode, fallback to simulated payment
+            if (checkoutResponse.data.environment === 'sandbox') {
+              console.log('Falling back to simulated payment due to Paddle error');
+              await simulatePayment(raffleId, fee);
+            } else {
+              setError('Error al iniciar el pago. Por favor intenta de nuevo.');
+              setLoading(false);
             }
-          });
+          }
         } else {
           // Paddle.js not loaded - fallback to simulated payment
           console.warn('Paddle.js not loaded, using simulated payment');
