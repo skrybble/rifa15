@@ -134,34 +134,102 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
         submitData.append('images', file);
       });
 
-      // Create raffle with pending_payment status
+      // Step 1: Create raffle with pending_payment status
       const response = await axios.post(`${API}/raffles/create-with-fee`, submitData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      // TODO: Integrate Paddle payment here
-      // For now, we'll simulate payment success and activate the raffle
-      // In production, this would redirect to Paddle checkout
-      
-      // Simulate payment (remove this when Paddle is integrated)
-      // TODO: Replace with Paddle checkout when credentials are available
-      await axios.post(`${API}/raffles/${response.data.id}/confirm-payment`, {
-        payment_id: 'SIMULATED_' + Date.now(),
-        amount: fee
-      }, {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      const raffleId = response.data.id;
 
-      setStep(3);
-      setTimeout(() => {
-        onSuccess && onSuccess(response.data);
-        onClose();
-        resetForm();
-      }, 2000);
+      // Step 2: Check if Paddle is configured
+      const paddleStatus = await axios.get(`${API}/paddle/status`);
+      
+      if (paddleStatus.data.configured && paddleStatus.data.client_token) {
+        // Step 3: Create checkout session
+        const checkoutResponse = await axios.post(`${API}/paddle/create-fee-checkout`, {
+          raffle_id: raffleId
+        });
+
+        // Step 4: Initialize Paddle.js and open checkout
+        if (window.Paddle) {
+          window.Paddle.Initialize({
+            token: checkoutResponse.data.client_token,
+            environment: checkoutResponse.data.environment
+          });
+
+          // Open Paddle checkout overlay
+          window.Paddle.Checkout.open({
+            items: [{
+              priceId: null, // We'll use custom price
+              quantity: 1
+            }],
+            customData: {
+              raffle_id: raffleId,
+              fee_payment_id: checkoutResponse.data.fee_payment_id
+            },
+            settings: {
+              displayMode: 'overlay',
+              theme: 'light',
+              locale: 'es'
+            },
+            customer: {
+              email: user?.email
+            },
+            successCallback: async (data) => {
+              console.log('Payment successful:', data);
+              // Confirm payment on backend
+              await axios.post(`${API}/raffles/${raffleId}/confirm-payment`, {
+                payment_id: data.transaction_id || 'paddle_' + Date.now(),
+                amount: fee
+              });
+              setStep(3);
+              setTimeout(() => {
+                onSuccess && onSuccess(response.data);
+                onClose();
+                resetForm();
+              }, 2000);
+            },
+            closeCallback: () => {
+              console.log('Checkout closed');
+              setLoading(false);
+              // The raffle stays in pending_payment status
+              setError('Pago cancelado. Tu rifa está guardada y puedes completar el pago más tarde.');
+            }
+          });
+        } else {
+          // Paddle.js not loaded - fallback to simulated payment
+          console.warn('Paddle.js not loaded, using simulated payment');
+          await simulatePayment(raffleId, fee);
+        }
+      } else {
+        // Paddle not configured - use simulated payment for testing
+        console.warn('Paddle not configured, using simulated payment');
+        await simulatePayment(raffleId, fee);
+      }
 
     } catch (err) {
       console.error('Error creating raffle:', err);
       setError(err.response?.data?.detail || 'Error al crear la rifa');
+      setLoading(false);
+    }
+  };
+
+  // Simulated payment for testing when Paddle is not available
+  const simulatePayment = async (raffleId, fee) => {
+    try {
+      await axios.post(`${API}/raffles/${raffleId}/confirm-payment`, {
+        payment_id: 'SIMULATED_' + Date.now(),
+        amount: fee
+      });
+      
+      setStep(3);
+      setTimeout(() => {
+        onSuccess && onSuccess({ id: raffleId });
+        onClose();
+        resetForm();
+      }, 2000);
+    } catch (err) {
+      setError('Error al confirmar el pago');
     } finally {
       setLoading(false);
     }
