@@ -612,6 +612,18 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
                     </>
                   )}
                 </button>
+                
+                {/* Test payment button for sandbox mode */}
+                {isSandboxMode && createdRaffleId && !loading && (
+                  <button
+                    onClick={handleTestPayment}
+                    className="w-full py-3 bg-amber-500 text-white rounded-xl font-bold hover:bg-amber-600 transition-colors flex items-center justify-center space-x-2"
+                  >
+                    <CheckCircle className="w-5 h-5" />
+                    <span>🧪 Pago de Prueba (Sandbox)</span>
+                  </button>
+                )}
+                
                 <button
                   onClick={() => setStep(1)}
                   disabled={loading}
