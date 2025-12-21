@@ -69,6 +69,74 @@ class AdminAPITester:
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         })
+
+class PaddleAPITester:
+    def __init__(self):
+        self.token = None
+        self.session = requests.Session()
+        self.session.headers.update({
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        })
+        self.creator_email = "carlos@creator.com"
+        self.creator_password = "test123"
+    
+    def login_creator(self, results: TestResults) -> bool:
+        """Login as creator and get authentication token"""
+        try:
+            login_data = {
+                "email": self.creator_email,
+                "password": self.creator_password
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/auth/login", json=login_data, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "token" in data and "user" in data:
+                    self.token = data["token"]
+                    user = data["user"]
+                    
+                    # Verify creator role
+                    if user.get("role") in ["creator", "admin", "super_admin"]:
+                        self.session.headers.update({
+                            'Authorization': f'Bearer {self.token}'
+                        })
+                        results.add_result(
+                            "Creator Login",
+                            True,
+                            f"Successfully logged in as {user.get('role')} - {user.get('full_name', 'Creator')}"
+                        )
+                        return True
+                    else:
+                        results.add_result(
+                            "Creator Login",
+                            False,
+                            f"User role is '{user.get('role')}', expected 'creator', 'admin' or 'super_admin'"
+                        )
+                        return False
+                else:
+                    results.add_result(
+                        "Creator Login",
+                        False,
+                        "Login response missing token or user data"
+                    )
+                    return False
+            else:
+                results.add_result(
+                    "Creator Login",
+                    False,
+                    f"Login failed: HTTP {response.status_code} - {response.text}"
+                )
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            results.add_result(
+                "Creator Login",
+                False,
+                f"Login request failed: {str(e)}"
+            )
+            return False
     
     def login_admin(self, results: TestResults) -> bool:
         """Login as admin and get authentication token"""
