@@ -519,6 +519,7 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
                 <ul className="space-y-1">
                   <li>• Hasta $500: $1</li>
                   <li>• Hasta $1,000: $2</li>
+                  <li>• Hasta $3,000: $3</li>
                   <li>• Hasta $5,000: $5</li>
                   <li>• Hasta $10,000: $10</li>
                 </ul>
