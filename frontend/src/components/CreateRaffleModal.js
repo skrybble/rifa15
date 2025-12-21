@@ -154,11 +154,21 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
         const checkoutResponse = await axios.post(`${API}/paddle/create-fee-checkout`, {
           raffle_id: raffleId
         });
+        
+        setIsSandboxMode(isSandbox);
 
-        // Step 4: Initialize Paddle.js and open checkout
+        // In sandbox mode, skip Paddle checkout and show test button directly
+        // This avoids the Paddle error popup when products aren't configured
+        if (isSandbox) {
+          console.log('Sandbox mode - showing test payment option');
+          setLoading(false);
+          return; // Exit here - user will use sandbox test button
+        }
+
+        // Production mode: Initialize Paddle.js and open checkout
         if (window.Paddle) {
           try {
-            window.Paddle.Environment.set(isSandbox ? 'sandbox' : 'production');
+            window.Paddle.Environment.set('production');
             window.Paddle.Initialize({
               token: checkoutResponse.data.client_token
             });
@@ -206,42 +216,30 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
                   console.log('Checkout closed');
                   setLoading(false);
                   if (event.data?.status !== 'completed') {
-                    // Show sandbox test option
-                    if (isSandbox) {
-                      setError('');
-                    } else {
-                      setError('Pago cancelado. Tu rifa está guardada.');
-                    }
+                    setError('Pago cancelado. Tu rifa está guardada.');
                   }
                 }
                 
                 if (event.name === 'checkout.error') {
                   console.error('Paddle checkout error:', event);
                   setLoading(false);
-                  if (isSandbox) {
-                    setError('');
-                  } else {
-                    setError('Error en el proceso de pago.');
-                  }
+                  setError('Error en el proceso de pago.');
                 }
               }
             });
           } catch (paddleError) {
             console.error('Paddle initialization error:', paddleError);
             setLoading(false);
-            // In sandbox mode, show test payment option
-            if (isSandbox) {
-              setError('');
-            } else {
-              setError('Error al iniciar el pago.');
-            }
+            setError('Error al iniciar el pago.');
           }
         } else {
           console.warn('Paddle.js not loaded');
           setLoading(false);
+          setError('Error al cargar el sistema de pagos.');
         }
       } else {
         // Paddle not configured - show test option in sandbox
+        setIsSandboxMode(true);
         setLoading(false);
       }
 
