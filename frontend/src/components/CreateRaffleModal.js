@@ -31,6 +31,12 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
   ];
 
   // Calculate fee based on total potential value
+  // Fee structure:
+  // - $0 - $500: $1
+  // - $501 - $1,000: $2
+  // - $1,001 - $3,000: $3
+  // - $3,001 - $5,000: $5
+  // - $5,001 - $10,000: $10
   const calculateFee = () => {
     const price = parseFloat(formData.ticket_price) || 0;
     const quantity = parseInt(formData.ticket_range) || 0;
@@ -39,6 +45,7 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
     if (totalValue <= 0) return { fee: 0, totalValue: 0, tier: null };
     if (totalValue <= 500) return { fee: 1, totalValue, tier: '$500' };
     if (totalValue <= 1000) return { fee: 2, totalValue, tier: '$1,000' };
+    if (totalValue <= 3000) return { fee: 3, totalValue, tier: '$3,000' };
     if (totalValue <= 5000) return { fee: 5, totalValue, tier: '$5,000' };
     if (totalValue <= 10000) return { fee: 10, totalValue, tier: '$10,000' };
     return { fee: -1, totalValue, tier: 'exceeded' }; // Exceeded limit
