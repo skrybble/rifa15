@@ -303,15 +303,18 @@ test_plan:
 
   - task: "Paddle integration for raffle creation fees"
     implemented: true
-    working: needs_testing
+    working: true
     files:
       - "/app/backend/server.py"
       - "/app/frontend/src/components/CreateRaffleModal.js"
       - "/app/backend/.env"
       - "/app/frontend/.env"
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: needs_testing
         agent: "main"
         comment: "Implemented Paddle integration with sandbox mode. Fee tiers: $0-500=$1, $501-1000=$2, $1001-3000=$3, $3001-5000=$5, $5001-10000=$10. In sandbox mode, shows test payment button. Production mode uses real Paddle checkout."
+      - working: true
+        agent: "testing"
+        comment: "✅ Paddle integration fully functional. All 5 test scenarios completed successfully: 1) Paddle Status Endpoint - configured=true, environment=sandbox, client_token present ✅ 2) Fee Calculation Tiers - All 5 tiers working correctly: Tier 1 ($250→$1), Tier 2 ($800→$2), Tier 3 ($2000→$3), Tier 4 ($4000→$5), Tier 5 ($8000→$10) ✅ 3) Create Fee Checkout - Successfully creates checkout sessions with fee_payment_id, client_token, environment=sandbox ✅ 4) Confirm Payment - Payment confirmation working, changes raffle status from 'pending_payment' to 'active' ✅ 5) Verify Raffle Active - Raffle status correctly updated to 'active' after payment ✅ Login with carlos@creator.com successful. All API endpoints responding correctly. Fee calculation logic working as specified. Payment flow complete from creation to activation."
