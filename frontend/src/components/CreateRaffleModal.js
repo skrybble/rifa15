@@ -152,48 +152,63 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
 
         // Step 4: Initialize Paddle.js and open checkout
         if (window.Paddle) {
+          // Initialize Paddle with client-side token
+          // For sandbox: use sandbox token
+          // For production: use production token
+          const isSandbox = checkoutResponse.data.environment === 'sandbox';
+          
+          window.Paddle.Environment.set(isSandbox ? 'sandbox' : 'production');
           window.Paddle.Initialize({
-            token: checkoutResponse.data.client_token,
-            environment: checkoutResponse.data.environment
+            token: checkoutResponse.data.client_token
           });
 
           // Open Paddle checkout overlay
           window.Paddle.Checkout.open({
+            settings: {
+              displayMode: 'overlay',
+              theme: 'light',
+              locale: 'es',
+              allowLogout: false
+            },
             items: [{
-              priceId: null, // We'll use custom price
               quantity: 1
             }],
             customData: {
               raffle_id: raffleId,
-              fee_payment_id: checkoutResponse.data.fee_payment_id
-            },
-            settings: {
-              displayMode: 'overlay',
-              theme: 'light',
-              locale: 'es'
+              fee_payment_id: checkoutResponse.data.fee_payment_id,
+              fee_amount: fee
             },
             customer: {
               email: user?.email
             },
-            successCallback: async (data) => {
-              console.log('Payment successful:', data);
-              // Confirm payment on backend
-              await axios.post(`${API}/raffles/${raffleId}/confirm-payment`, {
-                payment_id: data.transaction_id || 'paddle_' + Date.now(),
-                amount: fee
-              });
-              setStep(3);
-              setTimeout(() => {
-                onSuccess && onSuccess(response.data);
-                onClose();
-                resetForm();
-              }, 2000);
-            },
-            closeCallback: () => {
-              console.log('Checkout closed');
-              setLoading(false);
-              // The raffle stays in pending_payment status
-              setError('Pago cancelado. Tu rifa está guardada y puedes completar el pago más tarde.');
+            eventCallback: function(event) {
+              console.log('Paddle event:', event);
+              
+              if (event.name === 'checkout.completed') {
+                // Payment successful
+                axios.post(`${API}/raffles/${raffleId}/confirm-payment`, {
+                  payment_id: event.data?.transaction_id || 'paddle_' + Date.now(),
+                  amount: fee
+                }).then(() => {
+                  setStep(3);
+                  setTimeout(() => {
+                    onSuccess && onSuccess({ id: raffleId });
+                    onClose();
+                    resetForm();
+                  }, 2000);
+                }).catch(err => {
+                  console.error('Payment confirmation error:', err);
+                  setError('Error al confirmar el pago');
+                });
+              }
+              
+              if (event.name === 'checkout.closed') {
+                console.log('Checkout closed');
+                setLoading(false);
+                if (event.data?.status !== 'completed') {
+                  setError('Pago cancelado. Tu rifa está guardada y puedes completar el pago más tarde.');
+                }
+              }
             }
           });
         } else {
