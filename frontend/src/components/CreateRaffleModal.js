@@ -291,6 +291,8 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
     setImageFiles([]);
     setStep(1);
     setError('');
+    setIsSandboxMode(false);
+    setCreatedRaffleId(null);
   };
 
   if (!isOpen) return null;
