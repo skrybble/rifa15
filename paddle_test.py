@@ -225,16 +225,16 @@ class PaddleAPITester:
         
         for test_case in test_cases:
             try:
-                # Prepare form data
+                # Prepare form data (convert all values to strings for multipart)
                 form_data = {
                     "title": f"Test Raffle - {test_case['name']}",
                     "description": f"Testing fee calculation for {test_case['name']}",
-                    "ticket_range": test_case["ticket_range"],
-                    "ticket_price": test_case["ticket_price"],
+                    "ticket_range": str(test_case["ticket_range"]),
+                    "ticket_price": str(test_case["ticket_price"]),
                     "raffle_date": "2025-12-31",
                     "categories": "[]",
-                    "creation_fee": test_case["expected_fee"],
-                    "total_potential_value": test_case["expected_total"]
+                    "creation_fee": str(test_case["expected_fee"]),
+                    "total_potential_value": str(test_case["expected_total"])
                 }
                 
                 # Use multipart/form-data for this endpoint
