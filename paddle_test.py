@@ -238,9 +238,13 @@ class PaddleAPITester:
                 }
                 
                 # Use multipart/form-data for this endpoint
-                response = self.session.post(
+                # Remove Content-Type header to let requests set it automatically for multipart
+                headers = {k: v for k, v in self.session.headers.items() if k.lower() != 'content-type'}
+                
+                response = requests.post(
                     f"{API_BASE_URL}/raffles/create-with-fee", 
-                    files=form_data,  # Use files parameter to send as multipart/form-data
+                    data=form_data,
+                    headers=headers,
                     timeout=10
                 )
                 
