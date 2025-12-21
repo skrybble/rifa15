@@ -1257,8 +1257,11 @@ def main():
     # Run PWA tests (existing functionality)
     pwa_success = run_pwa_tests()
     
-    # Run Admin Dashboard tests (new functionality)
+    # Run Admin Dashboard tests (existing functionality)
     admin_success = run_admin_dashboard_tests()
+    
+    # Run Paddle Integration tests (new functionality)
+    paddle_success = run_paddle_integration_tests()
     
     # Overall summary
     print("\n" + "="*60)
@@ -1266,8 +1269,9 @@ def main():
     print("="*60)
     print(f"PWA Tests: {'✅ PASSED' if pwa_success else '❌ FAILED'}")
     print(f"Admin Dashboard Tests: {'✅ PASSED' if admin_success else '❌ FAILED'}")
+    print(f"Paddle Integration Tests: {'✅ PASSED' if paddle_success else '❌ FAILED'}")
     
-    overall_success = pwa_success and admin_success
+    overall_success = pwa_success and admin_success and paddle_success
     print(f"Overall Result: {'✅ ALL TESTS PASSED' if overall_success else '❌ SOME TESTS FAILED'}")
     
     # Return appropriate exit code
