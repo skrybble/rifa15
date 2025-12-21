@@ -240,7 +240,7 @@ class PaddleAPITester:
                 # Use multipart/form-data for this endpoint
                 response = self.session.post(
                     f"{API_BASE_URL}/raffles/create-with-fee", 
-                    data=form_data,
+                    files=form_data,  # Use files parameter to send as multipart/form-data
                     timeout=10
                 )
                 
