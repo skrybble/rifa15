@@ -598,34 +598,50 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
             )}
             {step === 2 && (
               <div className="space-y-2">
-                <button
-                  onClick={handlePayAndCreate}
-                  disabled={loading}
-                  className="w-full py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center justify-center space-x-2"
-                >
-                  {loading ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  ) : (
-                    <>
-                      <DollarSign className="w-5 h-5" />
-                      <span>Pagar ${fee} y Publicar Rifa</span>
-                    </>
-                  )}
-                </button>
-                
-                {/* Test payment button for sandbox mode */}
-                {isSandboxMode && createdRaffleId && !loading && (
+                {/* Main Pay button */}
+                {!createdRaffleId && (
                   <button
-                    onClick={handleTestPayment}
-                    className="w-full py-3 bg-amber-500 text-white rounded-xl font-bold hover:bg-amber-600 transition-colors flex items-center justify-center space-x-2"
+                    onClick={handlePayAndCreate}
+                    disabled={loading}
+                    className="w-full py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center justify-center space-x-2"
                   >
-                    <CheckCircle className="w-5 h-5" />
-                    <span>🧪 Pago de Prueba (Sandbox)</span>
+                    {loading ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    ) : (
+                      <>
+                        <DollarSign className="w-5 h-5" />
+                        <span>Pagar ${fee} y Publicar Rifa</span>
+                      </>
+                    )}
                   </button>
                 )}
                 
+                {/* Test payment button for sandbox mode - shown after raffle is created */}
+                {createdRaffleId && (
+                  <div className="space-y-2">
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+                      <p className="font-medium">🧪 Modo Sandbox</p>
+                      <p className="text-xs mt-1">Tu rifa fue creada. Usa el botón de prueba para simular el pago.</p>
+                    </div>
+                    <button
+                      onClick={handleTestPayment}
+                      disabled={loading}
+                      className="w-full py-3 bg-amber-500 text-white rounded-xl font-bold hover:bg-amber-600 transition-colors disabled:opacity-50 flex items-center justify-center space-x-2"
+                    >
+                      {loading ? (
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      ) : (
+                        <>
+                          <CheckCircle className="w-5 h-5" />
+                          <span>Simular Pago de ${fee} (Sandbox)</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
+                
                 <button
-                  onClick={() => setStep(1)}
+                  onClick={() => { setStep(1); setCreatedRaffleId(null); setIsSandboxMode(false); }}
                   disabled={loading}
                   className="w-full py-3 bg-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-300 transition-colors"
                 >
