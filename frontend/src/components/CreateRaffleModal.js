@@ -142,9 +142,12 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
       });
 
       const raffleId = response.data.id;
+      setCreatedRaffleId(raffleId);
 
       // Step 2: Check if Paddle is configured
       const paddleStatus = await axios.get(`${API}/paddle/status`);
+      const isSandbox = paddleStatus.data.environment === 'sandbox';
+      setIsSandboxMode(isSandbox);
       
       if (paddleStatus.data.configured && paddleStatus.data.client_token) {
         // Step 3: Create checkout session
@@ -155,11 +158,6 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
         // Step 4: Initialize Paddle.js and open checkout
         if (window.Paddle) {
           try {
-            // Initialize Paddle with client-side token
-            // For sandbox: use sandbox token
-            // For production: use production token
-            const isSandbox = checkoutResponse.data.environment === 'sandbox';
-            
             window.Paddle.Environment.set(isSandbox ? 'sandbox' : 'production');
             window.Paddle.Initialize({
               token: checkoutResponse.data.client_token
@@ -188,7 +186,6 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
                 console.log('Paddle event:', event);
                 
                 if (event.name === 'checkout.completed') {
-                  // Payment successful
                   axios.post(`${API}/raffles/${raffleId}/confirm-payment`, {
                     payment_id: event.data?.transaction_id || 'paddle_' + Date.now(),
                     amount: fee
@@ -209,43 +206,43 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
                   console.log('Checkout closed');
                   setLoading(false);
                   if (event.data?.status !== 'completed') {
-                    setError('Pago cancelado. Tu rifa está guardada y puedes completar el pago más tarde.');
+                    // Show sandbox test option
+                    if (isSandbox) {
+                      setError('');
+                    } else {
+                      setError('Pago cancelado. Tu rifa está guardada.');
+                    }
                   }
                 }
                 
                 if (event.name === 'checkout.error') {
                   console.error('Paddle checkout error:', event);
-                  // Fallback to simulated payment in sandbox mode
+                  setLoading(false);
                   if (isSandbox) {
-                    console.log('Paddle error in sandbox - using simulated payment');
-                    simulatePayment(raffleId, fee);
+                    setError('');
                   } else {
-                    setError('Error en el proceso de pago. Por favor intenta de nuevo.');
-                    setLoading(false);
+                    setError('Error en el proceso de pago.');
                   }
                 }
               }
             });
           } catch (paddleError) {
             console.error('Paddle initialization error:', paddleError);
-            // In sandbox mode, fallback to simulated payment
-            if (checkoutResponse.data.environment === 'sandbox') {
-              console.log('Falling back to simulated payment due to Paddle error');
-              await simulatePayment(raffleId, fee);
+            setLoading(false);
+            // In sandbox mode, show test payment option
+            if (isSandbox) {
+              setError('');
             } else {
-              setError('Error al iniciar el pago. Por favor intenta de nuevo.');
-              setLoading(false);
+              setError('Error al iniciar el pago.');
             }
           }
         } else {
-          // Paddle.js not loaded - fallback to simulated payment
-          console.warn('Paddle.js not loaded, using simulated payment');
-          await simulatePayment(raffleId, fee);
+          console.warn('Paddle.js not loaded');
+          setLoading(false);
         }
       } else {
-        // Paddle not configured - use simulated payment for testing
-        console.warn('Paddle not configured, using simulated payment');
-        await simulatePayment(raffleId, fee);
+        // Paddle not configured - show test option in sandbox
+        setLoading(false);
       }
 
     } catch (err) {
@@ -255,22 +252,27 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
     }
   };
 
-  // Simulated payment for testing when Paddle is not available
-  const simulatePayment = async (raffleId, fee) => {
+  // Handle test payment in sandbox mode
+  const handleTestPayment = async () => {
+    if (!createdRaffleId) return;
+    
+    setLoading(true);
+    const { fee } = calculateFee();
+    
     try {
-      await axios.post(`${API}/raffles/${raffleId}/confirm-payment`, {
-        payment_id: 'SIMULATED_' + Date.now(),
+      await axios.post(`${API}/raffles/${createdRaffleId}/confirm-payment`, {
+        payment_id: 'TEST_SANDBOX_' + Date.now(),
         amount: fee
       });
       
       setStep(3);
       setTimeout(() => {
-        onSuccess && onSuccess({ id: raffleId });
+        onSuccess && onSuccess({ id: createdRaffleId });
         onClose();
         resetForm();
       }, 2000);
     } catch (err) {
-      setError('Error al confirmar el pago');
+      setError('Error al procesar el pago de prueba');
     } finally {
       setLoading(false);
     }
