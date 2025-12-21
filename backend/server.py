@@ -518,7 +518,15 @@ async def create_raffle(
     return raffle
 
 def calculate_creation_fee(ticket_price: float, ticket_range: int) -> dict:
-    """Calculate the creation fee based on total potential value"""
+    """Calculate the creation fee based on total potential value
+    
+    Fee structure:
+    - $0 - $500: $1
+    - $501 - $1,000: $2
+    - $1,001 - $3,000: $3
+    - $3,001 - $5,000: $5
+    - $5,001 - $10,000: $10
+    """
     total_value = ticket_price * ticket_range
     
     if total_value <= 0:
@@ -527,6 +535,8 @@ def calculate_creation_fee(ticket_price: float, ticket_range: int) -> dict:
         return {"fee": 1, "total_value": total_value, "tier": "$500", "valid": True}
     if total_value <= 1000:
         return {"fee": 2, "total_value": total_value, "tier": "$1,000", "valid": True}
+    if total_value <= 3000:
+        return {"fee": 3, "total_value": total_value, "tier": "$3,000", "valid": True}
     if total_value <= 5000:
         return {"fee": 5, "total_value": total_value, "tier": "$5,000", "valid": True}
     if total_value <= 10000:
