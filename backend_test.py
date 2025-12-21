@@ -1186,6 +1186,32 @@ def run_pwa_tests():
     
     return results.failed == 0
 
+def run_paddle_integration_tests():
+    """Run Paddle payment integration tests"""
+    print("\n" + "="*60)
+    print("Starting Paddle Payment Integration Tests...")
+    print(f"API Base URL: {API_BASE_URL}")
+    print(f"Creator Credentials: carlos@creator.com")
+    print("="*60)
+    
+    results = TestResults()
+    paddle_tester = PaddleAPITester()
+    
+    # Step 1: Login as creator
+    print("Step 1: Logging in as creator...")
+    if not paddle_tester.login_creator(results):
+        results.print_summary("PADDLE INTEGRATION")
+        return False
+    
+    # Step 2: Run all Paddle integration tests
+    print("Step 2: Running Paddle integration tests...")
+    paddle_tester.run_paddle_integration_tests(results)
+    
+    # Print results
+    results.print_summary("PADDLE INTEGRATION")
+    
+    return results.failed == 0
+
 def run_admin_dashboard_tests():
     """Run Admin Dashboard enhancement tests"""
     print("\n" + "="*60)
