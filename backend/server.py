@@ -60,23 +60,23 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 # Paddle Configuration
-PADDLE_VENDOR_ID = os.environ.get('PADDLE_VENDOR_ID', 'PENDING_SETUP')
-PADDLE_AUTH_CODE = os.environ.get('PADDLE_AUTH_CODE', 'PENDING_SETUP')
-PADDLE_PUBLIC_KEY = os.environ.get('PADDLE_PUBLIC_KEY', 'PENDING_SETUP')
+PADDLE_API_KEY = os.environ.get('PADDLE_API_KEY', 'PENDING_SETUP')
+PADDLE_WEBHOOK_SECRET = os.environ.get('PADDLE_WEBHOOK_SECRET', 'PENDING_SETUP')
+PADDLE_CLIENT_TOKEN = os.environ.get('PADDLE_CLIENT_TOKEN', 'PENDING_SETUP')
 PADDLE_ENVIRONMENT = os.environ.get('PADDLE_ENVIRONMENT', 'sandbox')
 PLATFORM_COMMISSION = float(os.environ.get('PLATFORM_COMMISSION_PERCENTAGE', 1))
 
 # Initialize Paddle Client (if available and configured)
 paddle_client = None
-if PADDLE_AVAILABLE and PADDLE_AUTH_CODE != 'PENDING_SETUP':
+if PADDLE_AVAILABLE and PADDLE_API_KEY != 'PENDING_SETUP':
     try:
         paddle_env = Environment.SANDBOX if PADDLE_ENVIRONMENT == 'sandbox' else Environment.PRODUCTION
-        paddle_client = Client(PADDLE_AUTH_CODE, environment=paddle_env)
+        paddle_client = Client(PADDLE_API_KEY, environment=paddle_env)
         print(f"✅ Paddle client initialized in {PADDLE_ENVIRONMENT} mode")
     except Exception as e:
         print(f"⚠️ Failed to initialize Paddle client: {e}")
 else:
-    print("ℹ️ Paddle not configured. Set PADDLE_AUTH_CODE in .env to enable payments")
+    print("ℹ️ Paddle not configured. Set PADDLE_API_KEY in .env to enable payments")
 
 # Create the main app
 app = FastAPI()
