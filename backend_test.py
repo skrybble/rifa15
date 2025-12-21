@@ -69,6 +69,104 @@ class AdminAPITester:
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         })
+    
+    def login_admin(self, results: TestResults) -> bool:
+        """Login as admin and get authentication token"""
+        try:
+            login_data = {
+                "email": ADMIN_EMAIL,
+                "password": ADMIN_PASSWORD
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/auth/login", json=login_data, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "token" in data and "user" in data:
+                    self.token = data["token"]
+                    user = data["user"]
+                    
+                    # Verify admin role
+                    if user.get("role") in ["admin", "super_admin"]:
+                        self.session.headers.update({
+                            'Authorization': f'Bearer {self.token}'
+                        })
+                        results.add_result(
+                            "Admin Login",
+                            True,
+                            f"Successfully logged in as {user.get('role')} - {user.get('full_name', 'Admin')}"
+                        )
+                        return True
+                    else:
+                        results.add_result(
+                            "Admin Login",
+                            False,
+                            f"User role is '{user.get('role')}', expected 'admin' or 'super_admin'"
+                        )
+                        return False
+                else:
+                    results.add_result(
+                        "Admin Login",
+                        False,
+                        "Login response missing token or user data"
+                    )
+                    return False
+            else:
+                results.add_result(
+                    "Admin Login",
+                    False,
+                    f"Login failed: HTTP {response.status_code} - {response.text}"
+                )
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            results.add_result(
+                "Admin Login",
+                False,
+                f"Login request failed: {str(e)}"
+            )
+            return False
+    
+    def get_creator_id(self, results: TestResults) -> Optional[str]:
+        """Get a creator ID for testing"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/admin/creators", timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "data" in data and len(data["data"]) > 0:
+                    creator = data["data"][0]
+                    creator_id = creator.get("id")
+                    creator_name = creator.get("full_name", "Unknown")
+                    
+                    results.add_result(
+                        "Get Creator ID",
+                        True,
+                        f"Found creator: {creator_name} (ID: {creator_id})"
+                    )
+                    return creator_id
+                else:
+                    results.add_result(
+                        "Get Creator ID",
+                        False,
+                        "No creators found in response"
+                    )
+                    return None
+            else:
+                results.add_result(
+                    "Get Creator ID",
+                    False,
+                    f"Failed to get creators: HTTP {response.status_code}"
+                )
+                return None
+                
+        except requests.exceptions.RequestException as e:
+            results.add_result(
+                "Get Creator ID",
+                False,
+                f"Request failed: {str(e)}"
+            )
+            return None
 
 class PaddleAPITester:
     def __init__(self):
