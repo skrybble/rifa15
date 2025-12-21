@@ -24,6 +24,8 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [step, setStep] = useState(1); // 1: form, 2: fee confirmation, 3: payment
+  const [isSandboxMode, setIsSandboxMode] = useState(false);
+  const [createdRaffleId, setCreatedRaffleId] = useState(null);
 
   const categories = [
     'Tecnología', 'Gaming', 'Hogar', 'Moda', 'Deportes', 
