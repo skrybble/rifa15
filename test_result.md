@@ -300,3 +300,18 @@ test_plan:
       - working: true
         agent: "testing"
         comment: "✅ Language selector UI changes fully functional. Non-logged users: Language selector (globe icon) visible in header next to Sign In button with dropdown showing 🇪🇸 ES, 🇺🇸 EN, 🇧🇷 PT options. Logged-in users (Desktop & Mobile): Language selector NOT in header, correctly moved to user dropdown menu with 'Idioma / Language' section containing all 3 language options. Profile Settings Privacy tab: Language selector section with globe icon, 'Language' title, 'Select your preferred language' subtitle, and 3 language buttons working perfectly. UI is cleaner with language selector organized inside user profile dropdown for logged-in users as intended."
+
+  - task: "Paddle integration for raffle creation fees"
+    implemented: true
+    working: needs_testing
+    files:
+      - "/app/backend/server.py"
+      - "/app/frontend/src/components/CreateRaffleModal.js"
+      - "/app/backend/.env"
+      - "/app/frontend/.env"
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: needs_testing
+        agent: "main"
+        comment: "Implemented Paddle integration with sandbox mode. Fee tiers: $0-500=$1, $501-1000=$2, $1001-3000=$3, $3001-5000=$5, $5001-10000=$10. In sandbox mode, shows test payment button. Production mode uses real Paddle checkout."
