@@ -2378,11 +2378,168 @@ async def get_user_transactions(current_user: User = Depends(get_current_user)):
 async def get_paddle_status():
     """Verificar estado de Paddle"""
     return {
-        "configured": paddle_client is not None,
+        "configured": PADDLE_API_KEY != 'PENDING_SETUP',
         "environment": PADDLE_ENVIRONMENT,
-        "vendor_id": PADDLE_VENDOR_ID if PADDLE_VENDOR_ID != 'PENDING_SETUP' else None,
-        "message": "✅ Paddle configurado" if paddle_client else "⚠️ Paddle pendiente de configuración"
+        "client_token": PADDLE_CLIENT_TOKEN if PADDLE_CLIENT_TOKEN != 'PENDING_SETUP' else None,
+        "message": "✅ Paddle configurado" if PADDLE_API_KEY != 'PENDING_SETUP' else "⚠️ Paddle pendiente de configuración"
     }
+
+class CreateFeeCheckoutRequest(BaseModel):
+    raffle_id: str
+
+@api_router.post("/paddle/create-fee-checkout")
+async def create_fee_checkout(
+    request: CreateFeeCheckoutRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """Create Paddle checkout session for raffle creation fee"""
+    
+    # Get the raffle
+    raffle = await db.raffles.find_one({"id": request.raffle_id}, {"_id": 0})
+    if not raffle:
+        raise HTTPException(status_code=404, detail="Rifa no encontrada")
+    
+    # Verify ownership
+    if raffle["creator_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="No tienes permiso para esta rifa")
+    
+    # Verify status
+    if raffle["status"] != "pending_payment":
+        raise HTTPException(status_code=400, detail="Esta rifa ya fue pagada o no requiere pago")
+    
+    fee_amount = raffle.get("creation_fee", 1)
+    
+    # Store pending fee payment
+    fee_payment = {
+        "id": str(uuid.uuid4()),
+        "raffle_id": request.raffle_id,
+        "creator_id": current_user.id,
+        "amount": fee_amount,
+        "type": "creation_fee",
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.fee_payments.insert_one(fee_payment)
+    
+    # Return checkout info for Paddle.js
+    return {
+        "fee_payment_id": fee_payment["id"],
+        "raffle_id": request.raffle_id,
+        "amount": fee_amount,
+        "title": raffle["title"],
+        "client_token": PADDLE_CLIENT_TOKEN,
+        "environment": PADDLE_ENVIRONMENT,
+        "success_url": f"/my-raffles?payment=success&raffle={request.raffle_id}",
+        "cancel_url": f"/my-raffles?payment=cancelled&raffle={request.raffle_id}"
+    }
+
+@api_router.post("/paddle/fee-webhook")
+async def paddle_fee_webhook(request: Request):
+    """Webhook for raffle creation fee payments"""
+    body = await request.body()
+    signature = request.headers.get('Paddle-Signature', '')
+    
+    # Verify webhook signature
+    if PADDLE_WEBHOOK_SECRET != 'PENDING_SETUP':
+        try:
+            # Parse signature header: ts=timestamp;h1=signature
+            sig_parts = dict(part.split('=') for part in signature.split(';'))
+            timestamp = sig_parts.get('ts', '')
+            received_sig = sig_parts.get('h1', '')
+            
+            # Build signed payload
+            signed_payload = f"{timestamp}:{body.decode('utf-8')}"
+            
+            # Calculate expected signature
+            expected_sig = hmac.new(
+                PADDLE_WEBHOOK_SECRET.encode(),
+                signed_payload.encode(),
+                hashlib.sha256
+            ).hexdigest()
+            
+            if not hmac.compare_digest(expected_sig, received_sig):
+                print("⚠️ Paddle webhook signature verification failed")
+                # In sandbox, continue anyway for testing
+                if PADDLE_ENVIRONMENT != 'sandbox':
+                    raise HTTPException(status_code=403, detail="Invalid webhook signature")
+        except Exception as e:
+            print(f"⚠️ Webhook signature error: {e}")
+            if PADDLE_ENVIRONMENT != 'sandbox':
+                raise HTTPException(status_code=403, detail="Webhook verification failed")
+    
+    try:
+        payload = json.loads(body)
+        event_type = payload.get('event_type')
+        data = payload.get('data', {})
+        
+        print(f"📥 Paddle Fee Webhook: {event_type}")
+        print(f"📦 Data: {json.dumps(data, indent=2)}")
+        
+        if event_type == 'transaction.completed':
+            # Get custom data with raffle_id
+            custom_data = data.get('custom_data', {})
+            raffle_id = custom_data.get('raffle_id')
+            fee_payment_id = custom_data.get('fee_payment_id')
+            transaction_id = data.get('id')
+            
+            if raffle_id:
+                # Update fee payment record
+                await db.fee_payments.update_one(
+                    {"raffle_id": raffle_id, "status": "pending"},
+                    {"$set": {
+                        "status": "completed",
+                        "paddle_transaction_id": transaction_id,
+                        "completed_at": datetime.now(timezone.utc).isoformat()
+                    }}
+                )
+                
+                # Activate the raffle
+                await db.raffles.update_one(
+                    {"id": raffle_id},
+                    {"$set": {
+                        "status": "active",
+                        "payment_confirmed_at": datetime.now(timezone.utc).isoformat()
+                    }}
+                )
+                
+                # Get raffle and creator info for notification
+                raffle = await db.raffles.find_one({"id": raffle_id}, {"_id": 0})
+                if raffle:
+                    creator = await db.users.find_one({"id": raffle["creator_id"]}, {"_id": 0})
+                    
+                    # Notify followers
+                    followers = await db.users.find(
+                        {"following": raffle["creator_id"]}, 
+                        {"_id": 0, "id": 1}
+                    ).to_list(None)
+                    
+                    for follower in followers:
+                        await create_notification(
+                            follower['id'],
+                            "Nueva Rifa Disponible",
+                            f"{creator['full_name'] if creator else 'Un creador'} ha creado una nueva rifa: {raffle['title']}",
+                            "new_raffle"
+                        )
+                
+                print(f"✅ Raffle {raffle_id} activated after fee payment")
+                return {"status": "ok", "message": "Raffle activated"}
+        
+        elif event_type == 'transaction.payment_failed':
+            custom_data = data.get('custom_data', {})
+            raffle_id = custom_data.get('raffle_id')
+            
+            if raffle_id:
+                await db.fee_payments.update_one(
+                    {"raffle_id": raffle_id, "status": "pending"},
+                    {"$set": {"status": "failed"}}
+                )
+                print(f"❌ Fee payment failed for raffle {raffle_id}")
+        
+        return {"status": "ok"}
+        
+    except Exception as e:
+        print(f"❌ Webhook error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ============================================
