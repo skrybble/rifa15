@@ -1010,6 +1010,208 @@ async def update_privacy_settings(settings: UserPrivacySettings, current_user: U
     
     return {"message": "Configuración actualizada exitosamente"}
 
+# PayPal Configuration for Creators
+class PayPalConfigUpdate(BaseModel):
+    paypal_email: str
+
+@api_router.put("/users/paypal-config")
+async def update_paypal_config(config: PayPalConfigUpdate, current_user: User = Depends(get_current_user)):
+    """Update creator's PayPal email for receiving ticket payments"""
+    # Validate email format
+    import re
+    email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if not re.match(email_pattern, config.paypal_email):
+        raise HTTPException(status_code=400, detail="Email de PayPal inválido")
+    
+    # Only creators can configure PayPal
+    if current_user.role not in [UserRole.CREATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo los creadores pueden configurar PayPal")
+    
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {"paypal_email": config.paypal_email}}
+    )
+    
+    return {"message": "PayPal configurado exitosamente", "paypal_email": config.paypal_email}
+
+@api_router.delete("/users/paypal-config")
+async def remove_paypal_config(current_user: User = Depends(get_current_user)):
+    """Remove creator's PayPal configuration"""
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {"paypal_email": None}}
+    )
+    return {"message": "Configuración de PayPal eliminada"}
+
+@api_router.get("/users/paypal-config")
+async def get_paypal_config(current_user: User = Depends(get_current_user)):
+    """Get current user's PayPal configuration"""
+    user = await db.users.find_one({"id": current_user.id}, {"_id": 0, "paypal_email": 1})
+    return {"paypal_email": user.get("paypal_email") if user else None}
+
+# PayPal Payment Endpoints for Ticket Purchase
+class PayPalTicketPurchase(BaseModel):
+    raffle_id: str
+    quantity: int
+
+@api_router.post("/paypal/create-ticket-order")
+async def create_paypal_ticket_order(
+    purchase: PayPalTicketPurchase,
+    current_user: User = Depends(get_current_user)
+):
+    """Create a PayPal order for ticket purchase - returns data for PayPal JS SDK"""
+    # Get raffle
+    raffle = await db.raffles.find_one({"id": purchase.raffle_id}, {"_id": 0})
+    if not raffle:
+        raise HTTPException(status_code=404, detail="Rifa no encontrada")
+    
+    if raffle["status"] != "active":
+        raise HTTPException(status_code=400, detail="La rifa no está activa")
+    
+    # Get creator's PayPal email
+    creator = await db.users.find_one({"id": raffle["creator_id"]}, {"_id": 0, "paypal_email": 1, "full_name": 1})
+    if not creator or not creator.get("paypal_email"):
+        raise HTTPException(status_code=400, detail="El creador no tiene PayPal configurado")
+    
+    # Check ticket availability
+    sold_tickets = await db.tickets.count_documents({"raffle_id": purchase.raffle_id})
+    if sold_tickets + purchase.quantity > raffle["ticket_range"]:
+        raise HTTPException(status_code=400, detail="No hay suficientes tickets disponibles")
+    
+    # Calculate total
+    total_amount = raffle["ticket_price"] * purchase.quantity
+    
+    # Create pending order in database
+    order_id = str(uuid.uuid4())
+    pending_order = {
+        "id": order_id,
+        "raffle_id": purchase.raffle_id,
+        "user_id": current_user.id,
+        "creator_id": raffle["creator_id"],
+        "quantity": purchase.quantity,
+        "amount": total_amount,
+        "ticket_price": raffle["ticket_price"],
+        "status": "pending",
+        "payment_method": "paypal",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.pending_orders.insert_one(pending_order)
+    
+    # Return info for PayPal JS SDK
+    return {
+        "order_id": order_id,
+        "raffle_id": purchase.raffle_id,
+        "raffle_title": raffle["title"],
+        "quantity": purchase.quantity,
+        "ticket_price": raffle["ticket_price"],
+        "total_amount": total_amount,
+        "creator_paypal_email": creator["paypal_email"],
+        "creator_name": creator.get("full_name", "Creador"),
+        "paypal_client_id": PAYPAL_CLIENT_ID,
+        "paypal_mode": PAYPAL_MODE
+    }
+
+@api_router.post("/paypal/capture-ticket-order/{order_id}")
+async def capture_paypal_ticket_order(
+    order_id: str,
+    paypal_order_id: str = None,
+    current_user: User = Depends(get_current_user)
+):
+    """Capture/confirm PayPal payment and assign tickets"""
+    # Get pending order
+    pending_order = await db.pending_orders.find_one({"id": order_id}, {"_id": 0})
+    if not pending_order:
+        raise HTTPException(status_code=404, detail="Orden no encontrada")
+    
+    if pending_order["user_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="No tienes permiso para esta orden")
+    
+    if pending_order["status"] != "pending":
+        raise HTTPException(status_code=400, detail="Esta orden ya fue procesada")
+    
+    # Get raffle
+    raffle = await db.raffles.find_one({"id": pending_order["raffle_id"]}, {"_id": 0})
+    if not raffle:
+        raise HTTPException(status_code=404, detail="Rifa no encontrada")
+    
+    # Get existing ticket numbers
+    existing = await db.tickets.find({"raffle_id": pending_order["raffle_id"]}, {"_id": 0, "ticket_number": 1}).to_list(None)
+    used_numbers = set([t['ticket_number'] for t in existing])
+    
+    # Generate random ticket numbers
+    available = [n for n in range(1, raffle["ticket_range"] + 1) if n not in used_numbers]
+    if len(available) < pending_order["quantity"]:
+        raise HTTPException(status_code=400, detail="No hay suficientes tickets disponibles")
+    
+    selected_numbers = random.sample(available, pending_order["quantity"])
+    
+    # Create tickets
+    tickets = []
+    for number in selected_numbers:
+        ticket = {
+            "id": str(uuid.uuid4()),
+            "raffle_id": pending_order["raffle_id"],
+            "user_id": current_user.id,
+            "creator_id": pending_order["creator_id"],
+            "ticket_number": number,
+            "amount": pending_order["ticket_price"],
+            "payment_method": "paypal",
+            "paypal_order_id": paypal_order_id,
+            "purchased_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.tickets.insert_one(ticket)
+        tickets.append(ticket)
+    
+    # Update raffle tickets sold
+    sold_tickets = await db.tickets.count_documents({"raffle_id": pending_order["raffle_id"]})
+    await db.raffles.update_one(
+        {"id": pending_order["raffle_id"]},
+        {"$set": {"tickets_sold": sold_tickets}}
+    )
+    
+    # Update order status
+    await db.pending_orders.update_one(
+        {"id": order_id},
+        {"$set": {
+            "status": "completed",
+            "paypal_order_id": paypal_order_id,
+            "completed_at": datetime.now(timezone.utc).isoformat(),
+            "ticket_numbers": selected_numbers
+        }}
+    )
+    
+    # Notify user
+    await create_notification(
+        current_user.id,
+        "Compra Exitosa",
+        f"Has comprado {pending_order['quantity']} ticket(s) para {raffle['title']}",
+        "purchase"
+    )
+    
+    # Notify creator
+    await create_notification(
+        pending_order["creator_id"],
+        "Nueva Venta",
+        f"Has vendido {pending_order['quantity']} ticket(s) de {raffle['title']} por ${pending_order['amount']}",
+        "sale"
+    )
+    
+    return {
+        "success": True,
+        "tickets": selected_numbers,
+        "total": pending_order["amount"],
+        "message": f"Has comprado {pending_order['quantity']} ticket(s) exitosamente"
+    }
+
+@api_router.get("/paypal/status")
+async def get_paypal_status():
+    """Get PayPal configuration status"""
+    return {
+        "configured": bool(PAYPAL_CLIENT_ID),
+        "mode": PAYPAL_MODE,
+        "client_id": PAYPAL_CLIENT_ID if PAYPAL_CLIENT_ID else None
+    }
+
 @api_router.post("/users/block")
 async def block_user(request: BlockUserRequest, current_user: User = Depends(get_current_user)):
     """Block a user"""
