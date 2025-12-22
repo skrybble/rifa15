@@ -561,52 +561,135 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
           {/* Payment Methods Tab */}
           {activeTab === 'payments' && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-slate-900">{t('profile.paymentMethods')}</h2>
-                <button
-                  onClick={() => setShowPaymentModal(true)}
-                  className="bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-all flex items-center space-x-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>{t('profile.addPaymentMethod')}</span>
-                </button>
-              </div>
-              
-              {paymentMethods.length === 0 ? (
-                <div className="text-center py-12">
-                  <CreditCard className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                  <p className="text-slate-500">{t('profile.noPaymentMethods')}</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {paymentMethods.map((method, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <CreditCard className="w-5 h-5 text-slate-600" />
-                        <div>
-                          <p className="font-medium text-slate-900">{method.label}</p>
-                          <p className="text-sm text-slate-600">
-                            {method.type === 'card' && method.last_four && `•••• ${method.last_four}`}
-                            {method.type === 'paypal' && 'PayPal'}
-                            {method.type === 'google_pay' && 'Google Pay'}
-                          </p>
-                        </div>
-                        {method.is_default && (
-                          <span className="px-2 py-1 bg-sky-100 text-sky-700 text-xs rounded-full font-medium">
-                            Predeterminado
-                          </span>
-                        )}
-                      </div>
-                      <button
-                        onClick={() => handleDeletePaymentMethod(index)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+              {/* PayPal Configuration for Creators */}
+              {(user?.role === 'creator' || user?.role === 'admin' || user?.role === 'super_admin') && (
+                <div className="bg-gradient-to-r from-blue-50 to-sky-50 rounded-xl p-6 border border-blue-100">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold text-lg">P</span>
                     </div>
-                  ))}
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">PayPal para Recibir Pagos</h3>
+                      <p className="text-sm text-slate-600">Configura tu PayPal para recibir pagos de tickets vendidos</p>
+                    </div>
+                  </div>
+                  
+                  {paypalSuccess && (
+                    <div className="mb-4 p-3 bg-green-100 border border-green-200 text-green-700 rounded-lg flex items-center space-x-2">
+                      <Check className="w-5 h-5" />
+                      <span>{paypalSuccess}</span>
+                    </div>
+                  )}
+                  
+                  {paypalError && (
+                    <div className="mb-4 p-3 bg-red-100 border border-red-200 text-red-700 rounded-lg">
+                      {paypalError}
+                    </div>
+                  )}
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        Email de PayPal
+                      </label>
+                      <input
+                        type="email"
+                        value={paypalEmail}
+                        onChange={(e) => setPaypalEmail(e.target.value)}
+                        placeholder="tu-email@paypal.com"
+                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                      <p className="text-xs text-slate-500 mt-1">
+                        Este es el email donde recibirás los pagos cuando alguien compre tickets de tus rifas
+                      </p>
+                    </div>
+                    
+                    <div className="flex space-x-3">
+                      <button
+                        onClick={handleSavePaypal}
+                        disabled={paypalSaving || !paypalEmail}
+                        className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                      >
+                        {paypalSaving ? (
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        ) : (
+                          <>
+                            <Save className="w-5 h-5" />
+                            <span>Guardar PayPal</span>
+                          </>
+                        )}
+                      </button>
+                      {paypalEmail && (
+                        <button
+                          onClick={handleRemovePaypal}
+                          disabled={paypalSaving}
+                          className="px-4 py-3 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {!paypalEmail && (
+                    <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                      <p className="text-sm text-amber-800">
+                        ⚠️ Sin PayPal configurado, solo puedes crear rifas con tickets gratuitos ($0)
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
+              
+              {/* Existing Payment Methods Section */}
+              <div className="pt-4 border-t border-slate-200">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold text-slate-900">{t('profile.paymentMethods')}</h2>
+                  <button
+                    onClick={() => setShowPaymentModal(true)}
+                    className="bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-all flex items-center space-x-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>{t('profile.addPaymentMethod')}</span>
+                  </button>
+                </div>
+                
+                {paymentMethods.length === 0 ? (
+                  <div className="text-center py-8">
+                    <CreditCard className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                    <p className="text-slate-500">{t('profile.noPaymentMethods')}</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {paymentMethods.map((method, index) => (
+                      <div key={index} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <CreditCard className="w-5 h-5 text-slate-600" />
+                          <div>
+                            <p className="font-medium text-slate-900">{method.label}</p>
+                            <p className="text-sm text-slate-600">
+                              {method.type === 'card' && method.last_four && `•••• ${method.last_four}`}
+                              {method.type === 'paypal' && 'PayPal'}
+                              {method.type === 'google_pay' && 'Google Pay'}
+                            </p>
+                          </div>
+                          {method.is_default && (
+                            <span className="px-2 py-1 bg-sky-100 text-sky-700 text-xs rounded-full font-medium">
+                              Predeterminado
+                            </span>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => handleDeletePaymentMethod(index)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
