@@ -201,6 +201,14 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
                 console.log('Paddle event:', event.name, event);
                 
                 if (event.name === 'checkout.completed') {
+                  // Close Paddle checkout overlay first
+                  try {
+                    window.Paddle.Checkout.close();
+                  } catch (e) {
+                    console.log('Could not close Paddle checkout:', e);
+                  }
+                  
+                  // Confirm payment on backend
                   axios.post(`${API}/raffles/${raffleId}/confirm-payment`, {
                     payment_id: event.data?.transaction_id || 'paddle_' + Date.now(),
                     amount: fee
