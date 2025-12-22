@@ -41,10 +41,14 @@ const RaffleDetailPage = ({ user, onLogout }) => {
   const handlePurchase = async () => {
     if (!raffle) return;
     
+    // ticket_range is the total number of tickets (e.g., 500)
+    // Generate available tickets from 1 to ticket_range
+    const totalTickets = raffle.ticket_range;
+    const soldTickets = raffle.sold_tickets || [];
+    
     const availableTicketsList = [];
-    for (let i = raffle.ticket_range[0]; i <= raffle.ticket_range[1]; i++) {
-      const isSold = raffle.sold_tickets?.includes(i);
-      if (!isSold) {
+    for (let i = 1; i <= totalTickets; i++) {
+      if (!soldTickets.includes(i)) {
         availableTicketsList.push(i);
       }
     }
