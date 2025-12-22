@@ -2416,7 +2416,13 @@ async def create_fee_checkout(
     if raffle["status"] != "pending_payment":
         raise HTTPException(status_code=400, detail="Esta rifa ya fue pagada o no requiere pago")
     
-    fee_amount = raffle.get("creation_fee", 1)
+    fee_amount = int(raffle.get("creation_fee", 1))
+    
+    # Get the correct price ID for this fee tier
+    price_id = PADDLE_PRICE_IDS.get(fee_amount, '')
+    
+    if not price_id:
+        raise HTTPException(status_code=500, detail=f"No se encontró el precio de Paddle para el fee de ${fee_amount}")
     
     # Store pending fee payment
     fee_payment = {
@@ -2426,15 +2432,17 @@ async def create_fee_checkout(
         "amount": fee_amount,
         "type": "creation_fee",
         "status": "pending",
+        "price_id": price_id,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.fee_payments.insert_one(fee_payment)
     
-    # Return checkout info for Paddle.js
+    # Return checkout info for Paddle.js with price_id
     return {
         "fee_payment_id": fee_payment["id"],
         "raffle_id": request.raffle_id,
         "amount": fee_amount,
+        "price_id": price_id,
         "title": raffle["title"],
         "client_token": PADDLE_CLIENT_TOKEN,
         "environment": PADDLE_ENVIRONMENT,
