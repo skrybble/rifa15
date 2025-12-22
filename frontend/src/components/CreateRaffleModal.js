@@ -156,24 +156,25 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
         });
         
         setIsSandboxMode(isSandbox);
-
-        // In sandbox mode, skip Paddle checkout and show test button directly
-        // This avoids the Paddle error popup when products aren't configured
-        if (isSandbox) {
-          console.log('Sandbox mode - showing test payment option');
+        
+        const priceId = checkoutResponse.data.price_id;
+        
+        if (!priceId) {
+          console.error('No price ID returned from server');
           setLoading(false);
-          return; // Exit here - user will use sandbox test button
+          setError('Error: No se encontró el precio configurado en Paddle');
+          return;
         }
 
-        // Production mode: Initialize Paddle.js and open checkout
+        // Initialize Paddle.js and open checkout (both sandbox and production)
         if (window.Paddle) {
           try {
-            window.Paddle.Environment.set('production');
+            window.Paddle.Environment.set(isSandbox ? 'sandbox' : 'production');
             window.Paddle.Initialize({
               token: checkoutResponse.data.client_token
             });
 
-            // Open Paddle checkout overlay
+            // Open Paddle checkout overlay with the correct priceId
             window.Paddle.Checkout.open({
               settings: {
                 displayMode: 'overlay',
@@ -182,6 +183,7 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
                 allowLogout: false
               },
               items: [{
+                priceId: priceId,
                 quantity: 1
               }],
               customData: {
@@ -201,6 +203,7 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
                     amount: fee
                   }).then(() => {
                     setStep(3);
+                    setLoading(false);
                     setTimeout(() => {
                       onSuccess && onSuccess({ id: raffleId });
                       onClose();
@@ -209,6 +212,7 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
                   }).catch(err => {
                     console.error('Payment confirmation error:', err);
                     setError('Error al confirmar el pago');
+                    setLoading(false);
                   });
                 }
                 
@@ -216,31 +220,31 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
                   console.log('Checkout closed');
                   setLoading(false);
                   if (event.data?.status !== 'completed') {
-                    setError('Pago cancelado. Tu rifa está guardada.');
+                    setError('Pago cancelado. Tu rifa está guardada y puedes completar el pago más tarde desde "Mis Rifas".');
                   }
                 }
                 
                 if (event.name === 'checkout.error') {
                   console.error('Paddle checkout error:', event);
                   setLoading(false);
-                  setError('Error en el proceso de pago.');
+                  setError('Error en el proceso de pago. Por favor intenta de nuevo.');
                 }
               }
             });
           } catch (paddleError) {
             console.error('Paddle initialization error:', paddleError);
             setLoading(false);
-            setError('Error al iniciar el pago.');
+            setError('Error al iniciar el pago. Por favor intenta de nuevo.');
           }
         } else {
           console.warn('Paddle.js not loaded');
           setLoading(false);
-          setError('Error al cargar el sistema de pagos.');
+          setError('Error al cargar el sistema de pagos. Recarga la página e intenta de nuevo.');
         }
       } else {
-        // Paddle not configured - show test option in sandbox
-        setIsSandboxMode(true);
+        // Paddle not configured
         setLoading(false);
+        setError('El sistema de pagos no está configurado. Contacta al administrador.');
       }
 
     } catch (err) {
