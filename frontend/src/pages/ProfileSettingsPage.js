@@ -80,10 +80,52 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
       
       setBlockedUsers(blockedRes.data);
       setPaymentMethods(paymentsRes.data);
+      
+      // Load PayPal config for creators
+      if (userData.role === 'creator' || userData.role === 'admin' || userData.role === 'super_admin') {
+        try {
+          const paypalRes = await axios.get(`${API}/users/paypal-config`);
+          setPaypalEmail(paypalRes.data.paypal_email || '');
+        } catch (e) {
+          console.log('PayPal config not available');
+        }
+      }
     } catch (error) {
       console.error('Error loading user data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+  
+  // Save PayPal configuration
+  const handleSavePaypal = async () => {
+    setPaypalSaving(true);
+    setPaypalError('');
+    setPaypalSuccess('');
+    
+    try {
+      await axios.put(`${API}/users/paypal-config`, { paypal_email: paypalEmail });
+      setPaypalSuccess('PayPal configurado exitosamente');
+      setTimeout(() => setPaypalSuccess(''), 3000);
+    } catch (error) {
+      setPaypalError(error.response?.data?.detail || 'Error al guardar PayPal');
+    } finally {
+      setPaypalSaving(false);
+    }
+  };
+  
+  // Remove PayPal configuration
+  const handleRemovePaypal = async () => {
+    setPaypalSaving(true);
+    try {
+      await axios.delete(`${API}/users/paypal-config`);
+      setPaypalEmail('');
+      setPaypalSuccess('Configuración de PayPal eliminada');
+      setTimeout(() => setPaypalSuccess(''), 3000);
+    } catch (error) {
+      setPaypalError(error.response?.data?.detail || 'Error al eliminar PayPal');
+    } finally {
+      setPaypalSaving(false);
     }
   };
   
