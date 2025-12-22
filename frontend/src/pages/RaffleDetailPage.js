@@ -67,6 +67,7 @@ const RaffleDetailPage = ({ user, onLogout }) => {
       state: {
         raffleId: raffle.id,
         ticketNumbers: selectedTickets,
+        quantity: selectedTickets.length,
         amount: raffle.ticket_price * selectedTickets.length,
         raffleTitle: raffle.title
       }
