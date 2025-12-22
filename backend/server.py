@@ -75,6 +75,10 @@ PADDLE_PRICE_IDS = {
     10: os.environ.get('PADDLE_PRICE_TIER_5', ''), # $10 fee
 }
 
+# PayPal Configuration
+PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID', '')
+PAYPAL_MODE = os.environ.get('PAYPAL_MODE', 'sandbox')
+
 # Initialize Paddle Client (if available and configured)
 paddle_client = None
 if PADDLE_AVAILABLE and PADDLE_API_KEY != 'PENDING_SETUP':
