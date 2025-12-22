@@ -169,11 +169,15 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
         // Initialize Paddle.js and open checkout (both sandbox and production)
         if (window.Paddle) {
           try {
+            console.log('Setting Paddle environment:', isSandbox ? 'sandbox' : 'production');
             window.Paddle.Environment.set(isSandbox ? 'sandbox' : 'production');
+            
+            console.log('Initializing Paddle with token:', checkoutResponse.data.client_token.substring(0, 10) + '...');
             window.Paddle.Initialize({
               token: checkoutResponse.data.client_token
             });
 
+            console.log('Opening Paddle checkout with priceId:', priceId);
             // Open Paddle checkout overlay with the correct priceId
             window.Paddle.Checkout.open({
               settings: {
