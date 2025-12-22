@@ -66,6 +66,15 @@ PADDLE_CLIENT_TOKEN = os.environ.get('PADDLE_CLIENT_TOKEN', 'PENDING_SETUP')
 PADDLE_ENVIRONMENT = os.environ.get('PADDLE_ENVIRONMENT', 'sandbox')
 PLATFORM_COMMISSION = float(os.environ.get('PLATFORM_COMMISSION_PERCENTAGE', 1))
 
+# Paddle Price IDs for each fee tier
+PADDLE_PRICE_IDS = {
+    1: os.environ.get('PADDLE_PRICE_TIER_1', ''),  # $1 fee
+    2: os.environ.get('PADDLE_PRICE_TIER_2', ''),  # $2 fee
+    3: os.environ.get('PADDLE_PRICE_TIER_3', ''),  # $3 fee
+    5: os.environ.get('PADDLE_PRICE_TIER_4', ''),  # $5 fee
+    10: os.environ.get('PADDLE_PRICE_TIER_5', ''), # $10 fee
+}
+
 # Initialize Paddle Client (if available and configured)
 paddle_client = None
 if PADDLE_AVAILABLE and PADDLE_API_KEY != 'PENDING_SETUP':
