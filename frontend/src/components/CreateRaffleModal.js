@@ -198,7 +198,7 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
                 email: user?.email
               },
               eventCallback: function(event) {
-                console.log('Paddle event:', event);
+                console.log('Paddle event:', event.name, event);
                 
                 if (event.name === 'checkout.completed') {
                   axios.post(`${API}/raffles/${raffleId}/confirm-payment`, {
@@ -220,7 +220,7 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
                 }
                 
                 if (event.name === 'checkout.closed') {
-                  console.log('Checkout closed');
+                  console.log('Checkout closed with status:', event.data?.status);
                   setLoading(false);
                   if (event.data?.status !== 'completed') {
                     setError('Pago cancelado. Tu rifa está guardada y puedes completar el pago más tarde desde "Mis Rifas".');
@@ -231,6 +231,14 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
                   console.error('Paddle checkout error:', event);
                   setLoading(false);
                   setError('Error en el proceso de pago. Por favor intenta de nuevo.');
+                }
+                
+                if (event.name === 'checkout.loaded') {
+                  console.log('Paddle checkout loaded successfully');
+                }
+                
+                if (event.name === 'checkout.customer.created') {
+                  console.log('Customer created in Paddle');
                 }
               }
             });
