@@ -179,7 +179,7 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
               settings: {
                 displayMode: 'overlay',
                 theme: 'light',
-                locale: 'es',
+                locale: 'en',
                 allowLogout: false
               },
               items: [{
