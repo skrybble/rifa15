@@ -142,6 +142,8 @@ class User(BaseModel):
     blocked_users: List[str] = Field(default_factory=list)
     # Payment methods (stored as JSON string for UI display)
     payment_methods: List[dict] = Field(default_factory=list)
+    # PayPal email for receiving ticket payments (creators only)
+    paypal_email: Optional[str] = None
     # Suspension settings
     suspended_until: Optional[datetime] = None
     suspension_reason: Optional[str] = None
