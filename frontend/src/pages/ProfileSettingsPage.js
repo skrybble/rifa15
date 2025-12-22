@@ -44,6 +44,12 @@ const ProfileSettingsPage = ({ user, onLogout }) => {
     is_default: false
   });
   
+  // PayPal configuration for creators
+  const [paypalEmail, setPaypalEmail] = useState('');
+  const [paypalSaving, setPaypalSaving] = useState(false);
+  const [paypalError, setPaypalError] = useState('');
+  const [paypalSuccess, setPaypalSuccess] = useState('');
+  
   // Active tab
   const [activeTab, setActiveTab] = useState('profile');
   
