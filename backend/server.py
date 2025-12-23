@@ -575,6 +575,14 @@ async def create_raffle_with_fee(
     if current_user.role not in [UserRole.CREATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN]:
         raise HTTPException(status_code=403, detail="Solo los creadores pueden crear rifas")
     
+    # IMPORTANT: Check if creator has PayPal configured (required for paid raffles)
+    creator_data = await db.users.find_one({"id": current_user.id}, {"_id": 0, "paypal_email": 1})
+    if ticket_price > 0 and not creator_data.get("paypal_email"):
+        raise HTTPException(
+            status_code=400, 
+            detail="Debes configurar tu PayPal antes de crear rifas con precio. Ve a Configuración → Pagos para añadir tu email de PayPal."
+        )
+    
     # Validate fee calculation
     fee_info = calculate_creation_fee(ticket_price, ticket_range)
     if not fee_info["valid"]:
