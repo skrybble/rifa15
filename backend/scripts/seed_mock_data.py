@@ -22,7 +22,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # MongoDB connection
 MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
-DB_NAME = os.environ.get("DB_NAME", "rafflywin")
+DB_NAME = os.environ.get("DB_NAME", "test_database")  # Match the .env default
 
 # Sample data
 CREATORS = [
