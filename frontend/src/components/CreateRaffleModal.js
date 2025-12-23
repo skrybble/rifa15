@@ -1,10 +1,11 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../App';
 import { 
   X, Ticket, DollarSign, Calendar, Image, AlertCircle, 
-  CheckCircle, Upload, Trash2, Info
+  CheckCircle, Upload, Trash2, Info, CreditCard
 } from 'lucide-react';
 
 const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
@@ -26,6 +27,27 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
   const [step, setStep] = useState(1); // 1: form, 2: fee confirmation, 3: payment
   const [isSandboxMode, setIsSandboxMode] = useState(false);
   const [createdRaffleId, setCreatedRaffleId] = useState(null);
+  const [hasPayPal, setHasPayPal] = useState(false);
+  const [checkingPayPal, setCheckingPayPal] = useState(true);
+
+  // Check if creator has PayPal configured
+  useEffect(() => {
+    if (isOpen && user) {
+      checkPayPalConfig();
+    }
+  }, [isOpen, user]);
+
+  const checkPayPalConfig = async () => {
+    setCheckingPayPal(true);
+    try {
+      const response = await axios.get(`${API}/users/paypal-config`);
+      setHasPayPal(!!response.data.paypal_email);
+    } catch (err) {
+      setHasPayPal(false);
+    } finally {
+      setCheckingPayPal(false);
+    }
+  };
 
   const categories = [
     'Tecnología', 'Gaming', 'Hogar', 'Moda', 'Deportes', 
