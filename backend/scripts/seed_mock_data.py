@@ -30,31 +30,36 @@ CREATORS = [
         "full_name": "María García Tech",
         "email": "maria@creator.com",
         "description": "Creadora de contenido tech. Sorteos de gadgets, accesorios y cursos de programación.",
-        "is_featured": True
+        "is_featured": True,
+        "paypal_email": "maria.tech@paypal-sandbox.com"
     },
     {
         "full_name": "Carlos Gamer Pro",
         "email": "carlos.gamer@creator.com",
         "description": "Streamer y gamer profesional. Rifas de consolas, juegos y equipamiento gaming.",
-        "is_featured": True
+        "is_featured": True,
+        "paypal_email": "carlos.gamer@paypal-sandbox.com"
     },
     {
         "full_name": "Laura Fitness",
         "email": "laura@creator.com",
         "description": "Entrenadora personal certificada. Sorteos de suplementos, equipamiento deportivo y planes de entrenamiento.",
-        "is_featured": True
+        "is_featured": True,
+        "paypal_email": "laura.fitness@paypal-sandbox.com"
     },
     {
         "full_name": "Diego Chef",
         "email": "diego.chef@creator.com",
         "description": "Chef profesional y creador culinario. Rifas de utensilios de cocina, cursos y experiencias gastronómicas.",
-        "is_featured": False
+        "is_featured": False,
+        "paypal_email": "diego.chef@paypal-sandbox.com"
     },
     {
         "full_name": "Sofia Travel",
         "email": "sofia@creator.com",
         "description": "Travel blogger y fotógrafa. Sorteos de equipos de fotografía, maletas y experiencias de viaje.",
-        "is_featured": False
+        "is_featured": False,
+        "paypal_email": "sofia.travel@paypal-sandbox.com"
     }
 ]
 
