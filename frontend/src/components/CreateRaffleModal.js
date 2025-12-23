@@ -439,12 +439,19 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
                       type="number"
                       value={formData.ticket_price}
                       onChange={(e) => setFormData(prev => ({ ...prev, ticket_price: e.target.value }))}
-                      placeholder="0.00"
-                      min="0.01"
+                      placeholder={hasPayPal ? "0.00" : "0 (gratis)"}
+                      min={hasPayPal ? "0.01" : "0"}
+                      max={hasPayPal ? undefined : "0"}
                       step="0.01"
-                      className="w-full pl-9 pr-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                      disabled={!hasPayPal}
+                      className={`w-full pl-9 pr-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent ${!hasPayPal ? 'bg-slate-100 cursor-not-allowed' : ''}`}
                     />
                   </div>
+                  {!hasPayPal && (
+                    <p className="text-xs text-amber-600 mt-1">
+                      Solo rifas gratis hasta configurar PayPal
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
