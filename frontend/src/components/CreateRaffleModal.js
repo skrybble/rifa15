@@ -365,6 +365,28 @@ const CreateRaffleModal = ({ isOpen, onClose, onSuccess, user }) => {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4">
+          {/* PayPal Warning - Show if not configured */}
+          {!checkingPayPal && !hasPayPal && step === 1 && (
+            <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+              <div className="flex items-start space-x-3">
+                <CreditCard className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-bold text-amber-800">Configura tu método de pago</h4>
+                  <p className="text-sm text-amber-700 mt-1">
+                    Para crear rifas con precio, primero debes configurar tu PayPal donde recibirás los pagos de los tickets vendidos.
+                  </p>
+                  <Link 
+                    to="/profile-settings" 
+                    onClick={() => { onClose(); resetForm(); }}
+                    className="inline-flex items-center mt-3 px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors"
+                  >
+                    Ir a Configuración de Pagos →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center space-x-2 text-red-700 text-sm">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
