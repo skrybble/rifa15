@@ -150,6 +150,7 @@ async def seed_database():
             "role": "creator",
             "is_active": True,
             "is_featured": creator_data["is_featured"],
+            "paypal_email": creator_data.get("paypal_email"),
             "rating": round(random.uniform(4.0, 5.0), 1),
             "rating_count": random.randint(10, 100),
             "followers": [],
@@ -159,7 +160,8 @@ async def seed_database():
         await db.users.update_one({"email": creator["email"]}, {"$set": creator}, upsert=True)
         created_creators.append(creator)
         status = "⭐" if creator["is_featured"] else "  "
-        print(f"   {status} ✅ {creator['full_name']} ({creator['email']})")
+        paypal_status = "💳" if creator.get("paypal_email") else ""
+        print(f"   {status}{paypal_status} ✅ {creator['full_name']} ({creator['email']})")
     
     # Create Users
     print("\n👥 Creando Usuarios...")
