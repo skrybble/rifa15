@@ -438,11 +438,8 @@ async def login(credentials: UserLogin):
     if not verify_password(credentials.password, user_doc['password']):
         raise HTTPException(status_code=401, detail="Credenciales inválidas")
     
-    print(f"DEBUG LOGIN - user_doc id before parse: {user_doc.get('id')}")
     user_doc = parse_from_mongo(user_doc)
-    print(f"DEBUG LOGIN - user_doc id after parse: {user_doc.get('id')}")
     user = User(**user_doc)
-    print(f"DEBUG LOGIN - User.id after model: {user.id}")
     
     token = create_token(user.id, user.email, user.role)
     return {"token": token, "user": user}
