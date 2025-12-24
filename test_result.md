@@ -349,8 +349,12 @@ agent_communication:
         comment: "❌ Notifications Page not accessible. Navigation to /notifications results in error page. Tested with authenticated user juan@user.com but page fails to load properly. Component exists in codebase with proper routing in App.js, but runtime error prevents page from displaying. Expected elements (filter tabs: Todas/No leídas/Leídas, Marcar todo leído button, date groupings, notification items with icons) cannot be tested due to page load failure. Requires debugging of page component or routing issue."
 
 test_plan:
-  current_focus: []
-  stuck_tasks: []
+  current_focus:
+    - "Notification Bell Component UI"
+    - "Notifications Page UI"
+  stuck_tasks:
+    - "Notification Bell Component UI"
+    - "Notifications Page UI"
   test_all: false
   test_priority: "high_first"
 
