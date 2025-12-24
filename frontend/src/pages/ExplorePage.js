@@ -146,37 +146,6 @@ const ExplorePage = ({ user, onLogout }) => {
         </div>
       </header>
 
-      {/* Notifications Dropdown */}
-      {showNotifications && (
-        <div className="fixed top-20 right-4 w-96 bg-white rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto">
-          <div className="p-4 border-b border-slate-200">
-            <h3 className="font-bold text-slate-900">{t('nav.notifications')}</h3>
-          </div>
-          <div className="divide-y divide-slate-100">
-            {notifications.length === 0 ? (
-              <div className="p-4 text-center text-slate-500">
-                {t('messages.noMessages')}
-              </div>
-            ) : (
-              notifications.map((notif) => (
-                <div
-                  key={notif.id}
-                  className={`p-4 hover:bg-slate-50 transition-colors ${
-                    !notif.read ? 'bg-sky-50' : ''
-                  }`}
-                >
-                  <h4 className="font-semibold text-slate-900 text-sm">{notif.title}</h4>
-                  <p className="text-sm text-slate-600 mt-1">{notif.message}</p>
-                  <span className="text-xs text-slate-400 mt-2 block">
-                    {new Date(notif.created_at).toLocaleDateString('es-ES')}
-                  </span>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Mobile Menu */}
       {showMobileMenu && user && (
         <div className="md:hidden bg-white border-b border-slate-200 shadow-lg">
