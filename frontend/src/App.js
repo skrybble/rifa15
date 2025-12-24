@@ -139,6 +139,10 @@ function App() {
             path="/checkout"
             element={user ? <CheckoutPage user={user} /> : <Navigate to="/login" />}
           />
+          <Route
+            path="/notifications"
+            element={user ? <NotificationsPage user={user} /> : <Navigate to="/login" />}
+          />
         </Routes>
         {showBottomNav && <BottomNav user={user} />}
       </>
