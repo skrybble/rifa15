@@ -1347,6 +1347,62 @@ def run_admin_dashboard_tests():
     
     return results.failed == 0
 
+def run_admin_earnings_tests():
+    """Run Admin Earnings feature tests"""
+    print("\n" + "="*60)
+    print("Starting Admin Earnings Feature Tests...")
+    print(f"API Base URL: {API_BASE_URL}")
+    print(f"Admin Credentials: {ADMIN_EMAIL}")
+    print("="*60)
+    
+    results = TestResults()
+    earnings_tester = AdminEarningsTester()
+    
+    # Step 1: Login as admin
+    print("Step 1: Logging in as admin...")
+    if not earnings_tester.login_admin(results):
+        results.print_summary("ADMIN EARNINGS")
+        return False
+    
+    # Step 2: Test earnings endpoints
+    print("Step 2: Testing admin earnings endpoints...")
+    earnings_tester.test_earnings_endpoints(results)
+    
+    # Step 3: Test authorization
+    print("Step 3: Testing earnings endpoint authorization...")
+    earnings_tester.test_earnings_authorization(results)
+    
+    # Print results
+    results.print_summary("ADMIN EARNINGS")
+    
+    return results.failed == 0
+
+def run_notification_tests():
+    """Run Notification System tests"""
+    print("\n" + "="*60)
+    print("Starting Notification System Tests...")
+    print(f"API Base URL: {API_BASE_URL}")
+    print("User Credentials: juan@user.com")
+    print("="*60)
+    
+    results = TestResults()
+    notification_tester = NotificationTester()
+    
+    # Step 1: Login as user
+    print("Step 1: Logging in as user...")
+    if not notification_tester.login_user(results):
+        results.print_summary("NOTIFICATIONS")
+        return False
+    
+    # Step 2: Test notification endpoints
+    print("Step 2: Testing notification endpoints...")
+    notification_tester.test_notification_endpoints(results)
+    
+    # Print results
+    results.print_summary("NOTIFICATIONS")
+    
+    return results.failed == 0
+
 def main():
     """Main test runner"""
     print("RafflyWin Backend API Testing Suite")
