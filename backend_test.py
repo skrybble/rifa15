@@ -61,6 +61,406 @@ class TestResults:
             status = "✅" if result["passed"] else "❌"
             print(f"{status} {result['test']}: {result['message']}")
 
+class AdminAPITester:
+    def __init__(self):
+        self.token = None
+        self.session = requests.Session()
+        self.session.headers.update({
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        })
+    
+    def login_admin(self, results: TestResults) -> bool:
+        """Login as admin and get authentication token"""
+        try:
+            login_data = {
+                "email": ADMIN_EMAIL,
+                "password": ADMIN_PASSWORD
+            }
+            
+            response = self.session.post(f"{API_BASE_URL}/auth/login", json=login_data, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "token" in data and "user" in data:
+                    self.token = data["token"]
+                    user = data["user"]
+                    
+                    # Verify admin role
+                    if user.get("role") in ["admin", "super_admin"]:
+                        self.session.headers.update({
+                            'Authorization': f'Bearer {self.token}'
+                        })
+                        results.add_result(
+                            "Admin Login",
+                            True,
+                            f"Successfully logged in as {user.get('role')} - {user.get('full_name', 'Admin')}"
+                        )
+                        return True
+                    else:
+                        results.add_result(
+                            "Admin Login",
+                            False,
+                            f"User role is '{user.get('role')}', expected 'admin' or 'super_admin'"
+                        )
+                        return False
+                else:
+                    results.add_result(
+                        "Admin Login",
+                        False,
+                        "Login response missing token or user data"
+                    )
+                    return False
+            else:
+                results.add_result(
+                    "Admin Login",
+                    False,
+                    f"Login failed: HTTP {response.status_code} - {response.text}"
+                )
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            results.add_result(
+                "Admin Login",
+                False,
+                f"Login request failed: {str(e)}"
+            )
+            return False
+    
+    def get_creator_id(self, results: TestResults) -> Optional[str]:
+        """Get a creator ID for testing"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/admin/creators", timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "data" in data and len(data["data"]) > 0:
+                    creator = data["data"][0]
+                    creator_id = creator.get("id")
+                    creator_name = creator.get("full_name", "Unknown")
+                    
+                    results.add_result(
+                        "Get Creator ID",
+                        True,
+                        f"Found creator: {creator_name} (ID: {creator_id})"
+                    )
+                    return creator_id
+                else:
+                    results.add_result(
+                        "Get Creator ID",
+                        False,
+                        "No creators found in response"
+                    )
+                    return None
+            else:
+                results.add_result(
+                    "Get Creator ID",
+                    False,
+                    f"Failed to get creators: HTTP {response.status_code}"
+                )
+                return None
+                
+        except requests.exceptions.RequestException as e:
+            results.add_result(
+                "Get Creator ID",
+                False,
+                f"Request failed: {str(e)}"
+            )
+            return None
+    
+    def test_admin_endpoints(self, results: TestResults, creator_id: str):
+        """Test all admin dashboard enhancement endpoints"""
+        
+        # Test 1: GET /api/admin/user/{user_id}
+        self.test_user_detail_endpoint(results, creator_id)
+        
+        # Test 2: GET /api/admin/user/{user_id}/messages
+        self.test_user_messages_endpoint(results, creator_id)
+        
+        # Test 3: GET /api/admin/user/{user_id}/photos
+        self.test_user_photos_endpoint(results, creator_id)
+        
+        # Test 4: GET /api/admin/user-history
+        self.test_user_history_endpoint(results)
+        
+        # Test 5: GET /api/admin/users-by-reviews
+        self.test_users_by_reviews_endpoint(results)
+    
+    def test_user_detail_endpoint(self, results: TestResults, user_id: str):
+        """Test GET /api/admin/user/{user_id}"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/admin/user/{user_id}", timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Check required fields
+                required_fields = ["full_name", "email", "role", "total_raffles", "tickets_purchased", "followers_count"]
+                missing_fields = [field for field in required_fields if field not in data]
+                
+                if not missing_fields:
+                    results.add_result(
+                        "Admin User Detail Endpoint",
+                        True,
+                        f"User detail retrieved successfully. User: {data.get('full_name')} ({data.get('email')}), Role: {data.get('role')}, Raffles: {data.get('total_raffles')}, Followers: {data.get('followers_count')}"
+                    )
+                else:
+                    results.add_result(
+                        "Admin User Detail Endpoint",
+                        False,
+                        f"Missing required fields: {missing_fields}",
+                        data
+                    )
+            else:
+                results.add_result(
+                    "Admin User Detail Endpoint",
+                    False,
+                    f"HTTP {response.status_code}: {response.text}"
+                )
+                
+        except requests.exceptions.RequestException as e:
+            results.add_result(
+                "Admin User Detail Endpoint",
+                False,
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_user_messages_endpoint(self, results: TestResults, user_id: str):
+        """Test GET /api/admin/user/{user_id}/messages"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/admin/user/{user_id}/messages", timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                if isinstance(data, list):
+                    results.add_result(
+                        "Admin User Messages Endpoint",
+                        True,
+                        f"Messages retrieved successfully. Found {len(data)} messages for user"
+                    )
+                else:
+                    results.add_result(
+                        "Admin User Messages Endpoint",
+                        False,
+                        "Response is not an array of messages",
+                        data
+                    )
+            else:
+                results.add_result(
+                    "Admin User Messages Endpoint",
+                    False,
+                    f"HTTP {response.status_code}: {response.text}"
+                )
+                
+        except requests.exceptions.RequestException as e:
+            results.add_result(
+                "Admin User Messages Endpoint",
+                False,
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_user_photos_endpoint(self, results: TestResults, user_id: str):
+        """Test GET /api/admin/user/{user_id}/photos"""
+        try:
+            response = self.session.get(f"{API_BASE_URL}/admin/user/{user_id}/photos", timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                if isinstance(data, list):
+                    # Check if photos have required fields
+                    valid_photos = True
+                    for photo in data:
+                        if not all(key in photo for key in ["url", "raffle_id", "raffle_title"]):
+                            valid_photos = False
+                            break
+                    
+                    if valid_photos:
+                        results.add_result(
+                            "Admin User Photos Endpoint",
+                            True,
+                            f"Photos retrieved successfully. Found {len(data)} photos for user"
+                        )
+                    else:
+                        results.add_result(
+                            "Admin User Photos Endpoint",
+                            False,
+                            "Photos missing required fields (url, raffle_id, raffle_title)",
+                            data
+                        )
+                else:
+                    results.add_result(
+                        "Admin User Photos Endpoint",
+                        False,
+                        "Response is not an array of photos",
+                        data
+                    )
+            else:
+                results.add_result(
+                    "Admin User Photos Endpoint",
+                    False,
+                    f"HTTP {response.status_code}: {response.text}"
+                )
+                
+        except requests.exceptions.RequestException as e:
+            results.add_result(
+                "Admin User Photos Endpoint",
+                False,
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_user_history_endpoint(self, results: TestResults):
+        """Test GET /api/admin/user-history"""
+        try:
+            # Test with pagination parameters
+            params = {
+                "page": 1,
+                "per_page": 10
+            }
+            response = self.session.get(f"{API_BASE_URL}/admin/user-history", params=params, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Check pagination structure
+                required_fields = ["data", "total", "page", "per_page"]
+                missing_fields = [field for field in required_fields if field not in data]
+                
+                if not missing_fields:
+                    results.add_result(
+                        "Admin User History Endpoint",
+                        True,
+                        f"User history retrieved successfully. Total users: {data.get('total')}, Page: {data.get('page')}/{data.get('total_pages', 'N/A')}"
+                    )
+                else:
+                    results.add_result(
+                        "Admin User History Endpoint",
+                        False,
+                        f"Missing pagination fields: {missing_fields}",
+                        data
+                    )
+            else:
+                results.add_result(
+                    "Admin User History Endpoint",
+                    False,
+                    f"HTTP {response.status_code}: {response.text}"
+                )
+                
+        except requests.exceptions.RequestException as e:
+            results.add_result(
+                "Admin User History Endpoint",
+                False,
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_users_by_reviews_endpoint(self, results: TestResults):
+        """Test GET /api/admin/users-by-reviews with filters"""
+        try:
+            # Test with filter parameters
+            params = {
+                "filter": "all",
+                "sort_by": "total",
+                "page": 1,
+                "per_page": 10
+            }
+            response = self.session.get(f"{API_BASE_URL}/admin/users-by-reviews", params=params, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Check pagination structure
+                required_fields = ["data", "total", "page", "per_page"]
+                missing_fields = [field for field in required_fields if field not in data]
+                
+                if not missing_fields:
+                    # Check if users have review fields
+                    users = data.get("data", [])
+                    if users:
+                        user = users[0]
+                        review_fields = ["positive_reviews", "negative_reviews_count", "total_reviews", "avg_review_score"]
+                        missing_review_fields = [field for field in review_fields if field not in user]
+                        
+                        if not missing_review_fields:
+                            results.add_result(
+                                "Admin Users by Reviews Endpoint",
+                                True,
+                                f"Users by reviews retrieved successfully. Total: {data.get('total')}, Users with reviews: {len(users)}"
+                            )
+                        else:
+                            results.add_result(
+                                "Admin Users by Reviews Endpoint",
+                                False,
+                                f"Users missing review fields: {missing_review_fields}",
+                                user
+                            )
+                    else:
+                        results.add_result(
+                            "Admin Users by Reviews Endpoint",
+                            True,
+                            "Users by reviews endpoint working (no users with reviews found)"
+                        )
+                else:
+                    results.add_result(
+                        "Admin Users by Reviews Endpoint",
+                        False,
+                        f"Missing pagination fields: {missing_fields}",
+                        data
+                    )
+            else:
+                results.add_result(
+                    "Admin Users by Reviews Endpoint",
+                    False,
+                    f"HTTP {response.status_code}: {response.text}"
+                )
+                
+        except requests.exceptions.RequestException as e:
+            results.add_result(
+                "Admin Users by Reviews Endpoint",
+                False,
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_authorization(self, results: TestResults, creator_id: str):
+        """Test that endpoints require admin authorization"""
+        # Create a session without auth token
+        unauth_session = requests.Session()
+        unauth_session.headers.update({
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        })
+        
+        endpoints_to_test = [
+            f"/admin/user/{creator_id}",
+            f"/admin/user/{creator_id}/messages",
+            f"/admin/user/{creator_id}/photos",
+            "/admin/user-history",
+            "/admin/users-by-reviews"
+        ]
+        
+        unauthorized_count = 0
+        for endpoint in endpoints_to_test:
+            try:
+                response = unauth_session.get(f"{API_BASE_URL}{endpoint}", timeout=10)
+                # Check for 401 (Unauthorized) or 403 (Forbidden) - both indicate auth is required
+                if response.status_code in [401, 403]:
+                    unauthorized_count += 1
+            except:
+                pass  # Ignore network errors for this test
+        
+        if unauthorized_count == len(endpoints_to_test):
+            results.add_result(
+                "Admin Authorization Check",
+                True,
+                f"All {len(endpoints_to_test)} admin endpoints properly require authentication"
+            )
+        else:
+            results.add_result(
+                "Admin Authorization Check",
+                False,
+                f"Only {unauthorized_count}/{len(endpoints_to_test)} endpoints require authentication"
+            )
+
 class AdminEarningsTester:
     def __init__(self):
         self.token = None
