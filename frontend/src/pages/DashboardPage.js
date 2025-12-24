@@ -1225,10 +1225,177 @@ const DashboardPage = ({ user, onLogout }) => {
 
         {/* Admin Earnings */}
         {activeTab === 'admin-earnings' && (
-          <div className="bg-white rounded-xl shadow p-6 text-center py-12">
-            <DollarSign className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-slate-600 mb-2">Ganancias con Paddle</h2>
-            <p className="text-slate-500">Disponible cuando configures Paddle</p>
+          <div className="space-y-6">
+            {/* Period Selector */}
+            <div className="flex flex-wrap gap-2">
+              {['day', 'week', 'month', 'year', 'all'].map(p => (
+                <button 
+                  key={p} 
+                  onClick={() => { setEarningsPeriod(p); setEarningsPage(1); }}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    earningsPeriod === p 
+                      ? 'bg-green-600 text-white' 
+                      : 'bg-white hover:bg-slate-50 border'
+                  }`}
+                >
+                  {p === 'day' ? 'Hoy' : p === 'week' ? 'Semana' : p === 'month' ? 'Mes' : p === 'year' ? 'Año' : 'Todo'}
+                </button>
+              ))}
+            </div>
+
+            {/* Summary Cards */}
+            {earningsSummary && (
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white">
+                  <p className="text-green-100 text-sm">Hoy</p>
+                  <p className="text-2xl font-bold">${earningsSummary.today?.total || 0}</p>
+                  <p className="text-green-200 text-xs">{earningsSummary.today?.count || 0} transacciones</p>
+                </div>
+                <div className="bg-gradient-to-br from-sky-500 to-sky-600 rounded-xl p-4 text-white">
+                  <p className="text-sky-100 text-sm">Esta Semana</p>
+                  <p className="text-2xl font-bold">${earningsSummary.week?.total || 0}</p>
+                  <p className="text-sky-200 text-xs">{earningsSummary.week?.count || 0} transacciones</p>
+                </div>
+                <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white">
+                  <p className="text-purple-100 text-sm">Este Mes</p>
+                  <p className="text-2xl font-bold">${earningsSummary.month?.total || 0}</p>
+                  <p className="text-purple-200 text-xs">{earningsSummary.month?.count || 0} transacciones</p>
+                </div>
+                <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-4 text-white">
+                  <p className="text-amber-100 text-sm">Todo el Tiempo</p>
+                  <p className="text-2xl font-bold">${earningsSummary.all_time?.total || 0}</p>
+                  <p className="text-amber-200 text-xs">{earningsSummary.all_time?.count || 0} transacciones</p>
+                </div>
+              </div>
+            )}
+
+            {loadingEarnings ? (
+              <div className="bg-white rounded-xl shadow p-8 text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
+                <p className="text-slate-500 mt-2">Cargando ganancias...</p>
+              </div>
+            ) : earnings ? (
+              <>
+                {/* Stats Overview */}
+                <div className="bg-white rounded-xl shadow p-6">
+                  <h3 className="font-bold text-lg mb-4 flex items-center">
+                    <DollarSign className="w-5 h-5 mr-2 text-green-600" />
+                    Resumen del Período ({earningsPeriod === 'day' ? 'Hoy' : earningsPeriod === 'week' ? 'Semana' : earningsPeriod === 'month' ? 'Mes' : earningsPeriod === 'year' ? 'Año' : 'Todo'})
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-green-50 rounded-lg p-4 text-center">
+                      <p className="text-sm text-green-600 font-medium">Total Ganado</p>
+                      <p className="text-2xl font-bold text-green-700">${earnings.summary?.total_earnings || 0}</p>
+                    </div>
+                    <div className="bg-sky-50 rounded-lg p-4 text-center">
+                      <p className="text-sm text-sky-600 font-medium">Transacciones</p>
+                      <p className="text-2xl font-bold text-sky-700">{earnings.summary?.total_transactions || 0}</p>
+                    </div>
+                    <div className="bg-amber-50 rounded-lg p-4 text-center">
+                      <p className="text-sm text-amber-600 font-medium">Pendientes</p>
+                      <p className="text-2xl font-bold text-amber-700">{earnings.summary?.pending_transactions || 0}</p>
+                    </div>
+                    <div className="bg-purple-50 rounded-lg p-4 text-center">
+                      <p className="text-sm text-purple-600 font-medium">Fee Promedio</p>
+                      <p className="text-2xl font-bold text-purple-700">${(earnings.summary?.avg_fee || 0).toFixed(2)}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Earnings by Tier */}
+                {earnings.earnings_by_tier && (
+                  <div className="bg-white rounded-xl shadow p-6">
+                    <h3 className="font-bold text-lg mb-4">Ganancias por Tier de Fee</h3>
+                    <div className="grid grid-cols-5 gap-3">
+                      {Object.entries(earnings.earnings_by_tier).map(([tier, amount]) => (
+                        <div key={tier} className="bg-slate-50 rounded-lg p-3 text-center">
+                          <p className="text-xs text-slate-500">Tier ${tier}</p>
+                          <p className="text-lg font-bold text-slate-800">${amount}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Transactions Table */}
+                <div className="bg-white rounded-xl shadow overflow-hidden">
+                  <div className="p-4 border-b flex items-center justify-between">
+                    <h3 className="font-bold text-lg">Historial de Transacciones</h3>
+                    <span className="text-sm text-slate-500">
+                      {earnings.pagination?.total || 0} transacciones totales
+                    </span>
+                  </div>
+                  
+                  {earnings.transactions?.length === 0 ? (
+                    <div className="p-8 text-center">
+                      <DollarSign className="w-12 h-12 text-slate-300 mx-auto mb-2" />
+                      <p className="text-slate-500">No hay transacciones en este período</p>
+                      <p className="text-sm text-slate-400 mt-1">Los fees de creación de rifas aparecerán aquí</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead className="bg-slate-50">
+                            <tr>
+                              <th className="text-left p-3">Fecha</th>
+                              <th className="text-left p-3">Creador</th>
+                              <th className="text-left p-3">Rifa</th>
+                              <th className="text-right p-3">Valor Rifa</th>
+                              <th className="text-right p-3">Fee</th>
+                              <th className="text-center p-3">Estado</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {earnings.transactions?.map((tx, idx) => (
+                              <tr key={tx.id || idx} className="border-t hover:bg-slate-50">
+                                <td className="p-3 text-slate-600">
+                                  {tx.completed_at ? new Date(tx.completed_at).toLocaleDateString('es-ES', {
+                                    day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+                                  }) : '-'}
+                                </td>
+                                <td className="p-3">
+                                  <div>
+                                    <p className="font-medium text-slate-900">{tx.creator_name}</p>
+                                    <p className="text-xs text-slate-500">{tx.creator_email}</p>
+                                  </div>
+                                </td>
+                                <td className="p-3 text-slate-700">{tx.raffle_title}</td>
+                                <td className="p-3 text-right text-slate-600">${tx.raffle_value?.toFixed(2) || '0.00'}</td>
+                                <td className="p-3 text-right font-bold text-green-600">${tx.amount}</td>
+                                <td className="p-3 text-center">
+                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    tx.status === 'completed' ? 'bg-green-100 text-green-700' :
+                                    tx.status === 'pending' ? 'bg-amber-100 text-amber-700' :
+                                    'bg-red-100 text-red-700'
+                                  }`}>
+                                    {tx.status === 'completed' ? 'Completado' : tx.status === 'pending' ? 'Pendiente' : 'Fallido'}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      <Pagination 
+                        page={earningsPage} 
+                        setPage={setEarningsPage} 
+                        total={earnings.pagination?.total || 0} 
+                        perPage={earningsPerPage} 
+                        setPerPage={setEarningsPerPage} 
+                      />
+                    </>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="bg-white rounded-xl shadow p-8 text-center">
+                <DollarSign className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                <h2 className="text-xl font-bold text-slate-600 mb-2">Ganancias con Paddle</h2>
+                <p className="text-slate-500">Aún no hay transacciones registradas</p>
+                <p className="text-sm text-slate-400 mt-2">Los fees de creación de rifas aparecerán aquí cuando los creadores paguen para publicar sus rifas.</p>
+              </div>
+            )}
           </div>
         )}
       </div>
