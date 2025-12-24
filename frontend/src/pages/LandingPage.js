@@ -3,9 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { API } from '../App';
-import { Ticket, Search, Plus, Bell, User, BadgeCheck, Image, X, LogOut, Settings, Gift, Link as LinkIcon } from 'lucide-react';
+import { Ticket, Search, Plus, User, BadgeCheck, Image, X, LogOut, Settings, Gift, Link as LinkIcon, MessageSquare } from 'lucide-react';
 import LanguageSelector from '../components/LanguageSelector';
 import FeedCard from '../components/FeedCard';
+import NotificationBell from '../components/NotificationBell';
 
 const LandingPage = ({ user, onLogout }) => {
   const { t } = useTranslation();
