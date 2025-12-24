@@ -146,6 +146,13 @@ const DashboardPage = ({ user, onLogout }) => {
     }
   }, [activeTab, reviewsFilter, reviewsSortBy, minNegativeReviews]);
 
+  useEffect(() => {
+    if (isSuperAdmin && activeTab === 'admin-earnings') {
+      loadEarnings();
+      loadEarningsSummary();
+    }
+  }, [activeTab, earningsPeriod, earningsPage, earningsPerPage]);
+
   // Creator functions
   const loadDashboard = async () => {
     try {
