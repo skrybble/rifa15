@@ -1931,6 +1931,163 @@ async def get_admin_statistics(
         "daily_data": daily_data
     }
 
+# ============================================
+# ADMIN EARNINGS (PADDLE FEES)
+# ============================================
+
+@api_router.get("/admin/earnings")
+async def get_admin_earnings(
+    period: str = "month",  # day, week, month, year, all
+    page: int = 1,
+    per_page: int = 20,
+    current_user: User = Depends(get_current_user)
+):
+    """Get platform earnings from raffle creation fees (Paddle)"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    # Calculate date range
+    now = datetime.now(timezone.utc)
+    if period == "day":
+        start_date = now - timedelta(days=1)
+    elif period == "week":
+        start_date = now - timedelta(weeks=1)
+    elif period == "month":
+        start_date = now - timedelta(days=30)
+    elif period == "year":
+        start_date = now - timedelta(days=365)
+    else:
+        start_date = None  # All time
+    
+    # Query for fee payments
+    query = {"status": "completed", "type": "creation_fee"}
+    if start_date:
+        query["completed_at"] = {"$gte": start_date.isoformat()}
+    
+    # Get total count and stats
+    all_completed_fees = await db.fee_payments.find(query, {"_id": 0}).to_list(None)
+    
+    total_earnings = sum([f.get("amount", 0) for f in all_completed_fees])
+    total_transactions = len(all_completed_fees)
+    
+    # Get paginated results with creator info
+    skip = (page - 1) * per_page
+    fee_payments = await db.fee_payments.find(
+        query, {"_id": 0}
+    ).sort("completed_at", -1).skip(skip).limit(per_page).to_list(per_page)
+    
+    # Enrich with raffle and creator info
+    enriched_payments = []
+    for payment in fee_payments:
+        # Get raffle info
+        raffle = await db.raffles.find_one(
+            {"id": payment.get("raffle_id")}, 
+            {"_id": 0, "title": 1, "ticket_price": 1, "ticket_range": 1}
+        )
+        
+        # Get creator info
+        creator = await db.users.find_one(
+            {"id": payment.get("creator_id")},
+            {"_id": 0, "full_name": 1, "email": 1}
+        )
+        
+        enriched_payments.append({
+            **payment,
+            "raffle_title": raffle.get("title") if raffle else "Rifa eliminada",
+            "raffle_value": (raffle.get("ticket_price", 0) * raffle.get("ticket_range", 0)) if raffle else 0,
+            "creator_name": creator.get("full_name") if creator else "Usuario eliminado",
+            "creator_email": creator.get("email") if creator else ""
+        })
+    
+    # Calculate earnings by tier
+    earnings_by_tier = {1: 0, 2: 0, 3: 0, 5: 0, 10: 0}
+    for f in all_completed_fees:
+        amount = f.get("amount", 0)
+        if amount in earnings_by_tier:
+            earnings_by_tier[amount] += amount
+    
+    # Daily earnings for chart
+    daily_earnings = {}
+    for f in all_completed_fees:
+        completed_at = f.get("completed_at", "")
+        if completed_at:
+            date_str = completed_at[:10] if isinstance(completed_at, str) else completed_at.strftime("%Y-%m-%d")
+            if date_str not in daily_earnings:
+                daily_earnings[date_str] = {"amount": 0, "count": 0}
+            daily_earnings[date_str]["amount"] += f.get("amount", 0)
+            daily_earnings[date_str]["count"] += 1
+    
+    # Get pending fees count
+    pending_count = await db.fee_payments.count_documents({"status": "pending"})
+    
+    return {
+        "period": period,
+        "summary": {
+            "total_earnings": total_earnings,
+            "total_transactions": total_transactions,
+            "pending_transactions": pending_count,
+            "avg_fee": total_earnings / total_transactions if total_transactions > 0 else 0
+        },
+        "earnings_by_tier": earnings_by_tier,
+        "daily_earnings": daily_earnings,
+        "transactions": enriched_payments,
+        "pagination": {
+            "page": page,
+            "per_page": per_page,
+            "total": total_transactions,
+            "total_pages": (total_transactions + per_page - 1) // per_page
+        }
+    }
+
+@api_router.get("/admin/earnings/summary")
+async def get_earnings_summary(current_user: User = Depends(get_current_user)):
+    """Get quick earnings summary for dashboard overview"""
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    
+    now = datetime.now(timezone.utc)
+    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    week_start = now - timedelta(days=7)
+    month_start = now - timedelta(days=30)
+    
+    # Today's earnings
+    today_fees = await db.fee_payments.find({
+        "status": "completed",
+        "type": "creation_fee",
+        "completed_at": {"$gte": today_start.isoformat()}
+    }, {"_id": 0, "amount": 1}).to_list(None)
+    today_total = sum([f.get("amount", 0) for f in today_fees])
+    
+    # This week's earnings
+    week_fees = await db.fee_payments.find({
+        "status": "completed",
+        "type": "creation_fee",
+        "completed_at": {"$gte": week_start.isoformat()}
+    }, {"_id": 0, "amount": 1}).to_list(None)
+    week_total = sum([f.get("amount", 0) for f in week_fees])
+    
+    # This month's earnings
+    month_fees = await db.fee_payments.find({
+        "status": "completed",
+        "type": "creation_fee",
+        "completed_at": {"$gte": month_start.isoformat()}
+    }, {"_id": 0, "amount": 1}).to_list(None)
+    month_total = sum([f.get("amount", 0) for f in month_fees])
+    
+    # All time earnings
+    all_fees = await db.fee_payments.find({
+        "status": "completed",
+        "type": "creation_fee"
+    }, {"_id": 0, "amount": 1}).to_list(None)
+    all_time_total = sum([f.get("amount", 0) for f in all_fees])
+    
+    return {
+        "today": {"total": today_total, "count": len(today_fees)},
+        "week": {"total": week_total, "count": len(week_fees)},
+        "month": {"total": month_total, "count": len(month_fees)},
+        "all_time": {"total": all_time_total, "count": len(all_fees)}
+    }
+
 @api_router.get("/admin/users-by-reviews")
 async def get_users_by_reviews(
     page: int = 1,
