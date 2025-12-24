@@ -18,6 +18,7 @@ import MessagesPage from './pages/MessagesPage';
 import ProfileSettingsPage from './pages/ProfileSettingsPage';
 import CheckoutPage from './pages/CheckoutPage';
 import TermsPage from './pages/TermsPage';
+import NotificationsPage from './pages/NotificationsPage';
 import InstallPWA from './components/InstallPWA';
 import BottomNav from './components/BottomNav';
 
