@@ -106,18 +106,7 @@ const ExplorePage = ({ user, onLogout }) => {
                 </nav>
 
                 <div className="flex items-center space-x-4">
-                  <button
-                    onClick={() => setShowNotifications(!showNotifications)}
-                    data-testid="notifications-btn"
-                    className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                  >
-                    <Bell className="w-6 h-6 text-slate-700" />
-                    {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </button>
+                  <NotificationBell user={user} />
                   <Link
                     to="/profile-settings"
                     data-testid="profile-settings-btn"
