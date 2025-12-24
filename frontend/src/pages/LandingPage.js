@@ -239,7 +239,7 @@ const LandingPage = ({ user, onLogout }) => {
                           className="flex items-center space-x-2 px-4 py-2 hover:bg-slate-50 text-slate-700"
                           onClick={() => setShowUserMenu(false)}
                         >
-                          <Bell className="w-4 h-4" />
+                          <MessageSquare className="w-4 h-4" />
                           <span className="text-sm">Mensajes</span>
                         </Link>
                         <Link 
