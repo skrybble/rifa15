@@ -3,9 +3,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { API } from '../App';
-import { Ticket, LogOut, User, Bell, LayoutDashboard, Heart, Calendar, DollarSign, Mail, Settings, Menu, X } from 'lucide-react';
+import { Ticket, LogOut, User, LayoutDashboard, Heart, Calendar, DollarSign, Mail, Settings, Menu, X } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import LanguageSelector from '../components/LanguageSelector';
+import NotificationBell from '../components/NotificationBell';
 
 const ExplorePage = ({ user, onLogout }) => {
   const { t } = useTranslation();
