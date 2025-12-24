@@ -340,6 +340,32 @@ const DashboardPage = ({ user, onLogout }) => {
     }
   };
 
+  const loadEarnings = async () => {
+    setLoadingEarnings(true);
+    try {
+      const params = new URLSearchParams({
+        period: earningsPeriod,
+        page: earningsPage,
+        per_page: earningsPerPage
+      });
+      const res = await axios.get(`${API}/admin/earnings?${params}`);
+      setEarnings(res.data);
+    } catch (error) {
+      console.error('Error loading earnings:', error);
+    } finally {
+      setLoadingEarnings(false);
+    }
+  };
+
+  const loadEarningsSummary = async () => {
+    try {
+      const res = await axios.get(`${API}/admin/earnings/summary`);
+      setEarningsSummary(res.data);
+    } catch (error) {
+      console.error('Error loading earnings summary:', error);
+    }
+  };
+
   const openUserDetail = (userId) => {
     setSelectedUser({ id: userId });
     setShowUserDetailModal(true);
