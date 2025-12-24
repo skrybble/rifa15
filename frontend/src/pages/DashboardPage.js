@@ -103,6 +103,14 @@ const DashboardPage = ({ user, onLogout }) => {
   const [historyPage, setHistoryPage] = useState(1);
   const [historyPerPage, setHistoryPerPage] = useState(20);
 
+  // Earnings - Paddle Fees
+  const [earnings, setEarnings] = useState(null);
+  const [earningsSummary, setEarningsSummary] = useState(null);
+  const [earningsPeriod, setEarningsPeriod] = useState('month');
+  const [earningsPage, setEarningsPage] = useState(1);
+  const [earningsPerPage, setEarningsPerPage] = useState(10);
+  const [loadingEarnings, setLoadingEarnings] = useState(false);
+
   // Load data on mount
   useEffect(() => {
     loadDashboard();
