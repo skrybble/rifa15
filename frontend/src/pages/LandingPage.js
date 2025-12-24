@@ -172,9 +172,7 @@ const LandingPage = ({ user, onLogout }) => {
                   <Link to="/explore" className="p-2 hover:bg-slate-100 rounded-full">
                     <Search className="w-5 h-5 text-slate-600" />
                   </Link>
-                  <Link to="/notifications" className="p-2 hover:bg-slate-100 rounded-full relative">
-                    <Bell className="w-5 h-5 text-slate-600" />
-                  </Link>
+                  <NotificationBell user={user} />
                   {/* Quick access for creators - Desktop */}
                   {(user.role === 'creator' || user.role === 'admin' || user.role === 'super_admin') && (
                     <Link 
