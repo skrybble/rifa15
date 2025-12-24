@@ -13,10 +13,8 @@ const ExplorePage = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const [raffles, setRaffles] = useState([]);
   const [creators, setCreators] = useState([]);
-  const [notifications, setNotifications] = useState([]);
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [showNotifications, setShowNotifications] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   useEffect(() => {
@@ -32,9 +30,6 @@ const ExplorePage = ({ user, onLogout }) => {
       setCreators(creatorsRes.data);
       
       if (user) {
-        const notifRes = await axios.get(`${API}/notifications`);
-        setNotifications(notifRes.data);
-        
         // Get unread messages count
         try {
           const messagesCountRes = await axios.get(`${API}/messages/unread-count`);
@@ -49,8 +44,6 @@ const ExplorePage = ({ user, onLogout }) => {
       setLoading(false);
     }
   };
-
-  const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-200 to-slate-300 overflow-x-hidden">
